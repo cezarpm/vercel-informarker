@@ -1,0 +1,89 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Categorias {
+  id   Int    @id @default(autoincrement())
+  name String
+}
+
+model Parametros {
+  id                                    Int       @id @default(autoincrement())
+  random                                String
+  cep_invalido                          Boolean   @default(false)
+  data_limite_pgto_antecipado_anuidade  DateTime?
+  percent_desc_pgto_antecipado_anuidade Decimal
+  taxa_pgto_atrasado_anuidade           Decimal
+  parcelamento_permitido_anuidade       String
+  data_limite_pgto_antecipado_JAER      DateTime?
+  percent_desc_pgto_antecipado_JAER     Decimal
+  taxa_pgto_atrasado_JAER               Int
+  parcelamento_permitido_JAER           String
+  presidente_pode_se_reeleger           Boolean
+  demais_podem_se_reeleger              Boolean
+  duracao_mandato                       Int
+  exite_listas_imediato                 Boolean
+  quantidade_linhas_listas              Int
+  acesso_externo_sis                    Boolean
+  endereco_IP_primario                  String
+  endereco_IP_secundario                String
+}
+
+model TipoEmpresa {
+  id   Int    @id @default(autoincrement())
+  name String
+}
+
+model Pais {
+  id   Int    @id @default(autoincrement())
+  name String
+}
+
+model Tratamentos {
+  id   Int    @id @default(autoincrement())
+  name String
+}
+
+model Cargos {
+  id   Int    @id @default(autoincrement())
+  name String
+}
+
+model Empresa {
+  id                            Int     @id @default(autoincrement())
+  cod_empresa                   String
+  tipo_empresa                  String
+  patrocinadora                 Boolean
+  faculdade_anestesiologia      Boolean
+  empresa_ativa                 Boolean
+  cnpj                          String
+  razao_social                  String
+  nome_fantasia                 String
+  cep                           Int?
+  logradouro                    String?
+  numero                        Int?
+  complemento                   String?
+  cidade                        String?
+  uf                            String?
+  pais                          String?
+  bairro                        String?
+  telefone_comercial            String
+  tratamento_contato_primario   String
+  nome_contato_primario         String
+  cargo_contato_primario        String
+  email_contato_primario        String
+  telefone_contato_primario     String
+  tratamento_contato_secundario String
+  nome_contato_secundario       String
+  cargo_contato_secundario      String
+  email_contato_secundario      String
+  telefone_contato_secundario   String
+}
