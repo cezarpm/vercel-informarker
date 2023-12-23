@@ -9,13 +9,24 @@ interface schemaTextField {
   w?: number | string
   messageError?: string
   disabled?: any
+  helperText?: any
+  error?: any
 }
 
 // eslint-disable-next-line react/display-name
 export const TextInput = forwardRef<HTMLInputElement, schemaTextField>(
   (props, ref) => {
-    const { title, value, defaultValue, w, messageError, disabled, ...rest } =
-      props
+    const {
+      title,
+      value,
+      defaultValue,
+      w,
+      messageError,
+      disabled,
+      helperText,
+      error,
+      ...rest
+    } = props
     return (
       <Container>
         <ContainerTextField
@@ -27,8 +38,11 @@ export const TextInput = forwardRef<HTMLInputElement, schemaTextField>(
           value={value}
           sx={{ width: w }}
           defaultValue={defaultValue}
-          {...rest}
           disabled={disabled}
+          helperText={helperText}
+          {...rest}
+          error={error}
+          InputLabelProps={{ shrink: true }}
         />
         <FormErrorMessage>{messageError}</FormErrorMessage>
       </Container>

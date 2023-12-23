@@ -20,11 +20,11 @@ model Parametros {
   random                                String
   cep_invalido                          Boolean   @default(false)
   data_limite_pgto_antecipado_anuidade  DateTime?
-  percent_desc_pgto_antecipado_anuidade Decimal
-  taxa_pgto_atrasado_anuidade           Decimal
+  percent_desc_pgto_antecipado_anuidade Int
+  taxa_pgto_atrasado_anuidade           Int
   parcelamento_permitido_anuidade       String
   data_limite_pgto_antecipado_JAER      DateTime?
-  percent_desc_pgto_antecipado_JAER     Decimal
+  percent_desc_pgto_antecipado_JAER     Int
   taxa_pgto_atrasado_JAER               Int
   parcelamento_permitido_JAER           String
   presidente_pode_se_reeleger           Boolean
@@ -60,10 +60,10 @@ model Cargos {
 model Empresa {
   id                            Int     @id @default(autoincrement())
   cod_empresa                   String
-  tipo_empresa                  String
-  patrocinadora                 Boolean
-  faculdade_anestesiologia      Boolean
-  empresa_ativa                 Boolean
+  tipo_empresa                  String?
+  patrocinadora                 Boolean?
+  faculdade_anestesiologia      Boolean?
+  empresa_ativa                 Boolean?
   cnpj                          String
   razao_social                  String
   nome_fantasia                 String
@@ -75,15 +75,23 @@ model Empresa {
   uf                            String?
   pais                          String?
   bairro                        String?
-  telefone_comercial            String
-  tratamento_contato_primario   String
+  telefone_comercial            String?
+  tratamento_contato_primario   String?
   nome_contato_primario         String
-  cargo_contato_primario        String
-  email_contato_primario        String
-  telefone_contato_primario     String
-  tratamento_contato_secundario String
-  nome_contato_secundario       String
-  cargo_contato_secundario      String
-  email_contato_secundario      String
-  telefone_contato_secundario   String
+  cargo_contato_primario        String?
+  email_contato_primario        String?
+  telefone_contato_primario     String?
+  tratamento_contato_secundario String?
+  nome_contato_secundario       String?
+  cargo_contato_secundario      String?
+  email_contato_secundario      String?
+  telefone_contato_secundario   String?
 }
+
+ model Tabelas {
+   id            Int    @id @default(autoincrement())
+   codigo_tabela String
+   ocorrencia_tabela String
+   complemento_ocorrencia_selecao String?
+   ocorrencia_ativa Boolean
+ }

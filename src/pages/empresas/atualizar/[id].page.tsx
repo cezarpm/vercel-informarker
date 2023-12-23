@@ -47,6 +47,14 @@ const schemaEmpresaForm = z.object({
 
 type SchemaEmpresaForm = z.infer<typeof schemaEmpresaForm>
 
+interface shemaTabelas {
+  id: number
+  codigo_tabela: string
+  ocorrencia_tabela: string
+  complemento_ocorrencia_selecao: string
+  ocorrencia_ativa: boolean
+}
+
 export default function Vizualizar({
   data,
   dataTipoEmpresa,
@@ -56,7 +64,7 @@ export default function Vizualizar({
 }: any) {
   const router = useRouter()
   async function OnSubmit(data: any) {
-    console.log(data)
+    // console.log(data)
     try {
       await api.put('/empresa/update', { ...data })
       toast.success('Empresa atualizada!')
@@ -65,30 +73,30 @@ export default function Vizualizar({
       console.log(error)
     }
   }
-  const newDataTipoEmpresa = dataTipoEmpresa?.map((item: any) => {
+  const newDataTipoEmpresa = dataTipoEmpresa?.map((item: shemaTabelas) => {
     return {
-      label: item.name,
+      label: item.ocorrencia_tabela,
       id: item.id,
     }
   })
 
-  const newDataPais = dataPais?.map((item: any) => {
+  const newDataPais = dataPais?.map((item: shemaTabelas) => {
     return {
-      label: item.name,
+      label: item.ocorrencia_tabela,
       id: item.id,
     }
   })
 
-  const newDataCargo = dataCargo?.map((item: any) => {
+  const newDataCargo = dataCargo?.map((item: shemaTabelas) => {
     return {
-      label: item.name,
+      label: item.ocorrencia_tabela,
       id: item.id,
     }
   })
 
-  const newDataTratamento = dataTratamento?.map((item: any) => {
+  const newDataTratamento = dataTratamento?.map((item: shemaTabelas) => {
     return {
-      label: item.name,
+      label: item.ocorrencia_tabela,
       id: item.id,
     }
   })
@@ -101,7 +109,6 @@ export default function Vizualizar({
 
   useEffect(() => {
     setValue('id', data.id)
-    setValue('cod_empresa', data.cod_empresa)
     setValue('cod_empresa', data.cod_empresa)
     setValue('nome_fantasia', data.nome_fantasia)
     setValue('cnpj', data.cnpj)
@@ -321,10 +328,27 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     })
 
-    const dataTipoEmpresa = await prisma.tipoEmpresa.findMany()
-    const dataPais = await prisma.pais.findMany()
-    const dataCargo = await prisma.cargos.findMany()
-    const dataTratamento = await prisma.tratamentos.findMany()
+    const dataTipoEmpresa = await prisma.tabelas.findMany({
+      where: {
+        codigo_tabela: 'Tipo_Empresa',
+      },
+    })
+    const dataPais = await prisma.tabelas.findMany({
+      where: {
+        codigo_tabela: 'pais',
+      },
+    })
+
+    const dataCargo = await prisma.tabelas.findMany({
+      where: {
+        codigo_tabela: 'Cargos_Empresa',
+      },
+    })
+    const dataTratamento = await prisma.tabelas.findMany({
+      where: {
+        codigo_tabela: 'Tratamento',
+      },
+    })
 
     return {
       props: {
