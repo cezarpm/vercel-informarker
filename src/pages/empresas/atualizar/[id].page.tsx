@@ -1,5 +1,5 @@
 import { Container, Box } from './styled'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { z } from 'zod'
 import { GetServerSideProps } from 'next'
 import { prisma } from '@/lib/prisma'
@@ -13,6 +13,7 @@ import { SelectOptions } from '@/components/SelectOptions'
 import { api } from '@/lib/axios'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/router'
+import axios from 'axios'
 
 const schemaEmpresaForm = z.object({
   id: z.number(),
@@ -24,7 +25,7 @@ const schemaEmpresaForm = z.object({
   cnpj: z.string(),
   razao_social: z.string(),
   nome_fantasia: z.string(),
-  cep: z.number(),
+  cep: z.string(),
   logradouro: z.string(),
   numero: z.number(),
   complemento: z.string(),
@@ -63,6 +64,8 @@ export default function Vizualizar({
   dataTratamento,
 }: any) {
   const router = useRouter()
+  const [cepInvalido, setCepInvalido] = useState()
+
   async function OnSubmit(data: any) {
     // console.log(data)
     try {
@@ -104,8 +107,59 @@ export default function Vizualizar({
     register,
     handleSubmit,
     setValue,
+    watch,
     formState: { isSubmitting },
   } = useForm<SchemaEmpresaForm>()
+
+  // API VIA CEP
+  const cepValue = watch('cep')
+  async function handleCheckCep(cep: string) {
+    try {
+      const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`)
+      checkedViaCep(response.data)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  async function handleGetAllParams(): Promise<void> {
+    try {
+      const response = await api.get('/parametros')
+      setCepInvalido(response.data[0].cep_invalido)
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  function checkedViaCep(dataViaCep: any) {
+    if (dataViaCep.erro === true) {
+      if (cepInvalido === true) {
+        toast.warn('você optou: aceitar cep inválido')
+      } else {
+        toast.warn('você optou: não aceitar cep inválido')
+      }
+    }
+
+    if (!dataViaCep.erro) {
+      setValue('bairro', dataViaCep.bairro)
+      setValue('cidade', dataViaCep.localidade)
+      setValue('uf', dataViaCep.uf)
+      setValue('logradouro', dataViaCep.logradouro)
+    }
+  }
+  // VALIDAR CNPJ
+  const cnpj = watch('cnpj')
+  async function handleCheckCnpj(cnpj: any) {
+    try {
+      const response = await api.get(`/util/checkCnpj?cnpj=${cnpj}`)
+      // console.log(response)
+      if (response.data.message) {
+        toast.warn('CNPJ Inválido')
+      } else {
+        toast.success('CNPJ Válido')
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
 
   useEffect(() => {
     setValue('id', data.id)
@@ -136,6 +190,7 @@ export default function Vizualizar({
     setValue('cargo_contato_secundario', data.cargo_contato_secundario)
     setValue('email_contato_secundario', data.email_contato_secundario)
     setValue('telefone_contato_secundario', data.telefone_contato_secundario)
+    handleGetAllParams()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   return (
@@ -148,7 +203,7 @@ export default function Vizualizar({
               <Link href={'/empresas'}>Empresas</Link>
             </span>
             <CaretRight size={14} />
-            <span>Visualizar</span>
+            <span>Atualizar</span>
           </legend>
           <Box>
             <div style={{ width: '10%' }}>
@@ -156,9 +211,23 @@ export default function Vizualizar({
             </div>
 
             <TextInput title="Nome Fantasia" {...register('nome_fantasia')} />
-            <div style={{ width: '15%' }}>
-              <TextInput title="CNPJ" {...register('cnpj')} />
+
+            <div
+              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+            >
+              <TextInput title="CNPJ *" {...register('cnpj')} />
+              <Button
+                type="button"
+                onClick={() => {
+                  handleCheckCnpj(cnpj)
+                }}
+                title="Validar"
+                style={{ margin: '0px', width: '100%', fontSize: '12px' }}
+              />
             </div>
+
+            {/* <TextInput title="CNPJ" {...register('cnpj')} /> */}
+
             <div style={{ width: '15%' }}>
               <TextInput
                 type="text"
@@ -198,26 +267,45 @@ export default function Vizualizar({
           </Box>
 
           <Box>
-            <div style={{ width: '7%' }}>
+            {/* <div style={{ width: '7%' }}>
               <TextInput type="number" title="CEP" {...register('cep')} />
+            </div> */}
+
+            <div
+              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+            >
+              <TextInput title="Cep *" {...register('cep')} />
+              <Button
+                type="button"
+                onClick={() => {
+                  handleCheckCep(cepValue)
+                }}
+                title="Buscar"
+                style={{ margin: '0px', width: '100%', fontSize: '12px' }}
+              />
             </div>
 
-            <TextInput title="Logadouro" {...register('logradouro')} />
-            <TextInput title="Logadouro" {...register('complemento')} />
+            <TextInput title="Logadouro" disabled {...register('logradouro')} />
+            <TextInput title="Complemento" {...register('complemento')} />
             <div style={{ width: '8%' }}>
-              <TextInput type="number" title="Numero" {...register('numero')} />
+              <TextInput title="Numero" {...register('numero')} />
             </div>
           </Box>
 
           <Box>
             <div>
-              <TextInput w={450} title="Bairro" {...register('bairro')} />
+              <TextInput
+                disabled
+                w={450}
+                title="Bairro"
+                {...register('bairro')}
+              />
             </div>
 
-            <TextInput title="Cidade" {...register('cidade')} />
+            <TextInput disabled title="Cidade" {...register('cidade')} />
 
             <div>
-              <TextInput w={35} title="UF" {...register('uf')} />
+              <TextInput w={35} title="UF" disabled {...register('uf')} />
             </div>
 
             <div>
@@ -233,7 +321,6 @@ export default function Vizualizar({
 
           <Box>
             <TextInput
-              type="text"
               title="Nome do Contato Primario"
               {...register('nome_contato_primario')}
             />
