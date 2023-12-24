@@ -67,7 +67,7 @@ model Empresa {
   cnpj                          String
   razao_social                  String
   nome_fantasia                 String
-  cep                           Int?
+  cep                           String?
   logradouro                    String?
   numero                        Int?
   complemento                   String?

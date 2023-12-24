@@ -65,17 +65,8 @@ export default function Vizualizar({
 }: any) {
   const router = useRouter()
   const [cepInvalido, setCepInvalido] = useState()
+  const [disabledButtonCep, setDisabledButtonCep] = useState(false)
 
-  async function OnSubmit(data: any) {
-    // console.log(data)
-    try {
-      await api.put('/empresa/update', { ...data })
-      toast.success('Empresa atualizada!')
-      router.push('/empresas')
-    } catch (error) {
-      console.log(error)
-    }
-  }
   const newDataTipoEmpresa = dataTipoEmpresa?.map((item: shemaTabelas) => {
     return {
       label: item.ocorrencia_tabela,
@@ -111,9 +102,22 @@ export default function Vizualizar({
     formState: { isSubmitting },
   } = useForm<SchemaEmpresaForm>()
 
+  async function OnSubmit(data: any) {
+    if (disabledButtonCep === true) {
+      return toast.warn('Não é possivel atualizar com CEP inválido')
+    }
+    try {
+      await api.put('/empresa/update', { ...data })
+      toast.success('Empresa atualizada!')
+      router.push('/empresas')
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   // API VIA CEP
   const cepValue = watch('cep')
-  async function handleCheckCep(cep: string) {
+  async function handleCheckCep(cep: any) {
     try {
       const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`)
       checkedViaCep(response.data)
@@ -121,6 +125,7 @@ export default function Vizualizar({
       console.log(error)
     }
   }
+
   async function handleGetAllParams(): Promise<void> {
     try {
       const response = await api.get('/parametros')
@@ -129,16 +134,20 @@ export default function Vizualizar({
       console.log(error)
     }
   }
+
   function checkedViaCep(dataViaCep: any) {
     if (dataViaCep.erro === true) {
       if (cepInvalido === true) {
-        toast.warn('você optou: aceitar cep inválido')
+        toast.warn('Você optou: aceitar cep inválido')
       } else {
-        toast.warn('você optou: não aceitar cep inválido')
+        setDisabledButtonCep(true)
+        toast.warn('Você optou: não aceitar cep inválido')
+        toast('Botão Enviar Desabilitado!')
       }
     }
 
     if (!dataViaCep.erro) {
+      setDisabledButtonCep(false)
       setValue('bairro', dataViaCep.bairro)
       setValue('cidade', dataViaCep.localidade)
       setValue('uf', dataViaCep.uf)
@@ -267,10 +276,6 @@ export default function Vizualizar({
           </Box>
 
           <Box>
-            {/* <div style={{ width: '7%' }}>
-              <TextInput type="number" title="CEP" {...register('cep')} />
-            </div> */}
-
             <div
               style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
             >
