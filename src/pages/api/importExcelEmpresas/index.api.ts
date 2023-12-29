@@ -56,7 +56,7 @@ export default async function handler(
             cnpj: item.CNPJ,
             razao_social: item.Razao_Social,
             nome_fantasia: item.Nome_Fantasia,
-            cep: item.CEP,
+            cep: String(item.CEP),
             logradouro: item.Logradouro,
             numero: item.Numero,
             complemento: item.Complemento,

@@ -175,6 +175,10 @@ export default function Parametros({
     }
   })
 
+  function handleNextPage() {
+    router.push('/associados')
+  }
+
   useEffect(() => {
     setValue('day', newDateAnuidade.dia)
     setValue('month', newDateAnuidade.mes)
@@ -204,16 +208,27 @@ export default function Parametros({
             <span>Atualizar</span>
           </legend>
           <Box>
-            <SwitchInput
-              title="Acesso externo ao sistema autorizado?"
-              {...register('acesso_externo_sis')}
-              defaultChecked={dataParametros.acesso_externo_sis}
-            />
-            <SwitchInput
-              title="CEP inválido"
-              {...register('cep_invalido')}
-              defaultChecked={dataParametros.cep_invalido}
-            />
+            <div style={{ flex: 1 }}>
+              <SwitchInput
+                title="Acesso externo ao sistema autorizado?"
+                {...register('acesso_externo_sis')}
+                defaultChecked={dataParametros.acesso_externo_sis}
+              />
+            </div>
+            <div style={{ flex: 1 }}>
+              <SwitchInput
+                title="CEP inválido"
+                {...register('cep_invalido')}
+                defaultChecked={dataParametros.cep_invalido}
+              />
+            </div>
+            <div style={{ flex: 1 }}>
+              <Button
+                type="button"
+                title="Associados"
+                onClick={handleNextPage}
+              />
+            </div>
           </Box>
           <Box>
             <div style={{ display: 'flex', alignItems: 'end', width: '38rem' }}>

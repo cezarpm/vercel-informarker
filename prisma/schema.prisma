@@ -58,15 +58,15 @@ model Cargos {
 }
 
 model Empresa {
-  id                            Int     @id @default(autoincrement())
-  cod_empresa                   String
+  id                            Int      @id @default(autoincrement())
+  cod_empresa                   String?
   tipo_empresa                  String?
   patrocinadora                 Boolean?
   faculdade_anestesiologia      Boolean?
   empresa_ativa                 Boolean?
-  cnpj                          String
-  razao_social                  String
-  nome_fantasia                 String
+  cnpj                          String?
+  razao_social                  String?
+  nome_fantasia                 String?
   cep                           String?
   logradouro                    String?
   numero                        Int?
@@ -77,7 +77,7 @@ model Empresa {
   bairro                        String?
   telefone_comercial            String?
   tratamento_contato_primario   String?
-  nome_contato_primario         String
+  nome_contato_primario         String?
   cargo_contato_primario        String?
   email_contato_primario        String?
   telefone_contato_primario     String?
@@ -86,12 +86,63 @@ model Empresa {
   cargo_contato_secundario      String?
   email_contato_secundario      String?
   telefone_contato_secundario   String?
+  home_page                     String?
+  inscricao_estadual            String?
+  inscricao_municipal           String?
+  observacoes                   String?
 }
 
- model Tabelas {
-   id            Int    @id @default(autoincrement())
-   codigo_tabela String
-   ocorrencia_tabela String
-   complemento_ocorrencia_selecao String?
-   ocorrencia_ativa Boolean
- }
+model Tabelas {
+  id                             Int     @id @default(autoincrement())
+  codigo_tabela                  String
+  ocorrencia_tabela              String
+  complemento_ocorrencia_selecao String?
+  ocorrencia_ativa               Boolean
+}
+
+model Associados {
+  id                                   Int    @id @default(autoincrement())
+  data_nascimento                      String?
+  data_inicio_especializacao           String?
+  data_previsao_conclusao              String?
+  comprovante_cpf                      String?
+  numero_proposta_SBA                  BigInt?
+  matricula_SAERJ                      Int?
+  matricula_SBA                        Int?
+  situacao                             String?
+  uf_crm                               String?
+  crm                                  Int?
+  nome_completo                        String?
+  cpf                                  String?
+  sexo                                 String?
+  nome_profissional                    String?
+  categoria                            String?
+  cep                                  String?
+  logradouro                           String?
+  numero                               Int?
+  complemento                          String?
+  bairro                               String?
+  cidade                               String?
+  uf                                   String?
+  pais                                 String?
+  telefone_celular                     String?
+  telefone_residencial                 String?
+  email                                String?
+  nome_instituicao_ensino_graduacao    String?
+  ano_conclusao_graduacao              String?
+  residencia_mec_cnrm                  String?
+  nivel_residencia                     String?
+  nome_hospital_mec                    String?
+  uf_prm                               String?
+  comprovante_endereco                 String?
+  carta_indicacao_2_membros            String?
+  declaracao_hospital                  String?
+  diploma_medicina                     String?
+  certidao_quitacao_crm                String?
+  certificado_conclusao_especializacao String?
+  declaro_verdadeiras                  String?
+  declaro_quite_SAERJ                  String?
+  pendencias_SAERJ                     String?
+  nome_presidente_regional             String?
+  sigla_regional                       String?
+}

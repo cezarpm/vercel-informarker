@@ -84,6 +84,11 @@ const schemaEmpresaForm = z.object({
   cargo_contato_secundario: z.string(),
   email_contato_secundario: z.string(),
   telefone_contato_secundario: z.string(),
+
+  home_page: z.string(),
+  inscricao_estadual: z.string(),
+  inscricao_municipal: z.string(),
+  observacoes: z.string(),
 })
 
 type SchemaEmpresaForm = z.infer<typeof schemaEmpresaForm>
@@ -286,6 +291,18 @@ export default function Empresas({
           </Box>
 
           <Box>
+            <TextInput
+              title="Inscrição Estadual"
+              {...register('inscricao_estadual')}
+            />
+
+            <TextInput
+              title="Inscrição Municipal"
+              {...register('inscricao_municipal')}
+            />
+          </Box>
+
+          <Box>
             <div
               style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
             >
@@ -453,6 +470,12 @@ export default function Empresas({
               {...register('email_contato_secundario')}
             />
           </Box>
+
+          <Box>
+            <TextInput title="Observações" {...register('observacoes')} />
+            <TextInput title="Home Page" {...register('home_page')} />
+          </Box>
+
           <Button
             title={isSubmitting ? 'Enviando...' : 'Enviar'}
             type="submit"
