@@ -44,5 +44,6 @@ export const Text = styled('p', {
 export const Box = styled('div', {
   display: 'flex',
   gap: '1rem',
+  flexWrap: 'wrap',
   alignItems: 'end',
 })

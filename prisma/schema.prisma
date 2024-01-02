@@ -10,11 +10,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Categorias {
-  id   Int    @id @default(autoincrement())
-  name String
-}
-
 model Parametros {
   id                                    Int       @id @default(autoincrement())
   random                                String
@@ -35,26 +30,6 @@ model Parametros {
   acesso_externo_sis                    Boolean
   endereco_IP_primario                  String
   endereco_IP_secundario                String
-}
-
-model TipoEmpresa {
-  id   Int    @id @default(autoincrement())
-  name String
-}
-
-model Pais {
-  id   Int    @id @default(autoincrement())
-  name String
-}
-
-model Tratamentos {
-  id   Int    @id @default(autoincrement())
-  name String
-}
-
-model Cargos {
-  id   Int    @id @default(autoincrement())
-  name String
 }
 
 model Empresa {
@@ -101,7 +76,7 @@ model Tabelas {
 }
 
 model Associados {
-  id                                   Int    @id @default(autoincrement())
+  id                                   Int     @id @default(autoincrement())
   data_nascimento                      String?
   data_inicio_especializacao           String?
   data_previsao_conclusao              String?
@@ -145,4 +120,41 @@ model Associados {
   pendencias_SAERJ                     String?
   nome_presidente_regional             String?
   sigla_regional                       String?
+}
+
+model Adicionais_SAERJ {
+  id              Int    @id @default(autoincrement())
+  matricula_saerj String
+  admissao_saerj  String
+  categoria_saerj String
+  situacao        String
+  cooperativa     String
+  nome_pai        String
+  nome_mae        String
+  tsa             String
+  observacao_1    String
+  observacao_2    String
+  observacao_3    String
+  hospital_1      String
+  hospital_2      String
+  tratamento      String
+  nacionalidade   String
+  foto_associado  String
+  cet_data_inicio String
+  cet_data_fim    String
+}
+
+model Pagamentos {
+  id                    Int    @id @default(autoincrement())
+  matricula_saerj       String
+  tipo_pagamento        String
+  ano_anuidade          String
+  data_pagto_unica      String
+  valor_pagto_unica     String
+  data_pagto_parcela_1  String
+  valor_pagto_parcela_1 String
+  data_pagto_parcela_2  String
+  valor_pagto_parcela_2 String
+  data_pagto_parcela_3  String
+  valor_pagto_parcela_3 String
 }

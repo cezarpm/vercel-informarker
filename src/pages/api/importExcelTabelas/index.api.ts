@@ -16,7 +16,7 @@ export default async function handler(
       diretorioAtual,
       'src',
       'planilhas',
-      'tabelas.xlsx',
+      'Tabelas.xlsx',
     )
     console.log('Caminho da planilha:', caminhoPlanilha)
 

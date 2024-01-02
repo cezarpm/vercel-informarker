@@ -10,11 +10,12 @@ import axios from 'axios'
 import { TextInput } from '@/components/TextInput'
 import { SelectOptions } from '@/components/SelectOptions'
 import { SwitchInput } from '@/components/SwitchInput'
-import { CaretRight } from 'phosphor-react'
+import { ArrowBendDownLeft, CaretRight } from 'phosphor-react'
 import Link from 'next/link'
 import { toast } from 'react-toastify'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/router'
+import { TextAreaInput } from '../atualizar/styled'
 
 interface schemaTipoEmpresa {
   id: number
@@ -154,6 +155,17 @@ export default function Empresas({
   async function handleOnSubmit(data: SchemaEmpresaForm) {
     try {
       // console.log(data)
+      // const cnpjClear = data.cnpj.replace(/[^\d]/g, '')
+      data.cnpj = data.cnpj.replace(/[^\d]/g, '')
+      data.cep = data.cep.replace(/[^\d]/g, '')
+      data.telefone_comercial = data.telefone_comercial.replace(/[^\d]/g, '')
+      data.telefone_contato_primario = data.telefone_contato_primario.replace(
+        /[^\d]/g,
+        '',
+      )
+      data.telefone_contato_secundario =
+        data.telefone_contato_secundario.replace(/[^\d]/g, '')
+
       await api.post('/empresa/cadastro', { ...data })
       router.push('/empresas')
       return toast.success('Empresa cadastrada!')
@@ -177,7 +189,8 @@ export default function Empresas({
 
   async function handleCheckCnpj(cnpj: any) {
     try {
-      const response = await api.get(`/util/checkCnpj?cnpj=${cnpj}`)
+      const ClaerCnpj = cnpj.replace(/[^\d]/g, '')
+      const response = await api.get(`/util/checkCnpj?cnpj=${ClaerCnpj}`)
       // console.log(response)
       if (response.data.message) {
         toast.warn('CNPJ Inválido')
@@ -208,7 +221,6 @@ export default function Empresas({
     }
   }
 
-  // console.log(dataViaCep.erro)
   useEffect(() => {
     setDisableCamposCepInvalido(false)
     handleGetAllParams()
@@ -217,6 +229,23 @@ export default function Empresas({
   return (
     <Container>
       <form onSubmit={handleSubmit(handleOnSubmit)}>
+        <Box>
+          <Link
+            href="/empresas"
+            style={{
+              textDecoration: 'none',
+              fontFamily: 'Roboto',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              marginBottom: '1rem',
+              color: '#000',
+            }}
+          >
+            <ArrowBendDownLeft size={32} />
+            Retornar
+          </Link>
+        </Box>
         <fieldset>
           <legend>
             <span>
@@ -265,6 +294,7 @@ export default function Empresas({
                 {...register('cnpj')}
                 helperText={errors.cnpj?.message}
                 error={!!errors.cnpj?.message}
+                mask="99.999.999/9999-99"
               />
               <Button
                 type="button"
@@ -288,20 +318,22 @@ export default function Empresas({
               helperText={errors.nome_fantasia?.message}
               error={!!errors.nome_fantasia?.message}
             />
+            <div>
+              <TextInput
+                w="100"
+                title="Inscrição Estadual"
+                {...register('inscricao_estadual')}
+              />
+            </div>
+
+            <div>
+              <TextInput
+                w="100"
+                title="Inscrição Municipal"
+                {...register('inscricao_municipal')}
+              />
+            </div>
           </Box>
-
-          <Box>
-            <TextInput
-              title="Inscrição Estadual"
-              {...register('inscricao_estadual')}
-            />
-
-            <TextInput
-              title="Inscrição Municipal"
-              {...register('inscricao_municipal')}
-            />
-          </Box>
-
           <Box>
             <div
               style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
@@ -311,6 +343,7 @@ export default function Empresas({
                 {...register('cep')}
                 helperText={errors.cep?.message}
                 error={!!errors.cep?.message}
+                mask="99999-999"
               />
               <Button
                 type="button"
@@ -331,13 +364,15 @@ export default function Empresas({
               helperText={errors.logradouro?.message}
               error={!!errors.logradouro?.message}
             />
-            <TextInput
-              title="Número *"
-              {...register('numero')}
-              helperText={errors.numero?.message}
-              error={!!errors.numero?.message}
-              // disabled={disableCamposCepInvalido}
-            />
+            <div style={{ width: '8%' }}>
+              <TextInput
+                title="Número *"
+                {...register('numero')}
+                w="40"
+                helperText={errors.numero?.message}
+                error={!!errors.numero?.message}
+              />
+            </div>
 
             <TextInput
               title="Complemento"
@@ -387,9 +422,12 @@ export default function Empresas({
               // helperText={errors.pais?.message}
               error={!!errors.pais?.message}
             />
+
             <TextInput
               type="text"
+              w={'100%'}
               title="Telefone Comercial"
+              mask="(99) 9999-9999"
               {...register('telefone_comercial')}
             />
           </Box>
@@ -406,7 +444,7 @@ export default function Empresas({
             <SelectOptions
               description="Tratamento"
               data={newDataTratamento}
-              w={180}
+              w={300}
               {...register('tratamento_contato_primario')}
             />
             <SelectOptions
@@ -423,6 +461,7 @@ export default function Empresas({
                 w={180}
                 type="text"
                 title="Telefone"
+                mask="(99) 9.9999-9999"
                 {...register('telefone_contato_primario')}
               />
             </div>
@@ -443,7 +482,7 @@ export default function Empresas({
 
             <SelectOptions
               data={newDataTratamento}
-              w={180}
+              w={300}
               description="Tratamento"
               {...register('tratamento_contato_secundario')}
             />
@@ -454,12 +493,14 @@ export default function Empresas({
               {...register('cargo_contato_secundario')}
             />
           </Box>
+
           <Box>
             <div>
               <TextInput
                 type="text"
                 w={180}
                 title="Telefone"
+                mask="(99) 9.9999-9999"
                 {...register('telefone_contato_secundario')}
               />
             </div>
@@ -471,9 +512,22 @@ export default function Empresas({
             />
           </Box>
 
+          <TextInput title="Home Page" {...register('home_page')} />
+
           <Box>
-            <TextInput title="Observações" {...register('observacoes')} />
-            <TextInput title="Home Page" {...register('home_page')} />
+            <label
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                fontFamily: 'Roboto',
+                fontSize: '12px',
+                color: 'rgba(0, 0, 0, 0.6)',
+                width: '100%',
+              }}
+            >
+              Observações
+              <TextAreaInput {...register('observacoes')} />
+            </label>
           </Box>
 
           <Button

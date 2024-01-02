@@ -59,6 +59,7 @@ export default async function handler(
         console.log('Processando items Tabela:', item)
         await prisma.empresa.create({
           data: {
+            tipo_empresa: 'Cooperativa',
             cod_empresa: item.SIGLA,
             razao_social: item.COOPERATIV,
             logradouro: item.ENDERECO,

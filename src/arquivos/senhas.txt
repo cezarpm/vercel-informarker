@@ -12,3 +12,6 @@ Ip: 10.20.0.22                          Ip: 10.20.0.53
 User: informaker                        User: informaker
 Senha: In@2023#er                       Senha: In@2023#er
 
+database
+saerj
+In@2023#er

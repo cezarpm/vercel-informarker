@@ -5,8 +5,9 @@ import { GetServerSideProps } from 'next'
 import { prisma } from '@/lib/prisma'
 import { TextInput } from '@/components/TextInput'
 import { SwitchInput } from '@/components/SwitchInput'
-import { CaretRight } from 'phosphor-react'
+import { ArrowBendDownLeft, CaretRight } from 'phosphor-react'
 import Link from 'next/link'
+import { TextAreaInput } from '../atualizar/styled'
 
 const schemaEmpresaForm = z.object({
   id: z.number(),
@@ -50,9 +51,27 @@ interface schemaEmpresasProps {
   data: SchemaEmpresaForm
 }
 export default function Vizualizar({ data }: schemaEmpresasProps) {
+  console.log(data)
   return (
     <Container>
       <form>
+        <Box>
+          <Link
+            href="/empresas"
+            style={{
+              textDecoration: 'none',
+              fontFamily: 'Roboto',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              marginBottom: '1rem',
+              color: '#000',
+            }}
+          >
+            <ArrowBendDownLeft size={32} />
+            Retornar
+          </Link>
+        </Box>
         <fieldset>
           <legend>
             <span>
@@ -65,24 +84,8 @@ export default function Vizualizar({ data }: schemaEmpresasProps) {
             <div style={{ width: '10%' }}>
               <TextInput title="Codigo Empresa" value={data.cod_empresa} />
             </div>
-
-            <TextInput title="Nome Fantasia" value={data.nome_fantasia} />
-            <div style={{ width: '15%' }}>
-              <TextInput title="CNPJ" value={data.cnpj} />
-            </div>
-            <div style={{ width: '15%' }}>
-              <TextInput
-                type="text"
-                title="Telefone Comercial"
-                value={data.telefone_comercial}
-              />
-            </div>
-          </Box>
-
-          <Box>
-            <TextInput title="Razao Social" value={data.razao_social} />
-
             <TextInput title="Tipo Empresa" w={280} value={data.tipo_empresa} />
+
             <SwitchInput
               title="Patrocinadora?"
               defaultChecked={data.patrocinadora}
@@ -99,27 +102,41 @@ export default function Vizualizar({ data }: schemaEmpresasProps) {
           </Box>
 
           <Box>
-            <TextInput
-              title="Inscrição Estadual"
-              value={data.inscricao_estadual}
-            />
-
-            <TextInput
-              title="Inscrição Municipal"
-              value={data.inscricao_municipal}
-            />
+            <div style={{ width: '15%' }}>
+              <TextInput
+                title="CNPJ"
+                value={data.cnpj}
+                mask="99.999.999/9999-99"
+              />
+            </div>
+            <TextInput title="Razao Social" value={data.razao_social} />
+            <TextInput title="Nome Fantasia" value={data.nome_fantasia} />
+            <div>
+              <TextInput
+                title="Inscrição Estadual"
+                value={data.inscricao_estadual}
+                w="100"
+              />
+            </div>
+            <div>
+              <TextInput
+                w="100"
+                title="Inscrição Municipal"
+                value={data.inscricao_municipal}
+              />
+            </div>
           </Box>
 
           <Box>
-            <div style={{ width: '7%' }}>
-              <TextInput type="number" title="CEP" value={data.cep} />
+            <div>
+              <TextInput title="CEP" value={data.cep} mask="99999-999" />
             </div>
 
             <TextInput title="Logadouro" value={data.logradouro} />
-            <TextInput title="Complemento" value={data.complemento} />
             <div style={{ width: '8%' }}>
-              <TextInput type="number" title="Numero" value={data.numero} />
+              <TextInput title="Número" value={data.numero} />
             </div>
+            <TextInput title="Complemento" value={data.complemento} />
           </Box>
 
           <Box>
@@ -136,6 +153,14 @@ export default function Vizualizar({ data }: schemaEmpresasProps) {
             <div>
               <TextInput title="País" w={140} value={data.pais} />
             </div>
+            <div style={{ width: '15%' }}>
+              <TextInput
+                type="text"
+                title="Telefone Comercial"
+                value={data.telefone_comercial}
+                mask="(99) 9999-9999"
+              />
+            </div>
           </Box>
 
           <Box>
@@ -149,6 +174,9 @@ export default function Vizualizar({ data }: schemaEmpresasProps) {
               value={data.tratamento_contato_primario}
             />
             <TextInput title="Cargo" value={data.cargo_contato_primario} />
+          </Box>
+
+          <Box>
             <div>
               <TextInput
                 type="email"
@@ -161,6 +189,7 @@ export default function Vizualizar({ data }: schemaEmpresasProps) {
                 type="text"
                 title="Telefone"
                 value={data.telefone_contato_primario}
+                mask="(99) 9.9999-9999"
               />
             </div>
           </Box>
@@ -177,6 +206,8 @@ export default function Vizualizar({ data }: schemaEmpresasProps) {
               value={data.tratamento_contato_secundario}
             />
             <TextInput title="Cargo" value={data.cargo_contato_secundario} />
+          </Box>
+          <Box>
             <div>
               <TextInput
                 type="email"
@@ -189,12 +220,25 @@ export default function Vizualizar({ data }: schemaEmpresasProps) {
                 type="text"
                 title="Telefone"
                 value={data.telefone_contato_secundario}
+                mask="(99) 9.9999-9999"
               />
             </div>
           </Box>
+          <TextInput title="Home Page" value={data.home_page} />
           <Box>
-            <TextInput title="Observações" value={data.observacoes} />
-            <TextInput title="Home Page" value={data.home_page} />
+            <label
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                fontFamily: 'Roboto',
+                fontSize: '12px',
+                color: 'rgba(0, 0, 0, 0.6)',
+                width: '100%',
+              }}
+            >
+              Observações
+              <TextAreaInput defaultValue={data.observacoes} />
+            </label>
           </Box>
         </fieldset>
       </form>
