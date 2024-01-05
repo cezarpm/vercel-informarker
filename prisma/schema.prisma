@@ -158,3 +158,9 @@ model Pagamentos {
   data_pagto_parcela_3  String
   valor_pagto_parcela_3 String
 }
+
+model Chapas {
+  id            Int    @id @default(autoincrement())
+  nome_chapa    String
+  membros_chapa Json
+}
