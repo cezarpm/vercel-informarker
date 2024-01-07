@@ -164,3 +164,24 @@ model Chapas {
   nome_chapa    String
   membros_chapa Json
 }
+
+enum Status {
+  ATIVA
+  INATIVA
+}
+
+model Votacao {
+  id                  Int    @id @default(autoincrement())
+  matricula_saerj     String
+  data_votacao_inicio String
+  data_votacao_fim    String
+  chapas              Json
+  status              Status @default(ATIVA)
+}
+
+model Voto {
+  id         Int    @id @default(autoincrement())
+  nome_chapa String
+  usuario_id Int
+  votacao_id Int
+}

@@ -8,6 +8,7 @@ import Link from 'next/link'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { prisma } from '@/lib/prisma'
 import { GetServerSideProps } from 'next/types'
+import { Typography } from '@mui/material'
 
 const integranteSchema = z.object({
   nome: z.string().min(1, { message: 'O campo nome é obrigatório' }),
@@ -77,43 +78,36 @@ export default function VotacaoAtualizar({ data }) {
             <h1>Composição da chapa</h1>
           </Box>
 
-          {fields.map((membro, index) => {
-            const errorForFieldText2 =
-              errors?.integrantes?.[index]?.nome?.message
+          <div style={{ display: 'flex', gap: 15 }}>
+            {fields.map((membro, index) => {
 
-            const errorForFieldText3 =
-              errors?.integrantes?.[index]?.cargo?.message
 
-            return (
-              <Box key={index}>
-                <div>
-                  <p
-                    style={{
-                      marginBottom: 16,
-                      fontFamily: 'Roboto',
-                      fontSize: '12px',
-                      color: 'rgba(0, 0, 0, 0.6)',
+              return (
+                <Box key={index}>
+                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
+                    <img style={{
+                      width: 150,
+                      height: 150,
+                      objectFit: 'cover',
                     }}
-                  >
-                    Foto do membro
-                  </p>
-                  <input type="file" />
-                </div>
+                      src="https://private-user-images.githubusercontent.com/46573685/294706954-d1153550-f0ba-467f-bc6b-eddbfd6c9655.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDQ1NjM3MDUsIm5iZiI6MTcwNDU2MzQwNSwicGF0aCI6Ii80NjU3MzY4NS8yOTQ3MDY5NTQtZDExNTM1NTAtZjBiYS00NjdmLWJjNmItZWRkYmZkNmM5NjU1LnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDAxMDYlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwMTA2VDE3NTAwNVomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTU0NGRhODNkNjYzYmYwMDU0OTc1ZWFiMzI1M2ExOGNiNmExMWI1YjE2OWVjNTMzZWYyYjEwOGI0MWVmOTgyYzEmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.O-_eoWNogL3pH-i8GkwUKPHB0h-wdkrpOauJsSLDPt8" />
 
-                <TextInput
-                  title="Nome do membro *"
-                  {...register(`integrantes.${index}.nome` as const)}
-                  error={!!errorForFieldText2}
-                />
 
-                <TextInput
-                  title="Cargo do membro *"
-                  {...register(`integrantes.${index}.cargo` as const)}
-                  error={!!errorForFieldText3}
-                />
-              </Box>
-            )
-          })}
+                    <Typography style={{
+                      fontSize: 10,
+                    }}>
+                      {membro.cargo}
+                    </Typography>
+
+                    <Typography style={{ fontWeight: 'bold' }}>
+                      {membro.nome}
+                    </Typography>
+                  </div>
+
+                </Box>
+              )
+            })}
+          </div>
         </fieldset>
       </form>
     </Container>
