@@ -10,7 +10,15 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import Image from 'next/image'
 import logo from '@/assets/logo.png'
-import { Buildings, CloudArrowUp, SignOut, Table } from 'phosphor-react'
+import {
+  Buildings,
+  CloudArrowUp,
+  SignOut,
+  Table,
+  ArchiveTray,
+  User,
+  ArchiveBox,
+} from 'phosphor-react'
 import { useRouter } from 'next/navigation'
 import { Twirl as Hamburger } from 'hamburger-react'
 type Anchor = 'left'
@@ -28,6 +36,12 @@ export function TemporaryDrawer() {
       router.push('/empresas')
     } else if (text === 'Tabelas') {
       router.push('/tabelas')
+    } else if (text === 'Chapas') {
+      router.push('/chapas')
+    } else if (text === 'Diretorias') {
+      router.push('/diretorias')
+    } else if (text === 'Eleicoes') {
+      router.push('/eleicoes')
     }
   }
 
@@ -56,6 +70,15 @@ export function TemporaryDrawer() {
     <>
       <Table size={30} color="#fff" />
     </>,
+    <>
+      <ArchiveTray size={30} color="#fff" />
+    </>,
+    <>
+      <User size={30} color="#fff" />
+    </>,
+    <>
+      <ArchiveBox size={30} color="#fff" />
+    </>,
   ]
 
   const list = (anchor: Anchor) => (
@@ -82,7 +105,14 @@ export function TemporaryDrawer() {
         <Image src={logo} alt="logo" width={210} quality={100} />
       </div>
       <List>
-        {['Parametros', 'Empresas', 'Tabelas'].map((text, index) => (
+        {[
+          'Parametros',
+          'Empresas',
+          'Tabelas',
+          'Chapas',
+          'Diretorias',
+          'Eleicoes',
+        ].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton
               onClick={() => {

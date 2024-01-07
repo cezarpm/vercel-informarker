@@ -7,7 +7,13 @@ export default function Tabelas() {
   return (
     <Container>
       <p>Tabelas</p>
-      <div>
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'flex-start',
+        }}
+      >
         <CardTable
           onClick={() => {
             router.push('/tabelas/tratamentos')

@@ -56,7 +56,6 @@ export default function Vizualizar({
 }: any) {
   const router = useRouter()
   async function OnSubmit(data: any) {
-    console.log(data)
     try {
       await api.put('/empresa/update', { ...data })
       toast.success('Empresa atualizada!')
