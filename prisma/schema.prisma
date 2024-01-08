@@ -10,21 +10,16 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Categorias {
-  id   Int    @id @default(autoincrement())
-  name String
-}
-
 model Parametros {
   id                                    Int       @id @default(autoincrement())
   random                                String
   cep_invalido                          Boolean   @default(false)
   data_limite_pgto_antecipado_anuidade  DateTime?
-  percent_desc_pgto_antecipado_anuidade Decimal
-  taxa_pgto_atrasado_anuidade           Decimal
+  percent_desc_pgto_antecipado_anuidade Int
+  taxa_pgto_atrasado_anuidade           Int
   parcelamento_permitido_anuidade       String
   data_limite_pgto_antecipado_JAER      DateTime?
-  percent_desc_pgto_antecipado_JAER     Decimal
+  percent_desc_pgto_antecipado_JAER     Int
   taxa_pgto_atrasado_JAER               Int
   parcelamento_permitido_JAER           String
   presidente_pode_se_reeleger           Boolean
@@ -37,37 +32,17 @@ model Parametros {
   endereco_IP_secundario                String
 }
 
-model TipoEmpresa {
-  id   Int    @id @default(autoincrement())
-  name String
-}
-
-model Pais {
-  id   Int    @id @default(autoincrement())
-  name String
-}
-
-model Tratamentos {
-  id   Int    @id @default(autoincrement())
-  name String
-}
-
-model Cargos {
-  id   Int    @id @default(autoincrement())
-  name String
-}
-
 model Empresa {
-  id                            Int     @id @default(autoincrement())
-  cod_empresa                   String
-  tipo_empresa                  String
-  patrocinadora                 Boolean
-  faculdade_anestesiologia      Boolean
-  empresa_ativa                 Boolean
-  cnpj                          String
-  razao_social                  String
-  nome_fantasia                 String
-  cep                           Int?
+  id                            Int      @id @default(autoincrement())
+  cod_empresa                   String?
+  tipo_empresa                  String?
+  patrocinadora                 Boolean?
+  faculdade_anestesiologia      Boolean?
+  empresa_ativa                 Boolean?
+  cnpj                          String?
+  razao_social                  String?
+  nome_fantasia                 String?
+  cep                           String?
   logradouro                    String?
   numero                        Int?
   complemento                   String?
@@ -75,15 +50,111 @@ model Empresa {
   uf                            String?
   pais                          String?
   bairro                        String?
-  telefone_comercial            String
-  tratamento_contato_primario   String
-  nome_contato_primario         String
-  cargo_contato_primario        String
-  email_contato_primario        String
-  telefone_contato_primario     String
-  tratamento_contato_secundario String
-  nome_contato_secundario       String
-  cargo_contato_secundario      String
-  email_contato_secundario      String
-  telefone_contato_secundario   String
+  telefone_comercial            String?
+  tratamento_contato_primario   String?
+  nome_contato_primario         String?
+  cargo_contato_primario        String?
+  email_contato_primario        String?
+  telefone_contato_primario     String?
+  tratamento_contato_secundario String?
+  nome_contato_secundario       String?
+  cargo_contato_secundario      String?
+  email_contato_secundario      String?
+  telefone_contato_secundario   String?
+  home_page                     String?
+  inscricao_estadual            String?
+  inscricao_municipal           String?
+  observacoes                   String?
+}
+
+model Tabelas {
+  id                             Int     @id @default(autoincrement())
+  codigo_tabela                  String
+  ocorrencia_tabela              String
+  complemento_ocorrencia_selecao String?
+  ocorrencia_ativa               Boolean
+}
+
+model Associados {
+  id                                   Int     @id @default(autoincrement())
+  data_nascimento                      String?
+  data_inicio_especializacao           String?
+  data_previsao_conclusao              String?
+  comprovante_cpf                      String?
+  numero_proposta_SBA                  BigInt?
+  matricula_SAERJ                      Int?
+  matricula_SBA                        Int?
+  situacao                             String?
+  uf_crm                               String?
+  crm                                  Int?
+  nome_completo                        String?
+  cpf                                  String?
+  sexo                                 String?
+  nome_profissional                    String?
+  categoria                            String?
+  cep                                  String?
+  logradouro                           String?
+  numero                               Int?
+  complemento                          String?
+  bairro                               String?
+  cidade                               String?
+  uf                                   String?
+  pais                                 String?
+  telefone_celular                     String?
+  telefone_residencial                 String?
+  email                                String?
+  nome_instituicao_ensino_graduacao    String?
+  ano_conclusao_graduacao              String?
+  residencia_mec_cnrm                  String?
+  nivel_residencia                     String?
+  nome_hospital_mec                    String?
+  uf_prm                               String?
+  comprovante_endereco                 String?
+  carta_indicacao_2_membros            String?
+  declaracao_hospital                  String?
+  diploma_medicina                     String?
+  certidao_quitacao_crm                String?
+  certificado_conclusao_especializacao String?
+  declaro_verdadeiras                  String?
+  declaro_quite_SAERJ                  String?
+  pendencias_SAERJ                     String?
+  nome_presidente_regional             String?
+  sigla_regional                       String?
+}
+
+model Adicionais_SAERJ {
+  id              Int    @id @default(autoincrement())
+  matricula_saerj String
+  admissao_saerj  String
+  categoria_saerj String
+  situacao        String
+  cooperativa     String
+  nome_pai        String
+  nome_mae        String
+  tsa             String
+  observacao_1    String
+  observacao_2    String
+  observacao_3    String
+  hospital_1      String
+  hospital_2      String
+  tratamento      String
+  nacionalidade   String
+  foto_associado  String
+  cet_data_inicio String
+  cet_data_fim    String
+}
+
+model Pagamentos {
+  id                    Int    @id @default(autoincrement())
+  matricula_saerj       String
+  tipo_pagamento        String
+  ano_anuidade          String
+  data_pagto_unica      String
+  valor_pagto_unica     String
+  data_pagto_parcela_1  String
+  valor_pagto_parcela_1 String
+  data_pagto_parcela_2  String
+  valor_pagto_parcela_2 String
+  data_pagto_parcela_3  String
+  valor_pagto_parcela_3 String
 }

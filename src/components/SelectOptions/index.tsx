@@ -17,17 +17,18 @@ export const SelectOptions = forwardRef<any, any>((props, ref) => {
   return (
     <Container>
       <Autocomplete
+        getOptionLabel={(option) =>
+          typeof option === 'object' ? String(option.label) : String(option)
+        }
         disablePortal
         options={data}
         sx={{ width: w }}
         size="small"
         ref={ref}
-        getOptionLabel={(option: any) => option.label}
+        // getOptionLabel={(option: any) => option.label}
         isOptionEqualToValue={(option, value) => option.id === value.id}
         defaultValue={defaultValue}
         renderInput={(params) => {
-          // console.log(params)
-          // console.log(data)
           return <TextField {...params} label={description} {...rest} />
         }}
       />

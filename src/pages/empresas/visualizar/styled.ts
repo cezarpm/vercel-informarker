@@ -6,6 +6,7 @@ export const Container = styled('main', {
     fieldset: {
       paddingTop: '1rem',
       legend: {
+        fontFamily: 'Roboto',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
@@ -15,7 +16,7 @@ export const Container = styled('main', {
       display: 'flex',
       flexDirection: `column`,
       justifyContent: 'center',
-      gap: '5rem',
+      gap: '2rem',
       button: {
         width: '40%',
       },
