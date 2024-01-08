@@ -1,5 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { prisma } from '@/lib/prisma'
+import { Logs } from '@/utils/Logs'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { z } from 'zod'
 
@@ -26,6 +27,10 @@ export default async function handler(
         ocorrencia_tabela: data.ocorrencia_tabela,
         complemento_ocorrencia_selecao: data.complemento_ocorrencia_selecao,
       },
+    })
+    Logs({
+      modulo: 'TABELAS CADASTRO',
+      descriptionLog: `ITEM CADASTRADO`,
     })
     return res.status(201).end()
   } catch (error) {

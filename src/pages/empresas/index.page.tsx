@@ -11,6 +11,8 @@ import Modal from '@/components/Modal'
 import SelectNoComplete from '@/components/SelectNoComplete'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { formatCNPJ } from '@/utils/formatCnpj'
+import { useState } from 'react'
 
 const shemaFilter = z.object({
   tipo_empresa_filter: z.string(),
@@ -24,7 +26,7 @@ type SchemaFilter = z.infer<typeof shemaFilter>
 export default function EmpresaList({ data, dataTipoEmpresa }: any) {
   const router = useRouter()
   const { selectedRowIds } = useId()
-
+  const [list, setList] = useState(data)
   const columns: GridColDef[] = [
     {
       field: 'id',
@@ -44,32 +46,32 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
     },
     {
       field: 'faculdade_anestesiologia',
-      headerName: 'Faculdade Anestesiologia',
-      width: 220,
+      headerName: 'Fac Anest',
+      width: 100,
       disableColumnMenu: true,
     },
     {
       field: 'empresa_ativa',
-      headerName: 'Empresa Ativa',
-      width: 120,
+      headerName: 'Ativa',
+      width: 80,
       disableColumnMenu: true,
     },
     {
       field: 'razao_social',
       headerName: 'Razão Social',
-      flex: 1,
+      width: 220,
       disableColumnMenu: true,
     },
     {
       field: 'nome_fantasia',
       headerName: 'Nome Fantasia',
-      flex: 1,
+      width: 220,
       disableColumnMenu: true,
     },
     {
       field: 'cnpj',
-      headerName: 'Cnpj',
-      width: 140,
+      headerName: 'CNPJ',
+      width: 150,
       disableColumnMenu: true,
     },
     {
@@ -87,13 +89,13 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
 
     {
       field: 'nome_contato_primario',
-      headerName: 'Nome Contato Primário',
+      headerName: 'Contato Primário',
       width: 180,
       disableColumnMenu: true,
     },
     {
       field: 'email_contato_primario',
-      headerName: 'Email Contato Primário',
+      headerName: 'Email Primário',
       width: 180,
       disableColumnMenu: true,
     },
@@ -101,39 +103,88 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
 
   const { register, watch } = useForm<SchemaFilter>()
 
-  const TipoEmpresaFilter = watch('tipo_empresa_filter')
-  const PatrocinadoraFilter = watch('patrocinarora_filter')
-  const FaculdadeAnestesiologiaFilter = watch('faculdade_anestesiologia_filter')
-  const EmpresaAtivaFilter = watch('empresa_ativa_filter')
+  // const TipoEmpresaFilter = watch('tipo_empresa_filter')
+  // const PatrocinadoraFilter = watch('patrocinarora_filter')
+  // const FaculdadeAnestesiologiaFilter = watch('faculdade_anestesiologia_filter')
+  // const EmpresaAtivaFilter = watch('empresa_ativa_filter')
 
-  const filteredData = data.filter((item: any) => {
-    const tipoEmpresaMatch =
-      TipoEmpresaFilter === undefined ||
-      TipoEmpresaFilter === 'Todos' ||
-      item.tipo_empresa === TipoEmpresaFilter
-
-    const patrocinadoraMatch =
-      PatrocinadoraFilter === undefined ||
-      PatrocinadoraFilter === 'Todos' ||
-      item.patrocinadora === PatrocinadoraFilter
-
-    const faculdadeMatch =
-      FaculdadeAnestesiologiaFilter === undefined ||
-      FaculdadeAnestesiologiaFilter === 'Todos' ||
-      item.faculdade_anestesiologia === FaculdadeAnestesiologiaFilter
-
-    const empresaAtivaMatch =
-      EmpresaAtivaFilter === undefined ||
-      EmpresaAtivaFilter === 'Todos' ||
-      item.empresa_ativa === EmpresaAtivaFilter
-
-    return (
-      tipoEmpresaMatch &&
-      patrocinadoraMatch &&
-      faculdadeMatch &&
-      empresaAtivaMatch
+  function BuscarFiltro() {
+    const TipoEmpresaFilter = watch('tipo_empresa_filter')
+    const PatrocinadoraFilter = watch('patrocinarora_filter')
+    const FaculdadeAnestesiologiaFilter = watch(
+      'faculdade_anestesiologia_filter',
     )
-  })
+    const EmpresaAtivaFilter = watch('empresa_ativa_filter')
+
+    // Inicialize a lista com os dados originais
+    let filteredList = data
+
+    // Realize a filtragem com base nos valores selecionados
+    if (TipoEmpresaFilter !== 'Todos') {
+      filteredList = filteredList.filter((item: any) => {
+        const situacaoMatch =
+          TipoEmpresaFilter === 'Todos' ||
+          item.tipo_empresa === TipoEmpresaFilter
+        return situacaoMatch
+      })
+    }
+
+    if (PatrocinadoraFilter && PatrocinadoraFilter !== 'Todos') {
+      filteredList = filteredList.filter((item: any) => {
+        return item.patrocinadora === PatrocinadoraFilter
+      })
+    }
+
+    if (
+      FaculdadeAnestesiologiaFilter &&
+      FaculdadeAnestesiologiaFilter !== 'Todos'
+    ) {
+      filteredList = filteredList.filter((item: any) => {
+        return item.faculdade_anestesiologia === FaculdadeAnestesiologiaFilter
+      })
+    }
+
+    if (EmpresaAtivaFilter && EmpresaAtivaFilter !== 'Todos') {
+      filteredList = filteredList.filter((item: any) => {
+        return item.empresa_ativa === EmpresaAtivaFilter
+      })
+    }
+
+    // Atualize o estado com os dados filtrados
+    setList(filteredList)
+
+    // Imprima a lista filtrada (opcional, apenas para fins de depuração)
+    console.log(filteredList)
+  }
+
+  // const filteredData = data.filter((item: any) => {
+  //   const tipoEmpresaMatch =
+  //     TipoEmpresaFilter === undefined ||
+  //     TipoEmpresaFilter === 'Todos' ||
+  //     item.tipo_empresa === TipoEmpresaFilter
+
+  //   const patrocinadoraMatch =
+  //     PatrocinadoraFilter === undefined ||
+  //     PatrocinadoraFilter === 'Todos' ||
+  //     item.patrocinadora === PatrocinadoraFilter
+
+  //   const faculdadeMatch =
+  //     FaculdadeAnestesiologiaFilter === undefined ||
+  //     FaculdadeAnestesiologiaFilter === 'Todos' ||
+  //     item.faculdade_anestesiologia === FaculdadeAnestesiologiaFilter
+
+  //   const empresaAtivaMatch =
+  //     EmpresaAtivaFilter === undefined ||
+  //     EmpresaAtivaFilter === 'Todos' ||
+  //     item.empresa_ativa === EmpresaAtivaFilter
+
+  //   return (
+  //     tipoEmpresaMatch &&
+  //     patrocinadoraMatch &&
+  //     faculdadeMatch &&
+  //     empresaAtivaMatch
+  //   )
+  // })
   const dataSimNao = [
     {
       id: 1,
@@ -148,35 +199,54 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
   return (
     <Container>
       <p>Empresas</p>
-      <form>
-        <Box style={{ marginTop: '1rem' }}>
-          <SelectNoComplete
-            value="Todos"
-            title="Tipo Empresa"
-            data={dataTipoEmpresa}
-            {...register('tipo_empresa_filter')}
-          />
-          <SelectNoComplete
-            value="Todos"
-            title="Patrocinadora"
-            {...register('patrocinarora_filter')}
-            data={dataSimNao}
-          />
-          <SelectNoComplete
-            value="Todos"
-            title="Faculdade Anestesiologia"
-            {...register('faculdade_anestesiologia_filter')}
-            data={dataSimNao}
-          />
-          <SelectNoComplete
-            value="Todos"
-            title="Empresa Ativa"
-            {...register('empresa_ativa_filter')}
-            data={dataSimNao}
+      <div>
+        <Box
+          style={{
+            marginTop: '1rem',
+            justifyContent: 'flex-start',
+            alignItems: 'end',
+          }}
+        >
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <SelectNoComplete
+              value="Todos"
+              title="Tipo Empresa"
+              data={dataTipoEmpresa}
+              {...register('tipo_empresa_filter')}
+            />
+            <SelectNoComplete
+              value="Todos"
+              title="Patrocinadora"
+              {...register('patrocinarora_filter')}
+              data={dataSimNao}
+            />
+            <SelectNoComplete
+              value="Todos"
+              title="Faculdade Anestesiologia"
+              {...register('faculdade_anestesiologia_filter')}
+              data={dataSimNao}
+            />
+            <SelectNoComplete
+              value="Todos"
+              title="Empresa Ativa"
+              {...register('empresa_ativa_filter')}
+              data={dataSimNao}
+            />
+          </div>
+          <Button
+            style={{
+              margin: '0px',
+              fontSize: '12px',
+              width: '5rem',
+              border: 'solid 1px',
+              padding: '0.5rem',
+            }}
+            title="Buscar"
+            onClick={BuscarFiltro}
           />
         </Box>
-      </form>
-      <DataGridDemo columns={columns} rows={filteredData} w="100%" />
+      </div>
+      <DataGridDemo columns={columns} rows={list} w="100%" />
 
       <Box>
         <Button
@@ -246,7 +316,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
         tipo_empresa: item.tipo_empresa,
         razao_social: item.razao_social,
         nome_fantasia: item.nome_fantasia,
-        cnpj: item.cnpj,
+        cnpj: item.cnpj ? formatCNPJ(item.cnpj) : '',
         cidade: item.cidade,
         uf: item.uf,
         nome_contato_primario: item.nome_contato_primario,

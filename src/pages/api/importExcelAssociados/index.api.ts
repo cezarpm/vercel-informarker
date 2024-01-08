@@ -3,6 +3,7 @@ import xlsx from 'xlsx'
 import * as path from 'path'
 import * as fs from 'fs'
 import { prisma } from '@/lib/prisma'
+import { useArrayDate } from '@/utils/useArrayDate'
 
 export default async function handler(
   req: NextApiRequest,
@@ -46,6 +47,21 @@ export default async function handler(
     try {
       for (const item of lerTabela) {
         console.log('Processando items Tabela:', item)
+
+        // const getDateOriginalFormat = item.Data_Nascimento
+        //   ? useArrayDate.extrairComponentesData(item.Data_Nascimento)
+        //   : null
+
+        // console.log(getDateOriginalFormat)
+
+        // const transformDateTimeISO = getDateOriginalFormat
+        //   ? useArrayDate.MontarDate(
+        //       String(getDateOriginalFormat.ano),
+        //       String(getDateOriginalFormat.mes),
+        //       String(getDateOriginalFormat.dia),
+        //     )
+        //   : null
+
         await prisma.associados.create({
           data: {
             numero_proposta_SBA: Number(item.Numero_Proposta_SBA),
@@ -53,12 +69,12 @@ export default async function handler(
             matricula_SBA: item.Matricula_SBA,
             situacao: item.Situacao,
             uf_crm: item.UF_CRM,
-            crm: item.CRM,
+            crm: String(item.CRM),
             nome_completo: String(item.Nome_Completo),
             cpf: String(item.CPF),
             sexo: String(item.Sexo),
             nome_profissional: item.Nome_Profissional,
-            data_nascimento: String(item.Data_Nascimento),
+            data_nascimento: item.Data_Nascimento,
             categoria: item.Categoria,
             pais: item.Pais,
             cep: item.CEP,

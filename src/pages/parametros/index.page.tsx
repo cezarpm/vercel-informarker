@@ -12,6 +12,7 @@ import { CaretRight } from 'phosphor-react'
 import { api } from '@/lib/axios'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/router'
+import { useArrayDate } from '@/utils/useArrayDate'
 
 interface schemaCategorias {
   label: string
@@ -37,12 +38,12 @@ const schemaParams = z.object({
   acesso_externo_sis: z.boolean(),
   endereco_IP_primario: z.string(),
   endereco_IP_secundario: z.string(),
-  day: z.number(),
-  month: z.number(),
-  year: z.number(),
-  dayJaer: z.number(),
-  monthJaer: z.number(),
-  yearJaer: z.number(),
+  day: z.string(),
+  month: z.string(),
+  year: z.string(),
+  dayJaer: z.string(),
+  monthJaer: z.string(),
+  yearJaer: z.string(),
 })
 
 type SchemaParametros = z.infer<typeof schemaParams>
@@ -79,7 +80,6 @@ export default function Parametros({
   dataParametros,
 }: schemaParametrosProps) {
   const router = useRouter()
-  // console.log()
   const {
     register,
     handleSubmit,
@@ -87,60 +87,33 @@ export default function Parametros({
     formState: { isSubmitting },
   } = useForm<SchemaParametros>()
 
-  const dateAnuidade = new Date(
+  const newDateAnuidade = useArrayDate.DesestruturarDate(
     dataParametros.data_limite_pgto_antecipado_anuidade,
   )
-  const dateAnuidadeJaer = new Date(
+
+  const newDateAnuidadeJaer = useArrayDate.DesestruturarDate(
     dataParametros.data_limite_pgto_antecipado_JAER,
   )
 
-  function DateDestructure(newDate: any) {
-    const dia = newDate.getUTCDate().toString()
-    const mes = (newDate.getUTCMonth() + 1).toString()
-    const ano = newDate.getUTCFullYear().toString()
-
-    return { dia, mes, ano }
-  }
-
-  const newDateAnuidade = DateDestructure(dateAnuidade)
-
-  const newDateAnuidadeJaer = DateDestructure(dateAnuidadeJaer)
-
   async function handleOnSubmit(data: SchemaParametros) {
     try {
-      const dataLimitePagamentoAntecipadoAnuidade = `${data.year}-${data.month}-${data.day} 00:00:00`
-      const dataLimitePagamentoAntecipadoAnuidadeDate: Date = new Date(
-        dataLimitePagamentoAntecipadoAnuidade,
-      )
-
-      const dataLimitePagamentoAntecipadoJaer = `${data.yearJaer}-${data.monthJaer}-${data.dayJaer} 00:00:00`
-      const dataLimitePagamentoAntecipadoComoDateJaerDate: Date = new Date(
-        dataLimitePagamentoAntecipadoJaer,
-      )
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      const { day, month, year, dayJaer, monthJaer, yearJaer, ...newData } =
+        data
 
       const response = await api.put('/parametros/update', {
+        ...newData,
+        data_limite_pgto_antecipado_anuidade: useArrayDate.MontarDate(
+          data.year,
+          data.month,
+          data.day,
+        ),
         cep_invalido: data.cep_invalido,
-        data_limite_pgto_antecipado_anuidade:
-          dataLimitePagamentoAntecipadoAnuidadeDate,
-        percent_desc_pgto_antecipado_anuidade:
-          data.percent_desc_pgto_antecipado_anuidade,
-        taxa_pgto_atrasado_anuidade: data.taxa_pgto_atrasado_anuidade,
-        categorias: data.categorias,
-        parcelamento_permitido_anuidade: data.parcelamento_permitido_anuidade,
-        data_limite_pgto_antecipado_JAER:
-          dataLimitePagamentoAntecipadoComoDateJaerDate,
-        percent_desc_pgto_antecipado_JAER:
-          data.percent_desc_pgto_antecipado_JAER,
-        taxa_pgto_atrasado_JAER: data.taxa_pgto_atrasado_JAER,
-        parcelamento_permitido_JAER: data.parcelamento_permitido_JAER,
-        presidente_pode_se_reeleger: data.presidente_pode_se_reeleger,
-        demais_podem_se_reeleger: data.demais_podem_se_reeleger,
-        duracao_mandato: data.duracao_mandato,
-        exite_listas_imediato: data.exite_listas_imediato,
-        quantidade_linhas_listas: data.quantidade_linhas_listas,
-        acesso_externo_sis: data.acesso_externo_sis,
-        endereco_IP_primario: data.endereco_IP_primario,
-        endereco_IP_secundario: data.endereco_IP_secundario,
+        data_limite_pgto_antecipado_JAER: useArrayDate.MontarDate(
+          data.yearJaer,
+          data.monthJaer,
+          data.dayJaer,
+        ),
       })
       if (response.status === 200) {
         toast.success('Alterado com sucesso!')
@@ -152,28 +125,10 @@ export default function Parametros({
       console.log(error)
     }
   }
-  // array dias
-  const days = Array.from({ length: 31 }, (_, index) => ({
-    label: (index + 1).toString(),
-  }))
-  const dataDays = days.map((item) => item)
 
-  // array mes
-  const months = Array.from({ length: 12 }, (_, index) => ({
-    label: (index + 1).toString(),
-  }))
-  const dataMonths = months.map((item) => item)
-
-  // array anos
-  const yearCurrent = new Date().getFullYear()
-  const years = Array.from({ length: 10 }, (_, index) =>
-    (yearCurrent + index).toString(),
-  )
-  const dataYears = years.map((year) => {
-    return {
-      label: year,
-    }
-  })
+  const dataDays = useArrayDate.Dia()
+  const dataMonths = useArrayDate.Mes()
+  const dataYears = useArrayDate.AnoAtualMaior()
 
   function handleNextPage() {
     router.push('/parametros/associados')
@@ -204,8 +159,8 @@ export default function Parametros({
         <fieldset>
           <legend>
             <span>Parametros</span>
-            <CaretRight size={14} />
-            <span>Atualizar</span>
+            {/* <CaretRight size={14} />
+            <span>Atualizar</span> */}
           </legend>
           <Box>
             <div style={{ flex: 1 }}>

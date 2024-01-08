@@ -13,6 +13,7 @@ import logo from '@/assets/logo.png'
 import {
   Buildings,
   CloudArrowUp,
+  Function,
   SignOut,
   Table,
   UsersFour,
@@ -30,6 +31,8 @@ export function TemporaryDrawer() {
 
   const router = useRouter()
 
+  // const { Logs } = useId()
+
   function handleNextPage(text: string): void {
     if (text === 'Parametros') {
       router.push('/parametros')
@@ -39,6 +42,8 @@ export function TemporaryDrawer() {
       router.push('/tabelas')
     } else if (text === 'Associados') {
       router.push('/associados')
+    } else if (text === 'Logs') {
+      router.push('/logs')
     }
   }
 
@@ -71,7 +76,11 @@ export function TemporaryDrawer() {
       <UsersFour size={30} color="#fff" />
     </>,
   ]
-
+  const arrayIconsTwoList = [
+    <>
+      <Function size={30} color="#fff" />
+    </>,
+  ]
   const list = (anchor: Anchor) => (
     <Box
       sx={{ width: 250 }}
@@ -95,6 +104,7 @@ export function TemporaryDrawer() {
       >
         <Image src={logo} alt="logo" width={210} quality={100} />
       </div>
+
       <List>
         {['Parametros', 'Empresas', 'Tabelas', 'Associados'].map(
           (text, index) => (
@@ -111,20 +121,22 @@ export function TemporaryDrawer() {
           ),
         )}
       </List>
-
       <Divider />
-      {/* <List>
-        {['All mail', 'Trash', 'Spam'].map((text, index) => (
+      {/* two list */}
+      <List>
+        {['Logs'].map((text, index) => (
           <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {index % 2 === 0 ? 'Icone 2' : 'icone'}
-              </ListItemIcon>
-              <ListItemText primary={text} />
+            <ListItemButton
+              onClick={() => {
+                handleNextPage(text)
+              }}
+            >
+              <ListItemIcon>{arrayIconsTwoList[index]}</ListItemIcon>
+              <ListItemText primary={text} style={{ color: '#fff' }} />
             </ListItemButton>
           </ListItem>
         ))}
-      </List> */}
+      </List>
     </Box>
   )
 

@@ -20,9 +20,3 @@ export const Box = styled('div', {
     padding: '1rem 2rem',
   },
 })
-
-export const ContainerFormFilter = styled('div', {
-  display: 'flex',
-  alignItems: 'center',
-  width: '65%',
-})

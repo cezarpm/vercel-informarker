@@ -17,8 +17,9 @@ import Link from 'next/link'
 import { useArrayDate } from '@/utils/useArrayDate'
 import SelectNoComplete from '@/components/SelectNoComplete'
 import axios from 'axios'
+import { format } from 'date-fns'
 
-const schemaParams = z.object({
+const schemaAssociados = z.object({
   numero_proposta_SBA: z.number(),
   matricula_SAERJ: z.number(),
   matricula_SBA: z.number(),
@@ -77,137 +78,70 @@ const schemaParams = z.object({
   yearPrevConcl: z.string(),
 })
 
-type SchemaParametros = z.infer<typeof schemaParams>
+type SchemaAssociados = z.infer<typeof schemaAssociados>
 
-interface schemaParametrosProps {
-  data: any
-  dataCategoria: any
-  dataSituacao: any
-  dataPais: any
+interface schemaAssociados {
+  data: {
+    id: number
+    data_nascimento: string
+    data_inicio_especializacao: string
+    data_previsao_conclusao: string
+    comprovante_cpf: string
+    numero_proposta_SBA: any
+    matricula_SAERJ: number
+    matricula_SBA: number
+    situacao: string
+    uf_crm: string
+    crm: number
+    nome_completo: string
+    cpf: string
+    sexo: string
+    nome_profissional: string
+    categoria: string
+    cep: string
+    logradouro: string
+    numero: number
+    complemento: string
+    bairro: string
+    cidade: string
+    uf: string
+    pais: string
+    telefone_celular: string
+    telefone_residencial: string
+    email: string
+    nome_instituicao_ensino_graduacao: string
+    ano_conclusao_graduacao: string
+    residencia_mec_cnrm: string
+    nivel_residencia: string
+    nome_hospital_mec: string
+    uf_prm: string
+    comprovante_endereco: string
+    carta_indicacao_2_membros: string
+    declaracao_hospital: string
+    diploma_medicina: string
+    certidao_quitacao_crm: string
+    certificado_conclusao_especializacao: string
+    declaro_verdadeiras: string
+    declaro_quite_SAERJ: string
+    pendencias_SAERJ: string
+    nome_presidente_regional: string
+    sigla_regional: string
+  }
 }
-export default function AssociadosCadastro({
-  data,
-  dataCategoria,
-  dataSituacao,
-  dataPais,
-}: schemaParametrosProps) {
-  const [cepInvalido, setCepInvalido] = useState()
-  const [disableCamposCepInvalido, setDisableCamposCepInvalido] =
-    useState(false)
+export default function AssociadosCadastro({ data }: schemaAssociados) {
   const router = useRouter()
-  const dataAssociados = data[0]
 
-  const dataDays = useArrayDate.Dia()
-  const dataMonths = useArrayDate.Mes()
-  const dataYears = useArrayDate.AnoAtualMenor()
+  const dataInicio = useArrayDate.DesestruturarDate(
+    data.data_inicio_especializacao,
+  )
+  const dataPrevisao = useArrayDate.DesestruturarDate(
+    data.data_previsao_conclusao,
+  )
+  const dataNascimento = useArrayDate.DesestruturarDate(data.data_nascimento)
 
-  const {
-    register,
-    handleSubmit,
-    setValue,
-    watch,
-    formState: { isSubmitting, errors },
-  } = useForm<SchemaParametros>()
-  const cepValue = watch('cep')
-
-  async function handleCheckCep(cep: string) {
-    try {
-      const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`)
-      checkedViaCep(response.data)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  async function handleGetAllParams(): Promise<void> {
-    try {
-      const response = await api.get('/parametros')
-      setCepInvalido(response.data[0].cep_invalido)
-    } catch (error) {
-      console.log(error)
-    }
-  }
-
-  function checkedViaCep(dataViaCep: any) {
-    if (dataViaCep.erro === true) {
-      if (cepInvalido === true) {
-        toast.warn('você optou: aceitar cep inválido')
-      } else {
-        setDisableCamposCepInvalido(true)
-        toast.warn('você optou: não aceitar cep inválido')
-      }
-    }
-
-    if (!dataViaCep.erro) {
-      setDisableCamposCepInvalido(false)
-      setValue('bairro', dataViaCep.bairro)
-      setValue('cidade', dataViaCep.localidade)
-      setValue('uf', dataViaCep.uf)
-      setValue('logradouro', dataViaCep.logradouro)
-    }
-  }
-
-  async function handleOnSubmit(data: SchemaParametros) {
-    try {
-      const dataNascimento = useArrayDate.MontarDate(
-        data.yearNasc,
-        data.monthNasc,
-        data.dayNasc,
-      )
-      const dataInicioEspecializacao = useArrayDate.MontarDate(
-        data.yearInicioEspec,
-        data.monthInicioEspec,
-        data.dayInicioEspec,
-      )
-      const dataPrevisaoConclusao = useArrayDate.MontarDate(
-        data.yearPrevConcl,
-        data.monthPrevConcl,
-        data.dayPrevConcl,
-      )
-      // console.log(dataNascimento, dataInicioEspecializacao, dataPrevisaoConclusao)
-      data.cpf = data.cpf.replace(/[^\d]/g, '')
-      data.cep = data.cep.replace(/[^\d]/g, '')
-
-      data.telefone_residencial = data.telefone_residencial.replace(
-        /[^\d]/g,
-        '',
-      )
-      data.telefone_celular = data.telefone_celular.replace(/[^\d]/g, '')
-
-      const {
-        dayNasc,
-        monthNasc,
-        yearNasc,
-        dayInicioEspec,
-        monthInicioEspec,
-        yearInicioEspec,
-        dayPrevConcl,
-        monthPrevConcl,
-        yearPrevConcl,
-        ...newData
-      } = data
-      console.log(newData)
-
-      await api.post('/associados/cadastro', {
-        ...newData,
-        data_nascimento: dataNascimento,
-        data_inicio_especializacao: dataInicioEspecializacao,
-        data_previsao_conclusao: dataPrevisaoConclusao,
-      })
-      toast.success('Associado cadastrado')
-      // router.push('/associados')
-    } catch (error) {
-      console.log(error)
-      toast.error('Oops algo deu errado...')
-    }
-  }
-  useEffect(() => {
-    setDisableCamposCepInvalido(false)
-    handleGetAllParams()
-  }, [])
   return (
     <Container>
-      <form onSubmit={handleSubmit(handleOnSubmit)}>
+      <form>
         <Box style={{ flexDirection: 'row-reverse' }}>
           <Link
             href="/associados"
@@ -229,7 +163,7 @@ export default function AssociadosCadastro({
           <legend>
             <Link href="/associados">Associados</Link>
             <CaretRight size={14} />
-            <span>Incluir</span>
+            <span>Vizualizar</span>
           </legend>
 
           <fieldset
@@ -249,105 +183,98 @@ export default function AssociadosCadastro({
                 <TextInput
                   w={180}
                   title="Número proposta SBA"
-                  {...register('numero_proposta_SBA', {
-                    valueAsNumber: true,
-                  })}
+                  defaultValue={data.numero_proposta_SBA}
                 />
               </div>
               <div>
                 <TextInput
                   w={180}
+                  defaultValue={data.matricula_SAERJ}
                   title="Matrícula SAERJ"
-                  {...register('matricula_SAERJ', {
-                    valueAsNumber: true,
-                  })}
                 />
               </div>
               <div>
                 <TextInput
                   w={180}
                   title="Matrícula SBA"
-                  {...register('matricula_SBA', {
-                    valueAsNumber: true,
-                  })}
+                  defaultValue={data.matricula_SBA}
                 />
               </div>
-              <SelectOptions
+              <TextInput
                 w={260}
-                data={dataCategoria}
-                description="Categoria"
+                title="Categoria"
+                defaultValue={data.categoria}
                 // data={() => []}
-                {...register('categoria')}
               />
             </Box>
 
             <Box>
               <TextInput
                 title="Residencia MEC-CNRM"
-                {...register('residencia_mec_cnrm')}
+                defaultValue={data.residencia_mec_cnrm}
               />
               <TextInput
                 title="Nível Residencia"
-                {...register('nivel_residencia')}
+                defaultValue={data.nivel_residencia}
               />
               <TextInput
+                defaultValue={data.nome_hospital_mec}
                 title="Nome Hospital MEC"
-                {...register('nome_hospital_mec')}
               />
-              <TextInput title="UF PRM" {...register('uf_prm')} />
+              <TextInput title="UF PRM" defaultValue={data.uf_prm} />
               <TextInput
+                defaultValue={data.comprovante_endereco}
                 title="Comprovante Endereço"
-                {...register('comprovante_endereco')}
               />
               <TextInput
+                defaultValue={data.carta_indicacao_2_membros}
                 title="Carta Indicação 2 membros"
-                {...register('carta_indicacao_2_membros')}
               />
               <TextInput
+                defaultValue={data.declaracao_hospital}
                 title="Declaração Hospital"
-                {...register('declaracao_hospital')}
               />
             </Box>
 
             <Box>
               <TextInput
+                defaultValue={data.diploma_medicina}
                 title="Diploma Medicina"
-                {...register('diploma_medicina')}
               />
 
               <TextInput
+                defaultValue={data.certidao_quitacao_crm}
                 title="Certidão Quitação CRM"
-                {...register('certidao_quitacao_crm')}
               />
               <div>
                 <TextInput
                   w={220}
+                  defaultValue={data.certificado_conclusao_especializacao}
                   title="Certificado Conclusão Especialização"
-                  {...register('certificado_conclusao_especializacao')}
                 />
               </div>
               <TextInput
+                defaultValue={data.declaro_verdadeiras}
                 title="Declaro Verdadeiras"
-                {...register('declaro_verdadeiras')}
               />
               <TextInput
+                defaultValue={data.declaro_quite_SAERJ}
                 title="Declaro Quite SAERJ"
-                {...register('declaro_quite_SAERJ')}
               />
               <TextInput
                 title="Pendências SERJ"
-                {...register('pendencias_SAERJ')}
+                defaultValue={data.pendencias_SAERJ}
               />
               <div>
                 <TextInput
                   w={180}
+                  defaultValue={data.nome_presidente_regional}
                   title="Nome Presidente Regional"
-                  {...register('nome_presidente_regional')}
                 />
               </div>
               <TextInput
+                defaultValue={data.sigla_regional}
                 title="Sigla Regional"
-                {...register('sigla_regional')}
               />
             </Box>
           </fieldset>
@@ -365,27 +292,30 @@ export default function AssociadosCadastro({
             </legend>
 
             <Box>
-              <TextInput title="Nome Completo" {...register('nome_completo')} />
+              <TextInput
+                defaultValue={data.nome_completo}
+                title="Nome Completo"
+              />
               <div>
                 <TextInput
                   w={140}
+                  value={data.cpf}
                   title="CPF"
                   mask={'999.999.999-99'}
-                  {...register('cpf')}
                 />
               </div>
               <div>
                 <TextInput
                   w={220}
+                  defaultValue={data.comprovante_cpf}
                   title="Comprovante CPF"
-                  {...register('comprovante_cpf')}
                 />
               </div>
 
               {/* <div>
                 <TextInput
                   title="Data nascimento"
-                  {...register('data_nascimento')}
+                 
                 />
               </div> */}
 
@@ -396,26 +326,23 @@ export default function AssociadosCadastro({
 
                 <SelectOptions
                   description="Dia"
-                  data={dataDays}
                   w={90}
-                  {...register('dayNasc')}
-                  // defaultValue={{ label: newDateAnuidade.dia }}
+                  data={useArrayDate.Dia()}
+                  defaultValue={{ label: dataNascimento.dia }}
                 />
 
                 <SelectOptions
-                  data={dataMonths}
                   description="Mês"
                   w={90}
-                  {...register('monthNasc')}
-                  // defaultValue={{ label: newDateAnuidade.mes }}
+                  data={useArrayDate.Mes()}
+                  defaultValue={{ label: dataNascimento.mes }}
                 />
 
                 <SelectOptions
                   w={120}
                   description="Ano"
-                  data={dataYears}
-                  {...register('yearNasc')}
-                  // defaultValue={{ label: newDateAnuidade.ano }}
+                  data={useArrayDate.AnoAtualMenor()}
+                  defaultValue={{ label: dataNascimento.ano }}
                 />
               </div>
             </Box>
@@ -423,45 +350,44 @@ export default function AssociadosCadastro({
             <Box>
               <TextInput
                 title="Nome Profissional"
-                {...register('nome_profissional')}
+                defaultValue={data.nome_profissional}
               />
               <div>
-                <TextInput w={100} title="Sexo" {...register('sexo')} />
+                <TextInput w={100} title="Sexo" defaultValue={data.sexo} />
               </div>
               <div>
-                <SelectOptions
+                <TextInput
                   w={200}
-                  description="Situação"
-                  data={dataSituacao}
-                  {...register('situacao')}
+                  title="Situação"
+                  defaultValue={data.situacao}
                 />
               </div>
               <div>
-                <TextInput w={100} title="UF CRM" {...register('uf_crm')} />
+                <TextInput w={100} title="UF CRM" defaultValue={data.uf_crm} />
               </div>
 
               <div>
-                <TextInput w={180} title="CRM" {...register('crm')} />
+                <TextInput w={180} title="CRM" defaultValue={data.crm} />
               </div>
             </Box>
 
             <Box>
               <TextInput
+                defaultValue={data.nome_instituicao_ensino_graduacao}
                 title="Nome Instituição de Ensino Graduação"
-                {...register('nome_instituicao_ensino_graduacao')}
               />
               <div>
                 <TextInput
                   w={180}
                   title="Ano de Conclusão Graduação"
-                  {...register('ano_conclusao_graduacao')}
+                  defaultValue={data.ano_conclusao_graduacao}
                 />
               </div>
             </Box>
             <Box>
               {/* <TextInput
                 title="Data Início Especialização"
-                {...register('data_inicio_especializacao')}
+               
               /> */}
 
               <div
@@ -471,32 +397,29 @@ export default function AssociadosCadastro({
 
                 <SelectOptions
                   description="Dia"
-                  data={dataDays}
+                  data={useArrayDate.Dia()}
                   w={90}
-                  {...register('dayInicioEspec')}
-                  // defaultValue={{ label: newDateAnuidade.dia }}
+                  defaultValue={{ label: dataInicio.dia }}
                 />
 
                 <SelectOptions
-                  data={dataMonths}
+                  data={useArrayDate.Mes()}
                   description="Mês"
                   w={90}
-                  {...register('monthInicioEspec')}
-                  // defaultValue={{ label: newDateAnuidade.mes }}
+                  defaultValue={{ label: dataInicio.mes }}
                 />
 
                 <SelectOptions
                   w={120}
                   description="Ano"
-                  data={dataYears}
-                  {...register('yearInicioEspec')}
-                  // defaultValue={{ label: newDateAnuidade.ano }}
+                  data={useArrayDate.AnoAtualMenor()}
+                  defaultValue={{ label: dataInicio.ano }}
                 />
               </div>
 
               {/* <TextInput
                 title="Data Previsão Conclusão"
-                {...register('data_previsao_conclusao')}
+               
               /> */}
 
               <div
@@ -506,26 +429,23 @@ export default function AssociadosCadastro({
 
                 <SelectOptions
                   description="Dia"
-                  data={dataDays}
+                  data={useArrayDate.Dia()}
                   w={90}
-                  {...register('dayPrevConcl')}
-                  // defaultValue={{ label: newDateAnuidade.dia }}
+                  defaultValue={{ label: dataPrevisao.dia }}
                 />
 
                 <SelectOptions
-                  data={dataMonths}
+                  data={useArrayDate.Mes()}
                   description="Mês"
                   w={90}
-                  {...register('monthPrevConcl')}
-                  // defaultValue={{ label: newDateAnuidade.mes }}
+                  defaultValue={{ label: dataPrevisao.mes }}
                 />
 
                 <SelectOptions
                   w={120}
                   description="Ano"
-                  data={dataYears}
-                  {...register('yearPrevConcl')}
-                  // defaultValue={{ label: newDateAnuidade.ano }}
+                  data={useArrayDate.AnoAtualMaior()}
+                  defaultValue={{ label: dataPrevisao.ano }}
                 />
               </div>
             </Box>
@@ -548,7 +468,7 @@ export default function AssociadosCadastro({
                 {/* <TextInput
                   title="Cep *"
                   w={110}
-                  {...register('cep')}
+                 
                   mask={'99999-999'}
                 /> */}
                 <div
@@ -561,73 +481,33 @@ export default function AssociadosCadastro({
                   <TextInput
                     w={110}
                     title="Cep *"
-                    {...register('cep')}
-                    helperText={errors.cep?.message}
-                    error={!!errors.cep?.message}
+                    value={data.cep}
                     mask="99999-999"
-                  />
-                  <Button
-                    type="button"
-                    onClick={() => {
-                      handleCheckCep(cepValue)
-                    }}
-                    title="Buscar"
-                    style={{ margin: '0px', width: '100%', fontSize: '12px' }}
                   />
                 </div>
               </div>
 
-              <TextInput
-                disabled={disableCamposCepInvalido}
-                title="Logradouro *"
-                {...register('logradouro')}
-              />
+              <TextInput title="Logradouro *" defaultValue={data.logradouro} />
               <div>
-                <TextInput
-                  disabled={disableCamposCepInvalido}
-                  w={90}
-                  title="Número *"
-                  {...register('numero', {
-                    valueAsNumber: true,
-                  })}
-                />
+                <TextInput w={90} title="Número *" defaultValue={data.numero} />
               </div>
-              <TextInput
-                disabled={disableCamposCepInvalido}
-                title="Complemento"
-                {...register('complemento')}
-              />
+              <TextInput title="Complemento" defaultValue={data.complemento} />
             </Box>
 
             <Box>
-              <TextInput
-                disabled={disableCamposCepInvalido}
-                title="Bairro *"
-                {...register('bairro')}
-              />
+              <TextInput title="Bairro *" defaultValue={data.bairro} />
               <div>
                 <TextInput
-                  disabled={disableCamposCepInvalido}
                   w={220}
                   title="Cidade *"
-                  {...register('cidade')}
+                  defaultValue={data.cidade}
                 />
               </div>
               <div>
-                <TextInput
-                  disabled={disableCamposCepInvalido}
-                  w={50}
-                  title="UF *"
-                  {...register('uf')}
-                />
+                <TextInput w={50} title="UF *" defaultValue={data.uf} />
               </div>
               <div>
-                <SelectOptions
-                  data={dataPais}
-                  w={260}
-                  description="País *"
-                  {...register('pais')}
-                />
+                <TextInput defaultValue={data.pais} w={260} title="País *" />
               </div>
             </Box>
           </fieldset>
@@ -648,76 +528,57 @@ export default function AssociadosCadastro({
               <div>
                 <TextInput
                   w={140}
+                  value={data.telefone_celular}
                   title="Telefone Celular"
                   mask={'(99) 9.9999-9999'}
-                  {...register('telefone_celular')}
                 />
               </div>
               <div>
                 <TextInput
                   w={140}
                   title="Telefone Residencial"
+                  value={data.telefone_residencial}
                   mask={'(99) 9999-9999'}
-                  {...register('telefone_residencial')}
                 />
               </div>
-              <TextInput w={300} title="Email" {...register('email')} />
+              <TextInput w={300} title="Email" defaultValue={data.email} />
             </Box>
           </fieldset>
-
-          <Button
-            type="submit"
-            title={isSubmitting ? 'Enviando...' : 'Enviar'}
-            disabled={isSubmitting}
-          />
         </fieldset>
       </form>
     </Container>
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { id }: any = context.params
   try {
-    const categoriaAssociado = await prisma.tabelas.findMany({
+    const data = await prisma.associados.findFirst({
       where: {
-        codigo_tabela: 'Categoria_Associado',
+        id: Number(id),
       },
     })
-    const dataCategoria = categoriaAssociado.map((item) => {
-      return {
-        label: item.ocorrencia_tabela,
-      }
-    })
+    // const convertBigIntToString = (obj: any) => {
+    //   for (const key in obj)
+    //     typeof obj[key] === 'bigint' && (obj[key] = obj[key].toString())
+    //   return obj
+    // }
 
-    const situacao = await prisma.tabelas.findMany({
-      where: {
-        codigo_tabela: 'Situação_Associado',
-      },
-    })
-    const dataSituacao = situacao.map((item) => {
-      return {
-        label: item.ocorrencia_tabela,
+    const convertBigIntToString = (obj: any) => {
+      for (const key in obj) {
+        if (typeof obj[key] === 'bigint') {
+          obj[key] = obj[key].toString()
+        }
+        if (obj[key] instanceof Date) {
+          obj[key] = format(obj[key], 'yyyy-MM-dd') // ou o formato desejado
+        }
       }
-    })
-
-    const pais = await prisma.tabelas.findMany({
-      where: {
-        codigo_tabela: 'Pais',
-      },
-    })
-
-    const dataPais = pais.map((item) => {
-      return {
-        label: item.ocorrencia_tabela,
-      }
-    })
+      return obj
+    }
 
     return {
       props: {
-        data: [],
-        dataCategoria,
-        dataSituacao,
-        dataPais,
+        data: convertBigIntToString(data),
       },
     }
   } catch (error) {
@@ -725,7 +586,6 @@ export const getServerSideProps: GetServerSideProps = async () => {
     return {
       props: {
         data: [],
-        newDataCategory: [],
       },
     }
   }
