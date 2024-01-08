@@ -75,6 +75,7 @@ model Tabelas {
   ocorrencia_ativa               Boolean
 }
 
+
 model Associados {
   id                                   Int     @id @default(autoincrement())
   data_nascimento                      DateTime?
