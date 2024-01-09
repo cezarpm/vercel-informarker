@@ -42,6 +42,7 @@ export default function Modal({
       await api.delete(`${routeDelete}`, { data })
       setOpen(false)
       toast.success('Deletado com sucesso!')
+      // router.push(`/`)
       router.push(`${redirectRouter}`)
     } catch (error) {
       console.log(error)

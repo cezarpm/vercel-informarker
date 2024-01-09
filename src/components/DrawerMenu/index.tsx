@@ -15,9 +15,13 @@ import {
   CloudArrowUp,
   SignOut,
   Table,
+
   ArchiveTray,
   User,
   ArchiveBox,
+
+  UsersFour,
+
 } from 'phosphor-react'
 import { useRouter } from 'next/navigation'
 import { Twirl as Hamburger } from 'hamburger-react'
@@ -27,8 +31,11 @@ export function TemporaryDrawer() {
   const [state, setState] = React.useState({
     left: false,
   })
+
   const [isOpen, setOpen] = React.useState(false)
+
   const router = useRouter()
+
   function handleNextPage(text: string): void {
     if (text === 'Parametros') {
       router.push('/parametros')
@@ -36,12 +43,17 @@ export function TemporaryDrawer() {
       router.push('/empresas')
     } else if (text === 'Tabelas') {
       router.push('/tabelas')
+
     } else if (text === 'Chapas') {
       router.push('/chapas')
     } else if (text === 'Diretorias') {
       router.push('/diretorias')
     } else if (text === 'Eleicoes') {
       router.push('/eleicoes')
+
+    } else if (text === 'Associados') {
+      router.push('/associados')
+
     }
   }
 
@@ -71,6 +83,7 @@ export function TemporaryDrawer() {
       <Table size={30} color="#fff" />
     </>,
     <>
+
       <ArchiveTray size={30} color="#fff" />
     </>,
     <>
@@ -78,6 +91,9 @@ export function TemporaryDrawer() {
     </>,
     <>
       <ArchiveBox size={30} color="#fff" />
+
+      <UsersFour size={30} color="#fff" />
+
     </>,
   ]
 
@@ -105,6 +121,7 @@ export function TemporaryDrawer() {
         <Image src={logo} alt="logo" width={210} quality={100} />
       </div>
       <List>
+
         {[
           'Parametros',
           'Empresas',
@@ -124,6 +141,22 @@ export function TemporaryDrawer() {
             </ListItemButton>
           </ListItem>
         ))}
+
+        {['Parametros', 'Empresas', 'Tabelas', 'Associados'].map(
+          (text, index) => (
+            <ListItem key={text} disablePadding>
+              <ListItemButton
+                onClick={() => {
+                  handleNextPage(text)
+                }}
+              >
+                <ListItemIcon>{arrayIcons[index]}</ListItemIcon>
+                <ListItemText primary={text} style={{ color: '#fff' }} />
+              </ListItemButton>
+            </ListItem>
+          ),
+        )}
+
       </List>
 
       <Divider />

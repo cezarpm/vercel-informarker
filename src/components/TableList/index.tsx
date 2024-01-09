@@ -23,7 +23,7 @@ export default function DataGridDemo({ rows, columns, w }: any) {
             },
           },
         }}
-        pageSizeOptions={[5]}
+        pageSizeOptions={[10]}
         checkboxSelection
         disableRowSelectionOnClick
         rowSelectionModel={selectedRowIds}
