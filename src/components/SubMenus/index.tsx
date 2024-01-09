@@ -10,7 +10,7 @@ export default function SubMenus({ title }: any) {
   const teste = [
     { id: 0, name: 'empresa', link: 'empresas' },
     { id: 1, name: 'associados', link: 'associados' },
-    { id: 1, name: 'aniversariantes', link: 'associados/aniversariantes' },
+
     { id: 2, name: 'parametros', link: 'parametros' },
     { id: 3, name: 'nome 1', link: 'empresa' },
     { id: 4, name: 'nome 1', link: 'empresa' },

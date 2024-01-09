@@ -12,6 +12,7 @@ interface schemaTextField {
   value?: string | number
   defaultValue?: string
   w?: number | string
+  minW?: number | string
   messageError?: string
   disabled?: any
   helperText?: any
@@ -27,6 +28,8 @@ export const TextInput = forwardRef<HTMLInputElement, schemaTextField>(
       value,
       defaultValue,
       w,
+      messageError,
+      minW,
       disabled,
       helperText,
       error,
@@ -50,7 +53,7 @@ export const TextInput = forwardRef<HTMLInputElement, schemaTextField>(
             ref={ref}
             variant="standard"
             value={value}
-            sx={{ width: w }}
+            sx={{ width: w, minW }}
             defaultValue={defaultValue}
             disabled={disabled}
             helperText={helperText}

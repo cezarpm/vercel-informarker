@@ -25,13 +25,163 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
   const router = useRouter()
   const { selectedRowIds } = useId()
 
- 
+  const columns: GridColDef[] = [
+    {
+      field: 'id',
+      headerName: 'id',
+      disableColumnMenu: true,
+      width: 80,
+    },
+    {
+      field: 'tipo_empresa',
+      headerName: 'Tipo Empresa',
+      width: 120,
+    },
+    {
+      field: 'patrocinadora',
+      headerName: 'Patrocinadora',
+      width: 120,
+    },
+    {
+      field: 'faculdade_anestesiologia',
+      headerName: 'Faculdade Anestesiologia',
+      width: 220,
+      disableColumnMenu: true,
+    },
+    {
+      field: 'empresa_ativa',
+      headerName: 'Empresa Ativa',
+      width: 120,
+      disableColumnMenu: true,
+    },
+    {
+      field: 'razao_social',
+      headerName: 'Razão Social',
+      flex: 1,
+      disableColumnMenu: true,
+    },
+    {
+      field: 'nome_fantasia',
+      headerName: 'Nome Fantasia',
+      flex: 1,
+      disableColumnMenu: true,
+    },
+    {
+      field: 'cnpj',
+      headerName: 'Cnpj',
+      width: 140,
+      disableColumnMenu: true,
+    },
+    {
+      field: 'cidade',
+      headerName: 'Cidade',
+      width: 120,
+      disableColumnMenu: true,
+    },
+    {
+      field: 'uf',
+      headerName: 'Uf',
+      width: 50,
+      disableColumnMenu: true,
+    },
+
+    {
+      field: 'nome_contato_primario',
+      headerName: 'Nome Contato Primário',
+      width: 180,
+      disableColumnMenu: true,
+    },
+    {
+      field: 'email_contato_primario',
+      headerName: 'Email Contato Primário',
+      width: 180,
+      disableColumnMenu: true,
+    },
+  ]
+
+  const { register, watch } = useForm<SchemaFilter>()
+
+  const TipoEmpresaFilter = watch('tipo_empresa_filter')
+  const PatrocinadoraFilter = watch('patrocinarora_filter')
+  const FaculdadeAnestesiologiaFilter = watch('faculdade_anestesiologia_filter')
+  const EmpresaAtivaFilter = watch('empresa_ativa_filter')
+
+  const filteredData = data.filter((item: any) => {
+    const tipoEmpresaMatch =
+      TipoEmpresaFilter === undefined ||
+      TipoEmpresaFilter === 'Todos' ||
+      item.tipo_empresa === TipoEmpresaFilter
+
+    const patrocinadoraMatch =
+      PatrocinadoraFilter === undefined ||
+      PatrocinadoraFilter === 'Todos' ||
+      item.patrocinadora === PatrocinadoraFilter
+
+    const faculdadeMatch =
+      FaculdadeAnestesiologiaFilter === undefined ||
+      FaculdadeAnestesiologiaFilter === 'Todos' ||
+      item.faculdade_anestesiologia === FaculdadeAnestesiologiaFilter
+
+    const empresaAtivaMatch =
+      EmpresaAtivaFilter === undefined ||
+      EmpresaAtivaFilter === 'Todos' ||
+      item.empresa_ativa === EmpresaAtivaFilter
+
+    return (
+      tipoEmpresaMatch &&
+      patrocinadoraMatch &&
+      faculdadeMatch &&
+      empresaAtivaMatch
+    )
+  })
+  const dataSimNao = [
+    {
+      id: 1,
+      ocorrencia_tabela: 'sim',
+    },
+    {
+      id: 2,
+      ocorrencia_tabela: 'não',
+    },
+  ]
+
   // console.log(dataTipoEmpresa)
   return (
     <Container>
       <p>Empresas</p>
-      
-      <DataGridDemo dataTipoEmpresa={dataTipoEmpresa} data={data} w="100%" />
+     
+      // <DataGridDemo dataTipoEmpresa={dataTipoEmpresa} data={data} w="100%" />
+
+      <form>
+        <Box style={{ marginTop: '1rem' }}>
+          <SelectNoComplete
+            value="Todos"
+            title="Tipo Empresa"
+            data={dataTipoEmpresa}
+            {...register('tipo_empresa_filter')}
+          />
+          <SelectNoComplete
+            value="Todos"
+            title="Patrocinadora"
+            {...register('patrocinarora_filter')}
+            data={dataSimNao}
+          />
+          <SelectNoComplete
+            value="Todos"
+            title="Faculdade Anestesiologia"
+            {...register('faculdade_anestesiologia_filter')}
+            data={dataSimNao}
+          />
+          <SelectNoComplete
+            value="Todos"
+            title="Empresa Ativa"
+            {...register('empresa_ativa_filter')}
+            data={dataSimNao}
+          />
+        </Box>
+      </form>
+      <DataGridDemo columns={columns} rows={filteredData} w="100%" />
+
 
       <Box>
         <Button

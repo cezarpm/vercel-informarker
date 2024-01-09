@@ -168,7 +168,6 @@ export default function AssociadoList() {
           data={selectedRowIds}
           redirectRouter="/associados"
         />
-
       </Box>
     </Container>
   )
@@ -198,4 +197,4 @@ export default function AssociadoList() {
 //       },
 //     }
 //   }
-// }
+

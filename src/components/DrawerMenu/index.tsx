@@ -15,8 +15,12 @@ import {
   CloudArrowUp,
   SignOut,
   Table,
+  Balloon,
+  ArchiveTray,
+  User,
+  ArchiveBox,
   UsersFour,
-  Balloon
+
 } from 'phosphor-react'
 import { useRouter } from 'next/navigation'
 import { Twirl as Hamburger } from 'hamburger-react'
@@ -42,7 +46,14 @@ export function TemporaryDrawer() {
       router.push('/associados')
     }else if (text === 'Aniversariantes') {
       router.push('/associados/aniversariantes')
-    }
+    } else if (text === 'Chapas') {
+      router.push('/chapas')
+    } else if (text === 'Diretorias') {
+      router.push('/diretorias')
+    } else if (text === 'Eleicoes') {
+      router.push('/eleicoes')
+
+    } 
   }
 
   const toggleDrawer =
@@ -71,10 +82,22 @@ export function TemporaryDrawer() {
       <Table size={30} color="#fff" />
     </>,
     <>
+
       <UsersFour size={30} color="#fff" />
     </>,
     <>
       <Balloon size={30} color="#fff" />
+
+      <ArchiveTray size={30} color="#fff" />
+    </>,
+    <>
+      <User size={30} color="#fff" />
+    </>,
+    <>
+      <ArchiveBox size={30} color="#fff" />
+
+      <UsersFour size={30} color="#fff" />
+
     </>,
   ]
 
@@ -102,20 +125,28 @@ export function TemporaryDrawer() {
         <Image src={logo} alt="logo" width={210} quality={100} />
       </div>
       <List>
-        {['Parametros', 'Empresas', 'Tabelas', 'Associados', 'Aniversariantes'].map(
-          (text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton
-                onClick={() => {
-                  handleNextPage(text)
-                }}
-              >
-                <ListItemIcon>{arrayIcons[index]}</ListItemIcon>
-                <ListItemText primary={text} style={{ color: '#fff' }} />
-              </ListItemButton>
-            </ListItem>
-          ),
-        )}
+        {[
+          'Parametros',
+          'Empresas',
+          'Tabelas',
+          'Associados',
+          'Aniversariantes',
+          'Chapas',
+          'Diretorias',
+          'Eleicoes',
+         ].map((text, index) => (
+          <ListItem key={text} disablePadding>
+            <ListItemButton
+              onClick={() => {
+                handleNextPage(text)
+              }}
+            >
+              <ListItemIcon>{arrayIcons[index]}</ListItemIcon>
+              <ListItemText primary={text} style={{ color: '#fff' }} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+
       </List>
 
       <Divider />
