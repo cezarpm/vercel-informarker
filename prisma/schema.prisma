@@ -157,6 +157,7 @@ model Pagamentos {
   valor_pagto_parcela_2 String
   data_pagto_parcela_3  String
   valor_pagto_parcela_3 String
+
 }
 
 model Chapas {
@@ -218,4 +219,5 @@ model Eleicoes {
   votacao_fim    DateTime
   mandato_inicio DateTime
   mandato_fim    DateTime
+
 }

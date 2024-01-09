@@ -15,11 +15,10 @@ import {
   CloudArrowUp,
   SignOut,
   Table,
-
+  Balloon,
   ArchiveTray,
   User,
   ArchiveBox,
-
   UsersFour,
 
 } from 'phosphor-react'
@@ -43,7 +42,10 @@ export function TemporaryDrawer() {
       router.push('/empresas')
     } else if (text === 'Tabelas') {
       router.push('/tabelas')
-
+    } else if (text === 'Associados') {
+      router.push('/associados')
+    }else if (text === 'Aniversariantes') {
+      router.push('/associados/aniversariantes')
     } else if (text === 'Chapas') {
       router.push('/chapas')
     } else if (text === 'Diretorias') {
@@ -51,10 +53,7 @@ export function TemporaryDrawer() {
     } else if (text === 'Eleicoes') {
       router.push('/eleicoes')
 
-    } else if (text === 'Associados') {
-      router.push('/associados')
-
-    }
+    } 
   }
 
   const toggleDrawer =
@@ -83,6 +82,11 @@ export function TemporaryDrawer() {
       <Table size={30} color="#fff" />
     </>,
     <>
+
+      <UsersFour size={30} color="#fff" />
+    </>,
+    <>
+      <Balloon size={30} color="#fff" />
 
       <ArchiveTray size={30} color="#fff" />
     </>,
@@ -121,15 +125,16 @@ export function TemporaryDrawer() {
         <Image src={logo} alt="logo" width={210} quality={100} />
       </div>
       <List>
-
         {[
           'Parametros',
           'Empresas',
           'Tabelas',
+          'Associados',
+          'Aniversariantes',
           'Chapas',
           'Diretorias',
           'Eleicoes',
-        ].map((text, index) => (
+         ].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton
               onClick={() => {
@@ -141,21 +146,6 @@ export function TemporaryDrawer() {
             </ListItemButton>
           </ListItem>
         ))}
-
-        {['Parametros', 'Empresas', 'Tabelas', 'Associados'].map(
-          (text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton
-                onClick={() => {
-                  handleNextPage(text)
-                }}
-              >
-                <ListItemIcon>{arrayIcons[index]}</ListItemIcon>
-                <ListItemText primary={text} style={{ color: '#fff' }} />
-              </ListItemButton>
-            </ListItem>
-          ),
-        )}
 
       </List>
 

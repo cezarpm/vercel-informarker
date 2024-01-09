@@ -144,10 +144,14 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
       ocorrencia_tabela: 'não',
     },
   ]
+
   // console.log(dataTipoEmpresa)
   return (
     <Container>
       <p>Empresas</p>
+     
+      // <DataGridDemo dataTipoEmpresa={dataTipoEmpresa} data={data} w="100%" />
+
       <form>
         <Box style={{ marginTop: '1rem' }}>
           <SelectNoComplete
@@ -177,6 +181,7 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
         </Box>
       </form>
       <DataGridDemo columns={columns} rows={filteredData} w="100%" />
+
 
       <Box>
         <Button

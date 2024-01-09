@@ -71,6 +71,7 @@ export default function Vizualizar({
 }: any) {
   const router = useRouter()
 
+
   async function OnSubmit(data: any) {
     try {
       await api.put('/empresa/update', { ...data })
@@ -86,7 +87,6 @@ export default function Vizualizar({
   const [disabledButtonCep, setDisabledButtonCep] = useState(false)
 
   const newDataTipoEmpresa = dataTipoEmpresa?.map((item: shemaTabelas) => {
-
     return {
       label: item.ocorrencia_tabela,
       id: item.id,
