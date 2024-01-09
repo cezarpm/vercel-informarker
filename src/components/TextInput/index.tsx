@@ -12,6 +12,7 @@ interface schemaTextField {
   value?: string | number
   defaultValue?: string
   w?: number | string
+  minW?: number | string
   messageError?: string
   disabled?: any
   helperText?: any
@@ -27,14 +28,35 @@ export const TextInput = forwardRef<HTMLInputElement, schemaTextField>(
       value,
       defaultValue,
       w,
+
+      messageError,
+      disabled,
+      minW,
+
       disabled,
       helperText,
       error,
       mask,
+
       ...rest
     } = props
     return (
       <Container>
+
+        <ContainerTextField
+          fullWidth
+          id="fullWidth"
+          label={title}
+          ref={ref}
+          variant="standard"
+          value={value}
+          sx={{ width: w, minW }}
+          defaultValue={defaultValue}
+          {...rest}
+          disabled={disabled}
+        />
+        <FormErrorMessage>{messageError}</FormErrorMessage>
+
         {mask ? (
           <>
             <ContainerMaskInput style={{ width: w }}>
@@ -59,6 +81,7 @@ export const TextInput = forwardRef<HTMLInputElement, schemaTextField>(
             InputLabelProps={{ shrink: true }}
           />
         )}
+
       </Container>
     )
   },

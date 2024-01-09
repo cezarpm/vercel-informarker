@@ -81,12 +81,28 @@ export default function EmpresaList({ data }: any) {
   return (
     <Container>
       <p>Tabelas</p>
+
+      <div
+        style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          justifyContent: 'flex-start',
+        }}
+      >
+        <CardTable
+          onClick={() => {
+            router.push('/tabelas/tratamentos')
+          }}
+          title="Tratamentos"
+          description="Cadastre, Delete e Altere os Tratamentos"
+
       <form>
         <SelectNoComplete
           title="Código Tabela"
           value="Todos"
           {...register('codigo_tabela')}
           data={newDescriptionKeys}
+
         />
       </form>
       <DataGridDemo columns={columns} rows={filteredData} w="100%" />
