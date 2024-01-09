@@ -1,10 +1,10 @@
-import { Container, Box } from './styled'
+import { Container, Box,Text } from './styled'
 import React, { useEffect } from 'react'
 import { z } from 'zod'
-import { Controller, useFieldArray, useForm } from 'react-hook-form'
+import { useFieldArray, useForm } from 'react-hook-form'
 import { Button } from '@/components/Button'
 import { TextInput } from '@/components/TextInput'
-import { ArrowBendDownLeft } from 'phosphor-react'
+import { ArrowBendDownLeft, CaretRight } from 'phosphor-react'
 import Link from 'next/link'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { api } from '@/lib/axios'
@@ -14,79 +14,51 @@ import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
 import { SelectOptions } from '@/components/SelectOptions'
 import { Typography } from '@mui/material'
-import { DateTimePicker } from '@mui/x-date-pickers'
-import dayjs from 'dayjs'
-const integranteSchema = z.object({
-  nome: z.string().min(1, { message: 'O campo nome é obrigatório' }),
+
+ // array dias
+ const days = Array.from({ length: 31 }, (_, index) => ({
+  label: (index + 1).toString(),
+}))
+
+const dataDays = days.map((item) => item)
+
+// array mes
+const months = Array.from({ length: 12 }, (_, index) => ({
+  label: (index + 1).toString(),
+}))
+
+const dataMonths = months.map((item) => item)
+
+// array anos
+const yearCurrent = new Date().getFullYear()
+const years = Array.from({ length: 10 }, (_, index) =>
+  (yearCurrent + index).toString(),
+)
+
+const dataYears = years.map((year) => {
+  return {
+    label: year,
+  }
 })
 
-const schemaChapaForm = z.object({
-  nome_da_chapa: z
-    .string()
-    .min(1, { message: 'O campo nome da chapa é obrigatório' }),
-  data_inicio: z.coerce.date(),
-  data_fim: z.coerce.date(),
-  chapas: z.array(integranteSchema).nonempty(),
-})
 
 
 type SchemaChapaForm = z.infer<typeof schemaChapaForm>
 
-export default function VotacaoAtualizar({ data }) {
-  const router = useRouter()
+export default function VotacaoRead({ data, chapas }) {
+  const newDate = new Date(data.data_votacao_inicio)
+  const diaMes = String(newDate.getDate())
+  const mesAno = String(newDate.getMonth() + 1)
+  const anoTotal = String(newDate.getFullYear())
 
-  const { id }: any = router.query
-
-
-  const {
-    register,
-    handleSubmit,
-    formState: { isSubmitting, errors },
-    control,
-    setValue,
-  } = useForm<SchemaChapaForm>({
-    resolver: zodResolver(schemaChapaForm),
-  })
-
-  async function handleOnSubmit(data: SchemaChapaForm) {
-    console.log(data);
-
-    const selectedChapas = data.chapas.map((chapa) => {
-      const chapaSelected = chapas.find((item) => item.nome_chapa === chapa.nome)
-      return chapaSelected
-    })
-
-    const body = {
-      nome_da_chapa: data.nome_da_chapa,
-      data_inicio: data.data_inicio,
-      data_fim: data.data_fim,
-      chapas: selectedChapas
-    }
-
-    await api.post('/eleicao/cadastro', body)
-
-    router.push('/eleicao/lista')
-    return toast.success('Chapa cadastrada!')
-  }
-
-  const { fields, append, remove } = useFieldArray({
-    name: 'chapas',
-    control,
-  })
-
-  useEffect(() => {
-    if (data) {
-      setValue('matricula_saerj', data.matricula_saerj)
-      setValue('data_votacao_inicio', dayjs(data.data_votacao_inicio))
-      setValue('data_votacao_fim', dayjs(data.data_votacao_fim))
-
-    }
-  }, [data])
-
+  const endData = new Date(data.data_votacao_fim)
+  const diaMesEnd = String(endData.getDate())
+  const mesAnoEnd = String(endData.getMonth() + 1)
+  const anoTotalEnd = String(endData.getFullYear())
 
   return (
     <Container>
-      <form onSubmit={handleSubmit(handleOnSubmit)}>
+      <form>
         <Box>
           <Link
             href="/eleicao/lista"
@@ -105,89 +77,94 @@ export default function VotacaoAtualizar({ data }) {
           </Link>
         </Box>
         <fieldset>
+        <legend>
+          <span>
+            <Link href={'/chapas'}>Eleição</Link>
+          </span>
+          <CaretRight size={14} />
+          <span>Visualizar</span>
+        </legend>
           <Box>
-            <TextInput
-              title="Nome da eleicao *"
-              {...register('matricula_saerj')}
-            />
+            <div style={{ width: '30%' }}>
+              <TextInput
+                title="Nome da eleicao *"
+                defaultValue={data.matricula_saerj}
+              />
 
-            <Controller
-              control={control}
-              name="data_votacao_inicio"
-              rules={{
-                required: {
-                  value: true,
-                  message: "Start date is required",
-                },
-              }}
+             
+            </div>
 
-              render={({ field: { onChange, value, ref } }) => (
-                <DateTimePicker
-                  label="Start Date"
-                  disablePast
-                  onChange={onChange}
-                  onAccept={onChange}
-                  value={value}
-                  inputRef={ref}
-                />
-              )}
-            />
+            <div style={{ display: 'flex', alignItems: 'end', width: '31rem' }}>
+              <Text>
+                Data de início da votação
+              </Text>
 
-            <Controller
-              control={control}
-              name="data_votacao_fim"
-              rules={{
-                required: {
-                  value: true,
-                  message: "Start date is required",
-                },
-              }}
+              <TextInput
+                title="Dia *"
+                defaultValue={diaMes}
+              />
 
-              render={({ field: { onChange, value, ref } }) => (
-                <DateTimePicker
-                  label="Start Date"
-                  disablePast
-                  onChange={onChange}
-                  onAccept={onChange}
-                  value={value}
-                  inputRef={ref}
-                />
-              )}
-            />
+
+              <TextInput
+                title="Mês *"
+                defaultValue={mesAno}
+              />
+
+              <TextInput
+                title="Ano *"
+                defaultValue={anoTotal}
+              />
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'end', width: '32rem' }}>
+              <Text>
+                Data de término da votação
+              </Text>
+
+              <TextInput
+                title="Dia *"
+                defaultValue={diaMesEnd}
+              />
+
+              <TextInput
+                title="Mês *"
+                defaultValue={mesAnoEnd}
+              />
+
+              <TextInput
+                title="Ano *"
+                defaultValue={anoTotalEnd}
+              />
+            </div>
+
+            <SelectOptions
+                description="Selecione a chapa"
+                data={['ATIVO', 'INATIVO']}
+                w={280}
+                defaultValue={data.status}
+              />
 
           </Box>
 
           <Box>
-
             <Typography variant="h6" component="div">
-              Selecione a chapa
+              Adicionar chapas na eleição
             </Typography>
+          </Box>
 
-            <Button
-              onClick={() => append({ nome: '' })}
-              type="button"
-              title="+ Adicionar membro"
-              style={{ margin: '0px', width: '100%', fontSize: '12px' }}
-            />
 
-            {fields.map((membro, index) =>
-              <SelectOptions
-                key={index}
-                description="Tipo Empresa"
-                data={chapas.map((chapa) => chapa.nome_chapa)}
+          {data?.chapas.chapas.map((membro, index) =>
+           <Box key={index}>
+             <TextInput
                 w={280}
-                {...register(`chapas.${index}.nome` as const)}
+                title={"Chapa " + (index + 1)}
+                defaultValue={membro.nome_chapa}
+                
               />
+             </Box>
             )}
 
-
-
-          </Box>
-
-          <Button
-            title={isSubmitting ? 'Enviando...' : 'Enviar'}
-            type="submit"
-          />
+         
         </fieldset>
       </form>
     </Container>
@@ -204,6 +181,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     })
 
+    console.log(data?.chapas.chapas);
+    
     return {
       props: {
         data,

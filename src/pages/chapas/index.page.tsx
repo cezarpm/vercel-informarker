@@ -7,11 +7,10 @@ import { GridColDef } from '@mui/x-data-grid'
 import { toast } from 'react-toastify'
 import Modal from '@/components/Modal'
 import { GetServerSideProps } from 'next'
-import Avatar from '@mui/material/Avatar'
-import { AvatarGroup, Typography } from '@mui/material'
+import { Typography } from '@mui/material'
 import { prisma } from '@/lib/prisma'
 
-export default function VotacaoList({ data }: any) {
+export default function chapasList({ data }: any) {
   const router = useRouter()
   const { selectedRowIds } = useId()
 
@@ -61,7 +60,7 @@ export default function VotacaoList({ data }: any) {
             } else if (selectedRowIds.length >= 2) {
               toast.warn('selecione 1 chapa para visualizar')
             } else {
-              router.push(`/votacao/visualizar/${selectedRowIds}`)
+              router.push(`/chapas/visualizar/${selectedRowIds}`)
             }
           }}
         />
@@ -75,7 +74,7 @@ export default function VotacaoList({ data }: any) {
             } else if (selectedRowIds.length >= 2) {
               toast.warn('selecione 1 chapa para atualizar')
             } else {
-              router.push(`/votacao/atualizar/${selectedRowIds}`)
+              router.push(`/chapas/atualizar/${selectedRowIds}`)
             }
           }}
         />
@@ -84,16 +83,16 @@ export default function VotacaoList({ data }: any) {
           title="Incluir"
           style={{ backgroundColor: '#ED7D31' }}
           onClick={() => {
-            router.push('/votacao/cadastro')
+            router.push('/chapas/cadastro')
           }}
         />
 
         <Modal
           title="Excluir"
           bgColor="#BE0000"
-          routeDelete="/votacao/delete/"
+          routeDelete="/votacao/delete"
           data={selectedRowIds}
-          redirectRouter="/votacao/lista"
+          redirectRouter="/chapas"
         />
 
         {/* <Button

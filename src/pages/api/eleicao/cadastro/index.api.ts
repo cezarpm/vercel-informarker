@@ -9,22 +9,19 @@ export default async function handler(
 ) {
 
     try {
-        const { nome_da_chapa, data_inicio, data_fim, chapas, status } = req.body
-
-        console.log('olha euu');
-
+        const { nome_da_chapa, data_votacao_inicio, data_votacao_fim, chapas } = req.body
 
         await prisma.votacao.create({
             data: {
-                data_votacao_fim: new Date(data_fim).toISOString(),
-                data_votacao_inicio: new Date(data_inicio).toISOString(),
+                data_votacao_fim,
+                data_votacao_inicio,
                 matricula_saerj: nome_da_chapa,
                 chapas: {
                     chapas: [
                         ...chapas
                     ]
                 },
-                status: 'ATIVA'
+                status: 'ATIVO'
             }
         })
 

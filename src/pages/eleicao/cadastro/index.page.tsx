@@ -1,10 +1,10 @@
-import { Container, Box } from './styled'
+import { Container, Box, Text } from './styled'
 import React from 'react'
 import { z } from 'zod'
-import { Controller, useFieldArray, useForm } from 'react-hook-form'
+import { useFieldArray, useForm } from 'react-hook-form'
 import { Button } from '@/components/Button'
 import { TextInput } from '@/components/TextInput'
-import { ArrowBendDownLeft } from 'phosphor-react'
+import { ArrowBendDownLeft, CaretRight } from 'phosphor-react'
 import Link from 'next/link'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { api } from '@/lib/axios'
@@ -14,20 +14,46 @@ import { Typography } from '@mui/material'
 import { SelectOptions } from '@/components/SelectOptions'
 import { prisma } from '@/lib/prisma'
 import { GetServerSideProps } from 'next'
-import { DateTimePicker } from '@mui/x-date-pickers'
-import dayjs from 'dayjs'
+
+ // array dias
+ const days = Array.from({ length: 31 }, (_, index) => ({
+  label: (index + 1).toString(),
+}))
+const dataDays = days.map((item) => item)
+
+// array mes
+const months = Array.from({ length: 12 }, (_, index) => ({
+  label: (index + 1).toString(),
+}))
+const dataMonths = months.map((item) => item)
+
+// array anos
+const yearCurrent = new Date().getFullYear()
+const years = Array.from({ length: 10 }, (_, index) =>
+  (yearCurrent + index).toString(),
+)
+const dataYears = years.map((year) => {
+  return {
+    label: year,
+  }
+})
+
 
 const integranteSchema = z.object({
-  nome: z.string().min(1, { message: 'O campo nome é obrigatório' }),
+  nome_chapa: z.string().min(1, { message: 'O campo nome é obrigatório' }),
 })
 
 const schemaChapaForm = z.object({
-  nome_da_chapa: z
+  matricula_saerj: z
     .string()
     .min(1, { message: 'O campo nome da chapa é obrigatório' }),
-  data_inicio: z.coerce.date(),
-  data_fim: z.coerce.date(),
   chapas: z.array(integranteSchema).nonempty(),
+  start_day: z.string(),
+  start_month: z.string(),
+  start_year: z.string(),
+  end_day: z.string(),
+  end_month: z.string(),
+  end_year: z.string(),
 })
 
 type SchemaChapaForm = z.infer<typeof schemaChapaForm>
@@ -48,23 +74,30 @@ export default function VotacaoCreate({ chapas }) {
   console.log(errors);
 
   async function handleOnSubmit(data: SchemaChapaForm) {
+    const concatDate = `${data.start_month}-${data.start_day}-${data.start_year}`
+    const newDate = new Date(concatDate).toISOString()
+
+    const concatDateEnd = `${data.end_month}-${data.end_day}-${data.end_year}`
+    const newDateEnd = new Date(concatDateEnd).toISOString()
+
+
     const selectedChapas = data.chapas.map((chapa) => {
-      const chapaSelected = chapas.find((item) => item.nome_chapa === chapa.nome)
+      const chapaSelected = chapas.find((item) => item.nome_chapa === chapa.nome_chapa)
       return chapaSelected
     })
 
     const body = {
-      nome_da_chapa: data.nome_da_chapa,
-      data_inicio: new Date(data.data_inicio).toISOString(),
-      data_fim: new Date(data.data_fim).toISOString(),
+      nome_da_chapa: data.matricula_saerj,
+      data_votacao_inicio: newDate,
+      data_votacao_fim: newDateEnd,
       chapas: selectedChapas,
-      status: 'ATIVA'
+      status: 'ATIVO'
     }
 
-    await api.post('/eleicao/cadastro', body)
+    await api.post('/chapas/cadastro', body)
 
-    // router.push('/eleicao/lista')
-    // return toast.success('Chapa cadastrada!')
+    router.push('/eleicao/lista')
+    return toast.success('Chapa cadastrada!')
   }
 
   const { fields, append } = useFieldArray({
@@ -78,7 +111,7 @@ export default function VotacaoCreate({ chapas }) {
       <form onSubmit={handleSubmit(handleOnSubmit)}>
         <Box>
           <Link
-            href="/votacao/lista"
+            href="/eleicao/lista"
             style={{
               textDecoration: 'none',
               fontFamily: 'Roboto',
@@ -94,84 +127,103 @@ export default function VotacaoCreate({ chapas }) {
           </Link>
         </Box>
         <fieldset>
+        <legend>
+            <span>
+              <Link href={'/eleicao/lista'}>Eleição</Link>
+            </span>
+            <CaretRight size={14} />
+            <span>Incluir</span>
+          </legend>
           <Box>
-            <TextInput
-              title="Nome da eleicao *"
-              {...register('nome_da_chapa')}
-            />
+            <div style={{ width: '30%' }}>
+              <TextInput
+                title="Nome da eleição *"
+                {...register('matricula_saerj')}
+              />
+            </div>
 
-            <Controller
-              control={control}
-              name="data_inicio"
-              rules={{
-                required: {
-                  value: true,
-                  message: "Start date is required",
-                },
-              }}
+            <div style={{ display: 'flex', alignItems: 'end', width: '31rem' }}>
+              <Text>
+                Data de início da votação
+              </Text>
 
-              render={({ field: { onChange, value, ref } }) => (
-                <DateTimePicker
-                  label="Start Date"
-                  disablePast
-                  onChange={onChange}
-                  onAccept={onChange}
-                  value={value}
-                  inputRef={ref}
-                />
-              )}
-            />
+              <SelectOptions
+                description="Dia"
+                data={dataDays}
+                w={90}
+                {...register('start_day')}
+              />
 
-            <Controller
-              control={control}
-              name="data_fim"
-              rules={{
-                required: {
-                  value: true,
-                  message: "Start date is required",
-                },
-              }}
+              <SelectOptions
+                data={dataMonths}
+                description="Mês"
+                w={90}
+                {...register('start_month')}
+              />
 
-              render={({ field: { onChange, value, ref } }) => (
-                <DateTimePicker
-                  label="Start Date"
-                  disablePast
-                  onChange={onChange}
-                  onAccept={onChange}
-                  value={value}
-                  inputRef={ref}
-                />
-              )}
-            />
+              <SelectOptions
+                w={120}
+                description="Ano"
+                data={dataYears}
+                {...register('start_year')}
+              />
+            </div>
+
+            <div style={{ display: 'flex', alignItems: 'end', width: '32rem' }}>
+              <Text>
+                Data de término da votação
+              </Text>
+
+              <SelectOptions
+                description="Dia"
+                data={dataDays}
+                w={90}
+                {...register('end_day')}
+              />
+
+              <SelectOptions
+                data={dataMonths}
+                description="Mês"
+                w={90}
+                {...register('end_month')}
+              />
+
+              <SelectOptions
+                w={120}
+                description="Ano"
+                data={dataYears}
+                {...register('end_year')}
+              />
+            </div>
 
           </Box>
 
           <Box>
-
             <Typography variant="h6" component="div">
-              Selecione a chapa
+            Adicionar chapas na eleição
             </Typography>
 
             <Button
               onClick={() => append({ nome: '' })}
               type="button"
-              title="+ Adicionar membro"
+              title="+ Adicionar"
               style={{ margin: '0px', width: '100%', fontSize: '12px' }}
             />
 
-            {fields.map((membro, index) =>
-              <SelectOptions
-                key={index}
-                description="Tipo Empresa"
-                data={chapas.map((chapa) => chapa.nome_chapa)}
-                w={280}
-                {...register(`chapas.${index}.nome` as const)}
-              />
-            )}
-
-
 
           </Box>
+
+
+          {fields.map((membro, index) =>
+           <Box key={index}>
+              <SelectOptions
+                description="Selecione a chapa"
+                data={chapas.map((chapa) => chapa.nome_chapa)}
+                w={280}
+                {...register(`chapas.${index}.nome_chapa` as const)}
+              />
+             </Box>
+            )}
 
           <Button
             title={isSubmitting ? 'Enviando...' : 'Enviar'}

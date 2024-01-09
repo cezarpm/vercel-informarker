@@ -9,6 +9,9 @@ import Modal from '@/components/Modal'
 import { GetServerSideProps } from 'next'
 import { Typography } from '@mui/material'
 import { prisma } from '@/lib/prisma'
+import dayjs from 'dayjs'
+
+
 
 export default function eleicaoList({ data }: any) {
   const router = useRouter()
@@ -35,7 +38,7 @@ export default function eleicaoList({ data }: any) {
       renderCell: (params) => {
         return (
           <Typography>
-            {new Date(params.value).toLocaleDateString()}
+            {dayjs(params.value).format('DD/MM/YYYY')}
           </Typography>
         )
       }
@@ -48,7 +51,7 @@ export default function eleicaoList({ data }: any) {
       renderCell: (params) => {
         return (
           <Typography>
-            {new Date(params.value).toLocaleDateString()}
+            {dayjs(params.value).format('DD/MM/YYYY')}
           </Typography>
         )
       }
@@ -65,7 +68,7 @@ export default function eleicaoList({ data }: any) {
 
   return (
     <Container>
-      <p>Chapas</p>
+      <p>Eleições</p>
 
       <DataGridDemo columns={columns} rows={data} w="100%" />
 
@@ -114,13 +117,19 @@ export default function eleicaoList({ data }: any) {
           redirectRouter="/eleicao/lista"
         />
 
-        {/* <Button
-          title="Retornar"
+        <Button
+          title="Ver resultado"
           style={{ backgroundColor: '#b34db2' }}
           onClick={() => {
-            router.push('/')
+            if (selectedRowIds.length === 0) {
+              toast.warn('você não selecionou a chapa para atualizar')
+            } else if (selectedRowIds.length >= 2) {
+              toast.warn('selecione 1 chapa para atualizar')
+            } else {
+              router.push(`/eleicao/resultado/${selectedRowIds}`)
+            }
           }}
-        /> */}
+        />
       </Box>
     </Container>
   )

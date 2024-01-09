@@ -1,18 +1,28 @@
-import { Container, Table } from './styled'
+import { Container, Table, Box } from './styled'
 import React from 'react'
-import { Typography } from '@mui/material'
+import { Link, Typography } from '@mui/material'
 import { api } from '@/lib/axios'
+import { useRouter } from 'next/router'
+import { ArrowBendDownLeft, CaretRight } from 'phosphor-react'
 
 export default function Resultado() {
+  const router = useRouter()
+
+  const { id }: any = router.query
+
   const [votation, setVotation] = React.useState(null)
 
   const getResults = async () => {
-    const { data } = await api.get('/votos/votos')
+    if(!id) return
+
+    const { data } = await api.get(`/votos/votos?id=${id}`)
 
     setVotation(data)
   }
 
   const calculatePercentage = (count: number) => {
+    if(!votation?.votosCount) return 0
+
     const percentage = (count / votation?.votosCount) * 100
 
     return percentage.toFixed(2)
@@ -20,6 +30,7 @@ export default function Resultado() {
   }
 
   const calculatePercentageOfValidVotes = (count: number) => {
+    if(!votation?.votosCount) return 0
     const total = votation?.votosChapas[0].count + votation?.votosChapas[1].count
 
     console.log(total, 'deca');
@@ -32,13 +43,38 @@ export default function Resultado() {
 
   React.useEffect(() => {
     getResults()
-  }, [])
+  }, [id])
 
   console.log(votation);
 
 
   return (
     <Container>
+    <Box>
+        <Link
+          href="/eleicao/lista"
+          style={{
+            textDecoration: 'none',
+            fontFamily: 'Roboto',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            marginBottom: '1rem',
+            color: '#000',
+          }}
+        >
+          <ArrowBendDownLeft size={32} />
+          Retornar
+        </Link>
+    </Box>
+      <legend>
+          <span>
+            <Link href={'/eleicao/lista'}>Eleicão</Link>
+          </span>
+          <CaretRight size={14} />
+          <span>Resultados</span>
+        </legend>
+
       <Typography
         style={{
           textAlign: 'center',
@@ -58,7 +94,7 @@ export default function Resultado() {
         component="h2"
         gutterBottom
       >
-        Resultado Votação Eleição SAERJ 12 - 2024
+        Resultado da votação {votation?.name}
       </Typography>
 
       <Table>
@@ -97,8 +133,8 @@ export default function Resultado() {
           <tr>
             <td></td>
             <td>{votation?.votosCount}</td>
-            <td>100%</td>
-            <td>100%</td>
+            <td>{votation?.votosCount ? '100%' : '0%'}</td>
+            <td>{votation?.votosCount ? '100%' : '0%'}</td>
           </tr>
         </tfoot>
       </Table>

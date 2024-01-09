@@ -15,20 +15,21 @@ import {
 } from './styled'
 import { Avatar, Typography } from '@mui/material'
 import { Button } from '@/components/Button'
-import { useEffect, useState } from 'react'
+import {  useEffect, useState } from 'react'
 import { api } from '@/lib/axios'
+import { GetServerSideProps } from 'next'
+import { prisma } from '@/lib/prisma'
 
+export default function Votacao({data,alreadyVoted}) {
+  
 
-
-export default function Votacao() {
-  const [userAlreadyVoted, setUserAlreadyVoted] = useState(false)
+  const [userAlreadyVoted, setUserAlreadyVoted] = useState(alreadyVoted)
   const [open, setOpen] = useState(true)
   const [showVotation, setShowVotation] = useState(false)
   const [showVoteReceipt, setShowVoteReceipt] = useState(false)
 
   const [selected, setSelected] = useState('' as any)
-
-  const [votation, setVotation] = useState(null)
+  const [votation, setVotation] = useState(data)
 
   const handleClick = (item: string) => {
     setShowVotation(true)
@@ -44,9 +45,9 @@ export default function Votacao() {
 
     setShowVoteReceipt(true)
     setShowVotation(false)
+    setUserAlreadyVoted(true)
 
-
-    await api.post('/votos/cadastro', { nome_chapa: selected })
+    await api.post('/votos/cadastro', { nome_chapa: selected, votacao_id: votation.id, usuario_id: 1 })
   }
 
   const expandCandidates = (index: number) => {
@@ -83,22 +84,11 @@ export default function Votacao() {
     setSelected('')
   }
 
-  const getVotation = async () => {
-    const { data } = await api.get('/eleicao/read')
-
-    const { data: userVoted } = await api.get('/votos/')
-
-
-    if (userVoted.length > 0) {
-      setUserAlreadyVoted(true)
-    }
-
-    setVotation(data)
-  }
-
   useEffect(() => {
-    getVotation()
-  }, [])
+    if (userAlreadyVoted) {
+      setShowVoteReceipt(true)
+    }
+  }, [userAlreadyVoted])
 
   if (showVoteReceipt) {
     return (
@@ -123,13 +113,10 @@ export default function Votacao() {
           CPF: 857.260.010-87
         </Typography>
         <Typography id="modal-modal-title" variant="h6" component="h2">
-          Eleição: Eleição 1
+          Eleição: {votation?.matricula_saerj}
         </Typography>
         <Typography id="modal-modal-title" variant="h6" component="h2">
-          Data: {new Date().toLocaleDateString()}
-        </Typography>
-        <Typography id="modal-modal-title" variant="h6" component="h2">
-          Chapa Votada: {selected}
+          Chapa Votada: {selected || userAlreadyVoted.nome_chapa}
         </Typography>
 
         <Typography id="modal-modal-title" variant="h6" component="h2">
@@ -158,44 +145,65 @@ export default function Votacao() {
 
   return (
     <Container>
-      <h1>Votação</h1>
+
+      <h1 style={{textAlign:'center'}}>Votação {votation?.matricula_saerj}</h1>
+
 
       <Dialog open={open} onClose={() => setOpen(false)} setOpen={setOpen}>
         <WelcomeModal>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Bem-Vindo as Eleições da SAERJ
-          </Typography>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Perído de Votação
-          </Typography>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Início : {new Date(votation?.data_votacao_inicio).toLocaleDateString()}
-          </Typography>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Encerramento: {new Date(votation?.data_votacao_inicio).toLocaleDateString()}
-          </Typography>
-
-          {userAlreadyVoted ? (
-            <Typography style={{ marginTop: 10 }} variant="h6" component="h5">
-              Você já votou nessa eleição
+         
+          {votation ? (
+            <div>
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+            Bem-Vindo as Eleições {votation?.matricula_saerj}
             </Typography>
-          ) : (
-            <button
-              style={{
-                backgroundColor: 'rgb(82, 128, 53)',
-                border: 0,
-                width: 110,
-                height: 40,
-                borderRadius: 5,
-                marginRight: 10,
-                marginTop: 10,
-                color: '#fff',
-              }}
-              onClick={() => setOpen(false)}
-            >
-              Ir para votação
-            </button>
-          )}
+
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              Perído de Votação
+            </Typography>
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              Início : {new Date(votation?.data_votacao_inicio).toLocaleDateString()}
+            </Typography>
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              Encerramento: {new Date(votation?.data_votacao_fim).toLocaleDateString()}
+            </Typography>
+
+              {userAlreadyVoted ? (
+              <Typography style={{ marginTop: 10 }} variant="h6" component="h5">
+                Você já votou nessa eleição
+              </Typography>
+            ) : (
+              <button
+                style={{
+                  backgroundColor: 'rgb(82, 128, 53)',
+                  border: 0,
+                  width: 110,
+                  height: 40,
+                  borderRadius: 5,
+                  marginRight: 10,
+                  marginTop: 10,
+                  color: '#fff',
+                }}
+                onClick={() => setOpen(false)}
+              >
+                Ir para votação
+              </button>
+            )}
+            </div>
+          ):
+          <div>
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+            Bem-Vindo as Eleições da SAERJ
+            </Typography>
+
+            <Typography id="modal-modal-title" variant="h6" component="h2">
+              Ainda não existe nenhuma eleição ativa
+            </Typography>
+
+
+          </div>
+          }
+        
         </WelcomeModal>
       </Dialog>
 
@@ -246,20 +254,21 @@ export default function Votacao() {
       </Dialog>
 
       <Container>
-        {votation && votation.chapas.chapas.map((item, index) => (
+        {votation && votation.chapas?.chapas?.map((item, index) => (
           <>
-            <BoxOptions key={index}>
+          <div key={index}>
+            <BoxOptions >
               <Checkbox
-                onClick={() => handleClick(item.name)}
+                onClick={() => handleClick(item.nome_chapa)}
                 type="radio"
                 name="voto"
                 value="1"
-                checked={selected === item.name}
+                checked={selected === item.nome_chapa}
               />
 
               <div style={{ flex: 1 }}>
                 <BoxOptionName onClick={() => expandCandidates(index)}>
-                  <p>{item.name}</p>
+                  <p>{item.nome_chapa}</p>
 
                   <Typography
                     onClick={() => expandCandidates(index)}
@@ -273,13 +282,13 @@ export default function Votacao() {
 
                 {item.expandend && (
                   <div>
-                    {item.integrantes.map((canditate, index) => (
+                    {item.membros_chapa.map((canditate, index) => (
                       <BoxCandidates key={index}>
                         <Avatar alt="Remy Sharp" src={canditate.image} />
 
-                        <CanditateName>{canditate.name}</CanditateName>
+                        <CanditateName>{canditate.nome}</CanditateName>
                         <CanditatePosition>
-                          {canditate.position}
+                          {canditate.cargo}
                         </CanditatePosition>
                       </BoxCandidates>
                     ))}
@@ -287,37 +296,88 @@ export default function Votacao() {
                 )}
               </div>
             </BoxOptions>
+          </div>
           </>
         ))}
 
-        <BoxOptions>
-          <Checkbox
-            onClick={() => handleClick('BRANCO')}
-            checked={selected === 'BRANCO'}
-            type="radio"
-          />
+        {votation && (
+        <>
+          <BoxOptions>
+              <Checkbox
+                onClick={() => handleClick('BRANCO')}
+                checked={selected === 'BRANCO'}
+                type="radio"
+              />
 
-          <WhiteButton>
-            <p>BRANCO</p>
-          </WhiteButton>
-        </BoxOptions>
 
-        <BoxOptions>
-          <Checkbox
-            onClick={() => handleClick('NULO')}
-            type="radio"
-            name="voto"
-            checked={selected === 'NULO'}
-          />
+              <WhiteButton>
+                <p>BRANCO</p>
+              </WhiteButton>
+          </BoxOptions>
 
-          <NulableButton>
-            <p>NULO</p>
-          </NulableButton>
-        </BoxOptions>
+          <BoxOptions>
+              <Checkbox
+                onClick={() => handleClick('NULO')}
+                type="radio"
+                name="voto"
+                checked={selected === 'NULO'}
+              />
+
+              <NulableButton>
+                <p>NULO</p>
+              </NulableButton>
+          </BoxOptions>
+        </>
+        )}
       </Container>
+
+      {!votation && ( 
+      <Typography style={{textAlign:'center'}} variant="h6" component="h2">
+        Ainda não existe nenhuma eleição ativa para votação, volte mais tarde.
+      </Typography>
+      )}
     </Container>
   )
 }
 
 
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  try {
+    const data = await prisma.votacao.findFirst({
+      where: {
+        status: 'ATIVO'
+      },
+    })
 
+    if(!data) return {props:{data:null}}
+
+    const alreadyVoted = await prisma.voto.findFirst({
+      where: {
+        usuario_id: 1,
+        votacao_id: data?.id,
+      },
+    })
+
+    console.log(alreadyVoted,'alreadyVoted');
+    
+
+
+    console.log(data.chapas.chapas[0].membros_chapa,'data');
+    
+    return {
+      props: {
+        data,
+        alreadyVoted
+      },
+    }
+  } catch (error) {
+    console.error('Erro ao obter dados de tipo de empresa:', error)
+    return {
+      props: {
+        data: [],
+      },
+    }
+  } finally {
+    prisma.$disconnect()
+  }
+}

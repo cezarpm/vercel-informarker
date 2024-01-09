@@ -166,8 +166,8 @@ model Chapas {
 }
 
 enum Status {
-  ATIVA
-  INATIVA
+  ATIVO
+  INATIVO
 }
 
 model Votacao {
@@ -175,8 +175,8 @@ model Votacao {
   matricula_saerj     String
   data_votacao_inicio String
   data_votacao_fim    String
-  chapas              Json
-  status              Status @default(ATIVA)
+  chapas              Json  
+  status              Status @default(ATIVO)
 }
 
 model Voto {

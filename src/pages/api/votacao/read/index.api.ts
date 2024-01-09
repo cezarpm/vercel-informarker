@@ -1,3 +1,4 @@
+// Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { prisma } from '@/lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
@@ -6,19 +7,18 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse,
 ) {
+
+
+    const { id } = req.body
+
     try {
-
-        const { nome_chapa, usuario_id, votacao_id} = req.body
-
-        await prisma.voto.create({
-            data: {
-                nome_chapa,
-                usuario_id,
-                votacao_id
+        const response = await prisma.chapas.findFirst({
+            where: {
+                id,
             },
         })
 
-        return res.status(201).end()
+        res.status(200).json(response)
     } catch (error) {
         console.log(error)
         const ErrorMessage = `Error conect database`

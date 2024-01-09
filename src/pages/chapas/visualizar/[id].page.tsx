@@ -3,7 +3,7 @@ import React, { useEffect } from 'react'
 import { z } from 'zod'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { TextInput } from '@/components/TextInput'
-import { ArrowBendDownLeft } from 'phosphor-react'
+import { ArrowBendDownLeft, CaretRight } from 'phosphor-react'
 import Link from 'next/link'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { prisma } from '@/lib/prisma'
@@ -13,6 +13,7 @@ import { Typography } from '@mui/material'
 const integranteSchema = z.object({
   nome: z.string().min(1, { message: 'O campo nome é obrigatório' }),
   cargo: z.string().min(1, { message: 'O campo cargo é obrigatório' }),
+  image: z.string().min(1, { message: 'O campo imagem é obrigatório' }),
 })
 
 const schemaChapaForm = z.object({
@@ -44,12 +45,15 @@ export default function VotacaoAtualizar({ data }) {
     setValue('integrantes', data.membros_chapa)
   }, [data, setValue])
 
+  console.log(data);
+  
+
   return (
     <Container>
       <form>
         <Box>
           <Link
-            href="/votacao/lista"
+            href="/chapas"
             style={{
               textDecoration: 'none',
               fontFamily: 'Roboto',
@@ -65,6 +69,13 @@ export default function VotacaoAtualizar({ data }) {
           </Link>
         </Box>
         <fieldset>
+        <legend>
+            <span>
+              <Link href={'/chapas'}>Chapas</Link>
+            </span>
+            <CaretRight size={14} />
+            <span>Visualizar</span>
+          </legend>
           <Box>
             <TextInput
               title="Nome da chapa *"
@@ -90,7 +101,7 @@ export default function VotacaoAtualizar({ data }) {
                       height: 150,
                       objectFit: 'cover',
                     }}
-                      src="https://private-user-images.githubusercontent.com/46573685/294706954-d1153550-f0ba-467f-bc6b-eddbfd6c9655.png?jwt=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJnaXRodWIuY29tIiwiYXVkIjoicmF3LmdpdGh1YnVzZXJjb250ZW50LmNvbSIsImtleSI6ImtleTUiLCJleHAiOjE3MDQ1NjM3MDUsIm5iZiI6MTcwNDU2MzQwNSwicGF0aCI6Ii80NjU3MzY4NS8yOTQ3MDY5NTQtZDExNTM1NTAtZjBiYS00NjdmLWJjNmItZWRkYmZkNmM5NjU1LnBuZz9YLUFtei1BbGdvcml0aG09QVdTNC1ITUFDLVNIQTI1NiZYLUFtei1DcmVkZW50aWFsPUFLSUFWQ09EWUxTQTUzUFFLNFpBJTJGMjAyNDAxMDYlMkZ1cy1lYXN0LTElMkZzMyUyRmF3czRfcmVxdWVzdCZYLUFtei1EYXRlPTIwMjQwMTA2VDE3NTAwNVomWC1BbXotRXhwaXJlcz0zMDAmWC1BbXotU2lnbmF0dXJlPTU0NGRhODNkNjYzYmYwMDU0OTc1ZWFiMzI1M2ExOGNiNmExMWI1YjE2OWVjNTMzZWYyYjEwOGI0MWVmOTgyYzEmWC1BbXotU2lnbmVkSGVhZGVycz1ob3N0JmFjdG9yX2lkPTAma2V5X2lkPTAmcmVwb19pZD0wIn0.O-_eoWNogL3pH-i8GkwUKPHB0h-wdkrpOauJsSLDPt8" />
+                    src={membro.image} />
 
 
                     <Typography style={{
