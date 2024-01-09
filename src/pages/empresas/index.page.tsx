@@ -195,10 +195,12 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
       ocorrencia_tabela: 'não',
     },
   ]
+
   // console.log(dataTipoEmpresa)
   return (
     <Container>
       <p>Empresas</p>
+
       <div>
         <Box
           style={{
@@ -243,10 +245,39 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
             }}
             title="Buscar"
             onClick={BuscarFiltro}
-          />
+     />     
+      // <DataGridDemo dataTipoEmpresa={dataTipoEmpresa} data={data} w="100%" />
+
+      <form>
+        <Box style={{ marginTop: '1rem' }}>
+//          <SelectNoComplete
+//            value="Todos"
+//            title="Tipo Empresa"
+  //          data={dataTipoEmpresa}
+    //        {...register('tipo_empresa_filter')}
+  //        />
+    //      <SelectNoComplete
+  //          value="Todos"
+    //        title="Patrocinadora"
+   //         {...register('patrocinarora_filter')}
+   //         data={dataSimNao}
+   //       />
+   //       <SelectNoComplete
+   //         value="Todos"
+   //         title="Faculdade Anestesiologia"
+   //         {...register('faculdade_anestesiologia_filter')}
+    //        data={dataSimNao}
+     //     />
+     //     <SelectNoComplete
+     //       value="Todos"
+    //        title="Empresa Ativa"
+      //      {...register('empresa_ativa_filter')}
+        //    data={dataSimNao}
+         // />
         </Box>
       </div>
       <DataGridDemo columns={columns} rows={list} w="100%" />
+
 
       <Box>
         <Button

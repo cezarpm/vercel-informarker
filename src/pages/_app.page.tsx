@@ -5,6 +5,9 @@ import type { AppProps } from 'next/app'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
+
 globalStyles()
 export default function App({
   Component,
@@ -13,21 +16,23 @@ export default function App({
   return (
     <>
       <Header />
-      <SelecaoProvider>
-        <ToastContainer
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-        />
-        <Component {...pageProps} />
-      </SelecaoProvider>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <SelecaoProvider>
+          <ToastContainer
+            position="top-right"
+            autoClose={5000}
+            hideProgressBar={false}
+            newestOnTop={false}
+            closeOnClick
+            rtl={false}
+            pauseOnFocusLoss
+            draggable
+            pauseOnHover
+            theme="light"
+          />
+          <Component {...pageProps} />
+        </SelecaoProvider >
+      </LocalizationProvider>
     </>
   )
 }

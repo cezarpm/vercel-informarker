@@ -69,6 +69,19 @@ export default function Vizualizar({
   dataTratamento,
 }: any) {
   const router = useRouter()
+
+
+  async function OnSubmit(data: any) {
+    try {
+      await api.put('/empresa/update', { ...data })
+      toast.success('Empresa atualizada!')
+      router.push('/empresas')
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  const newDataTipoEmpresa = dataTipoEmpresa?.map((item: any) => {
+
   const [cepInvalido, setCepInvalido] = useState()
   const [disabledButtonCep, setDisabledButtonCep] = useState(false)
 
