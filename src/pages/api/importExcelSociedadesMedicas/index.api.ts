@@ -61,6 +61,7 @@ export default async function handler(
         console.log('Processando items Tabela:', item)
         await prisma.empresa.create({
           data: {
+            tipo_empresa: 'Sociedades Médias',
             razao_social: item.SOCIEDADE,
             cod_empresa: item.SIGLA,
             observacoes: `${item['ALTERAÇÃO']} ${item.ANO}`,

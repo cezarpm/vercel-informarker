@@ -176,7 +176,7 @@ export default function Parametros({
   })
 
   function handleNextPage() {
-    router.push('/associados')
+    router.push('/parametros/associados')
   }
 
   useEffect(() => {

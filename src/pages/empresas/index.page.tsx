@@ -26,61 +26,76 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
   const { selectedRowIds } = useId()
 
   const columns: GridColDef[] = [
-    { field: 'id', headerName: 'id', flex: 1 },
+    {
+      field: 'id',
+      headerName: 'id',
+      disableColumnMenu: true,
+      width: 80,
+    },
     {
       field: 'tipo_empresa',
       headerName: 'Tipo Empresa',
-      flex: 1,
+      width: 120,
     },
     {
       field: 'patrocinadora',
       headerName: 'Patrocinadora',
-      flex: 1,
+      width: 120,
     },
     {
       field: 'faculdade_anestesiologia',
       headerName: 'Faculdade Anestesiologia',
-      flex: 1,
+      width: 220,
+      disableColumnMenu: true,
     },
     {
       field: 'empresa_ativa',
       headerName: 'Empresa Ativa',
-      flex: 1,
+      width: 120,
+      disableColumnMenu: true,
     },
     {
       field: 'razao_social',
       headerName: 'Razão Social',
       flex: 1,
+      disableColumnMenu: true,
     },
     {
       field: 'nome_fantasia',
       headerName: 'Nome Fantasia',
       flex: 1,
+      disableColumnMenu: true,
     },
     {
       field: 'cnpj',
       headerName: 'Cnpj',
-      flex: 1,
+      width: 140,
+      disableColumnMenu: true,
     },
     {
       field: 'cidade',
       headerName: 'Cidade',
+      width: 120,
+      disableColumnMenu: true,
     },
     {
       field: 'uf',
       headerName: 'Uf',
-      flex: 1,
+      width: 50,
+      disableColumnMenu: true,
     },
 
     {
       field: 'nome_contato_primario',
       headerName: 'Nome Contato Primário',
-      flex: 1,
+      width: 180,
+      disableColumnMenu: true,
     },
     {
       field: 'email_contato_primario',
       headerName: 'Email Contato Primário',
-      flex: 1,
+      width: 180,
+      disableColumnMenu: true,
     },
   ]
 
@@ -129,7 +144,7 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
       ocorrencia_tabela: 'não',
     },
   ]
-
+  // console.log(dataTipoEmpresa)
   return (
     <Container>
       <p>Empresas</p>
@@ -207,6 +222,14 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
           data={selectedRowIds}
           redirectRouter="/empresas"
         />
+
+        {/* <Button
+          title="Retornar"
+          style={{ backgroundColor: '#b34db2' }}
+          onClick={() => {
+            router.push('/')
+          }}
+        /> */}
       </Box>
     </Container>
   )

@@ -10,7 +10,13 @@ import ListItemIcon from '@mui/material/ListItemIcon'
 import ListItemText from '@mui/material/ListItemText'
 import Image from 'next/image'
 import logo from '@/assets/logo.png'
-import { Buildings, CloudArrowUp, SignOut, Table } from 'phosphor-react'
+import {
+  Buildings,
+  CloudArrowUp,
+  SignOut,
+  Table,
+  UsersFour,
+} from 'phosphor-react'
 import { useRouter } from 'next/navigation'
 import { Twirl as Hamburger } from 'hamburger-react'
 type Anchor = 'left'
@@ -19,8 +25,11 @@ export function TemporaryDrawer() {
   const [state, setState] = React.useState({
     left: false,
   })
+
   const [isOpen, setOpen] = React.useState(false)
+
   const router = useRouter()
+
   function handleNextPage(text: string): void {
     if (text === 'Parametros') {
       router.push('/parametros')
@@ -28,6 +37,8 @@ export function TemporaryDrawer() {
       router.push('/empresas')
     } else if (text === 'Tabelas') {
       router.push('/tabelas')
+    } else if (text === 'Associados') {
+      router.push('/associados')
     }
   }
 
@@ -56,6 +67,9 @@ export function TemporaryDrawer() {
     <>
       <Table size={30} color="#fff" />
     </>,
+    <>
+      <UsersFour size={30} color="#fff" />
+    </>,
   ]
 
   const list = (anchor: Anchor) => (
@@ -82,18 +96,20 @@ export function TemporaryDrawer() {
         <Image src={logo} alt="logo" width={210} quality={100} />
       </div>
       <List>
-        {['Parametros', 'Empresas', 'Tabelas'].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton
-              onClick={() => {
-                handleNextPage(text)
-              }}
-            >
-              <ListItemIcon>{arrayIcons[index]}</ListItemIcon>
-              <ListItemText primary={text} style={{ color: '#fff' }} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+        {['Parametros', 'Empresas', 'Tabelas', 'Associados'].map(
+          (text, index) => (
+            <ListItem key={text} disablePadding>
+              <ListItemButton
+                onClick={() => {
+                  handleNextPage(text)
+                }}
+              >
+                <ListItemIcon>{arrayIcons[index]}</ListItemIcon>
+                <ListItemText primary={text} style={{ color: '#fff' }} />
+              </ListItemButton>
+            </ListItem>
+          ),
+        )}
       </List>
 
       <Divider />

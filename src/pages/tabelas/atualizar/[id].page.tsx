@@ -5,7 +5,7 @@ import { z } from 'zod'
 import { GetServerSideProps } from 'next'
 import { prisma } from '@/lib/prisma'
 import { TextInput } from '@/components/TextInput'
-import { CaretRight } from 'phosphor-react'
+import { ArrowBendDownLeft, CaretRight } from 'phosphor-react'
 import Link from 'next/link'
 import { useForm } from 'react-hook-form'
 import { Button } from '@/components/Button'
@@ -60,6 +60,23 @@ export default function Vizualizar({ data }: schemaCategoria) {
   return (
     <Container>
       <form onSubmit={handleSubmit(OnSubmit)}>
+        <Box>
+          <Link
+            href="/tabelas"
+            style={{
+              textDecoration: 'none',
+              fontFamily: 'Roboto',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              marginBottom: '1rem',
+              color: '#000',
+            }}
+          >
+            <ArrowBendDownLeft size={32} />
+            Retornar
+          </Link>
+        </Box>
         <fieldset>
           <legend>
             <span>

@@ -16,7 +16,7 @@ export const Container = styled('main', {
       display: 'flex',
       flexDirection: `column`,
       justifyContent: 'center',
-      gap: '5rem',
+      gap: '2rem',
       button: {
         width: '40%',
       },
