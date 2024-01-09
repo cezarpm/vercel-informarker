@@ -77,16 +77,16 @@ model Tabelas {
 
 model Associados {
   id                                   Int     @id @default(autoincrement())
-  data_nascimento                      String?
-  data_inicio_especializacao           String?
-  data_previsao_conclusao              String?
+  data_nascimento                      DateTime?
+  data_inicio_especializacao           DateTime?
+  data_previsao_conclusao              DateTime?
   comprovante_cpf                      String?
   numero_proposta_SBA                  BigInt?
   matricula_SAERJ                      Int?
   matricula_SBA                        Int?
   situacao                             String?
   uf_crm                               String?
-  crm                                  Int?
+  crm                                  String?
   nome_completo                        String?
   cpf                                  String?
   sexo                                 String?
@@ -220,4 +220,11 @@ model Eleicoes {
   mandato_inicio DateTime
   mandato_fim    DateTime
 
+}
+
+model Logs {
+  id             Int      @id @default(autoincrement())
+  cod_log        String
+  ocorrencia_log String
+  data_hora_log  DateTime
 }

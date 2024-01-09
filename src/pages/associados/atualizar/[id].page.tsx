@@ -5,7 +5,6 @@ import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { Button } from '@/components/Button'
 import { TextInput } from '@/components/TextInput'
-import { SwitchInput } from '@/components/SwitchInput'
 import { prisma } from '@/lib/prisma'
 import { GetServerSideProps } from 'next'
 import { SelectOptions } from '@/components/SelectOptions'
@@ -15,16 +14,17 @@ import { toast } from 'react-toastify'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { useArrayDate } from '@/utils/useArrayDate'
-import SelectNoComplete from '@/components/SelectNoComplete'
 import axios from 'axios'
+import { format } from 'date-fns'
 
-const schemaParams = z.object({
+const schemaAssociados = z.object({
+  id: z.number(),
   numero_proposta_SBA: z.number(),
   matricula_SAERJ: z.number(),
   matricula_SBA: z.number(),
   situacao: z.string(),
   uf_crm: z.string(),
-  crm: z.number(),
+  crm: z.string(),
   nome_completo: z.string(),
   cpf: z.string(),
   sexo: z.string(),
@@ -77,10 +77,55 @@ const schemaParams = z.object({
   yearPrevConcl: z.string(),
 })
 
-type SchemaParametros = z.infer<typeof schemaParams>
+type SchemaAssociados = z.infer<typeof schemaAssociados>
 
-interface schemaParametrosProps {
-  data: any
+interface schemaAssociados {
+  data: {
+    id: number
+    data_nascimento: string
+    data_inicio_especializacao: string
+    data_previsao_conclusao: string
+    comprovante_cpf: string
+    numero_proposta_SBA: any
+    matricula_SAERJ: number
+    matricula_SBA: number
+    situacao: string
+    uf_crm: string
+    crm: string
+    nome_completo: string
+    cpf: string
+    sexo: string
+    nome_profissional: string
+    categoria: string
+    cep: string
+    logradouro: string
+    numero: number
+    complemento: string
+    bairro: string
+    cidade: string
+    uf: string
+    pais: string
+    telefone_celular: string
+    telefone_residencial: string
+    email: string
+    nome_instituicao_ensino_graduacao: string
+    ano_conclusao_graduacao: string
+    residencia_mec_cnrm: string
+    nivel_residencia: string
+    nome_hospital_mec: string
+    uf_prm: string
+    comprovante_endereco: string
+    carta_indicacao_2_membros: string
+    declaracao_hospital: string
+    diploma_medicina: string
+    certidao_quitacao_crm: string
+    certificado_conclusao_especializacao: string
+    declaro_verdadeiras: string
+    declaro_quite_SAERJ: string
+    pendencias_SAERJ: string
+    nome_presidente_regional: string
+    sigla_regional: string
+  }
   dataCategoria: any
   dataSituacao: any
   dataPais: any
@@ -90,12 +135,18 @@ export default function AssociadosCadastro({
   dataCategoria,
   dataSituacao,
   dataPais,
-}: schemaParametrosProps) {
+}: schemaAssociados) {
   const [cepInvalido, setCepInvalido] = useState()
   const [disableCamposCepInvalido, setDisableCamposCepInvalido] =
     useState(false)
   const router = useRouter()
-  const dataAssociados = data[0]
+
+  // const extrairDataNascimentoOriginal = useArrayDate.extrairComponentesData(
+  //   data.data_nascimento,
+  // )
+  // console.log(extrairDataNascimentoOriginal)
+
+  // const dataAssociados = data[0]
 
   const dataDays = useArrayDate.Dia()
   const dataMonths = useArrayDate.Mes()
@@ -107,9 +158,16 @@ export default function AssociadosCadastro({
     setValue,
     watch,
     formState: { isSubmitting, errors },
-  } = useForm<SchemaParametros>()
+  } = useForm<SchemaAssociados>()
   const cepValue = watch('cep')
+  const dataNascimento = useArrayDate.DesestruturarDate(data.data_nascimento)
 
+  const dataInicio = useArrayDate.DesestruturarDate(
+    data.data_inicio_especializacao,
+  )
+  const dataPrevisao = useArrayDate.DesestruturarDate(
+    data.data_previsao_conclusao,
+  )
   async function handleCheckCep(cep: string) {
     try {
       const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`)
@@ -147,8 +205,9 @@ export default function AssociadosCadastro({
     }
   }
 
-  async function handleOnSubmit(data: SchemaParametros) {
+  async function handleOnSubmit(data: SchemaAssociados) {
     try {
+      console.log(data)
       const dataNascimento = useArrayDate.MontarDate(
         data.yearNasc,
         data.monthNasc,
@@ -164,7 +223,7 @@ export default function AssociadosCadastro({
         data.monthPrevConcl,
         data.dayPrevConcl,
       )
-      // console.log(dataNascimento, dataInicioEspecializacao, dataPrevisaoConclusao)
+
       data.cpf = data.cpf.replace(/[^\d]/g, '')
       data.cep = data.cep.replace(/[^\d]/g, '')
 
@@ -186,24 +245,52 @@ export default function AssociadosCadastro({
         yearPrevConcl,
         ...newData
       } = data
-      console.log(newData)
 
-      await api.post('/associados/cadastro', {
+      await api.put('/associados/update', {
         ...newData,
+        id: data.id,
         data_nascimento: dataNascimento,
         data_inicio_especializacao: dataInicioEspecializacao,
         data_previsao_conclusao: dataPrevisaoConclusao,
       })
       toast.success('Associado cadastrado')
-      // router.push('/associados')
+      router.push('/associados')
     } catch (error) {
       console.log(error)
       toast.error('Oops algo deu errado...')
     }
   }
+
   useEffect(() => {
     setDisableCamposCepInvalido(false)
     handleGetAllParams()
+    setValue('id', data.id)
+    setValue('cep', data.cep ? data.cep : '')
+    setValue('cpf', data.cpf ? data.cpf : '')
+    setValue(
+      'telefone_celular',
+      data.telefone_celular ? data.telefone_celular : '',
+    )
+    setValue(
+      'telefone_residencial',
+      data.telefone_residencial ? data.telefone_residencial : '',
+    )
+    setValue('categoria', data.categoria)
+    setValue('situacao', data.situacao)
+    setValue('pais', data.pais)
+
+    setValue('dayNasc', dataNascimento.dia)
+    setValue('monthNasc', dataNascimento.mes)
+    setValue('yearNasc', dataNascimento.ano)
+
+    setValue('dayInicioEspec', dataInicio.dia)
+    setValue('monthInicioEspec', dataInicio.mes)
+    setValue('yearInicioEspec', dataInicio.ano)
+
+    setValue('dayPrevConcl', dataPrevisao.dia)
+    setValue('monthPrevConcl', dataPrevisao.mes)
+    setValue('yearPrevConcl', dataPrevisao.ano)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
   return (
     <Container>
@@ -225,11 +312,12 @@ export default function AssociadosCadastro({
             Retornar
           </Link>
         </Box>
+
         <fieldset>
           <legend>
             <Link href="/associados">Associados</Link>
             <CaretRight size={14} />
-            <span>Incluir</span>
+            <span>Atualizar</span>
           </legend>
 
           <fieldset
@@ -249,6 +337,7 @@ export default function AssociadosCadastro({
                 <TextInput
                   w={180}
                   title="Número proposta SBA"
+                  defaultValue={data.numero_proposta_SBA}
                   {...register('numero_proposta_SBA', {
                     valueAsNumber: true,
                   })}
@@ -257,6 +346,7 @@ export default function AssociadosCadastro({
               <div>
                 <TextInput
                   w={180}
+                  defaultValue={data.matricula_SAERJ}
                   title="Matrícula SAERJ"
                   {...register('matricula_SAERJ', {
                     valueAsNumber: true,
@@ -267,16 +357,18 @@ export default function AssociadosCadastro({
                 <TextInput
                   w={180}
                   title="Matrícula SBA"
+                  defaultValue={data.matricula_SBA}
                   {...register('matricula_SBA', {
                     valueAsNumber: true,
                   })}
                 />
               </div>
+
               <SelectOptions
                 w={260}
-                data={dataCategoria}
                 description="Categoria"
-                // data={() => []}
+                defaultValue={data.categoria}
+                data={dataCategoria}
                 {...register('categoria')}
               />
             </Box>
@@ -284,26 +376,36 @@ export default function AssociadosCadastro({
             <Box>
               <TextInput
                 title="Residencia MEC-CNRM"
+                defaultValue={data.residencia_mec_cnrm}
                 {...register('residencia_mec_cnrm')}
               />
               <TextInput
                 title="Nível Residencia"
+                defaultValue={data.nivel_residencia}
                 {...register('nivel_residencia')}
               />
               <TextInput
+                defaultValue={data.nome_hospital_mec}
                 title="Nome Hospital MEC"
                 {...register('nome_hospital_mec')}
               />
-              <TextInput title="UF PRM" {...register('uf_prm')} />
               <TextInput
+                title="UF PRM"
+                defaultValue={data.uf_prm}
+                {...register('uf_prm')}
+              />
+              <TextInput
+                defaultValue={data.comprovante_endereco}
                 title="Comprovante Endereço"
                 {...register('comprovante_endereco')}
               />
               <TextInput
+                defaultValue={data.carta_indicacao_2_membros}
                 title="Carta Indicação 2 membros"
                 {...register('carta_indicacao_2_membros')}
               />
               <TextInput
+                defaultValue={data.declaracao_hospital}
                 title="Declaração Hospital"
                 {...register('declaracao_hospital')}
               />
@@ -311,41 +413,49 @@ export default function AssociadosCadastro({
 
             <Box>
               <TextInput
+                defaultValue={data.diploma_medicina}
                 title="Diploma Medicina"
                 {...register('diploma_medicina')}
               />
 
               <TextInput
+                defaultValue={data.certidao_quitacao_crm}
                 title="Certidão Quitação CRM"
                 {...register('certidao_quitacao_crm')}
               />
               <div>
                 <TextInput
                   w={220}
+                  defaultValue={data.certificado_conclusao_especializacao}
                   title="Certificado Conclusão Especialização"
                   {...register('certificado_conclusao_especializacao')}
                 />
               </div>
               <TextInput
+                defaultValue={data.declaro_verdadeiras}
                 title="Declaro Verdadeiras"
                 {...register('declaro_verdadeiras')}
               />
               <TextInput
+                defaultValue={data.declaro_quite_SAERJ}
                 title="Declaro Quite SAERJ"
                 {...register('declaro_quite_SAERJ')}
               />
               <TextInput
                 title="Pendências SERJ"
+                defaultValue={data.pendencias_SAERJ}
                 {...register('pendencias_SAERJ')}
               />
               <div>
                 <TextInput
                   w={180}
+                  defaultValue={data.nome_presidente_regional}
                   title="Nome Presidente Regional"
                   {...register('nome_presidente_regional')}
                 />
               </div>
               <TextInput
+                defaultValue={data.sigla_regional}
                 title="Sigla Regional"
                 {...register('sigla_regional')}
               />
@@ -365,7 +475,11 @@ export default function AssociadosCadastro({
             </legend>
 
             <Box>
-              <TextInput title="Nome Completo" {...register('nome_completo')} />
+              <TextInput
+                defaultValue={data.nome_completo}
+                title="Nome Completo"
+                {...register('nome_completo')}
+              />
               <div>
                 <TextInput
                   w={140}
@@ -377,6 +491,7 @@ export default function AssociadosCadastro({
               <div>
                 <TextInput
                   w={220}
+                  defaultValue={data.comprovante_cpf}
                   title="Comprovante CPF"
                   {...register('comprovante_cpf')}
                 />
@@ -399,7 +514,7 @@ export default function AssociadosCadastro({
                   data={dataDays}
                   w={90}
                   {...register('dayNasc')}
-                  // defaultValue={{ label: newDateAnuidade.dia }}
+                  defaultValue={{ label: dataNascimento.dia }}
                 />
 
                 <SelectOptions
@@ -407,7 +522,7 @@ export default function AssociadosCadastro({
                   description="Mês"
                   w={90}
                   {...register('monthNasc')}
-                  // defaultValue={{ label: newDateAnuidade.mes }}
+                  defaultValue={{ label: dataNascimento.mes }}
                 />
 
                 <SelectOptions
@@ -415,7 +530,7 @@ export default function AssociadosCadastro({
                   description="Ano"
                   data={dataYears}
                   {...register('yearNasc')}
-                  // defaultValue={{ label: newDateAnuidade.ano }}
+                  defaultValue={{ label: dataNascimento.ano }}
                 />
               </div>
             </Box>
@@ -424,24 +539,41 @@ export default function AssociadosCadastro({
               <TextInput
                 title="Nome Profissional"
                 {...register('nome_profissional')}
+                defaultValue={data.nome_profissional}
               />
               <div>
-                <TextInput w={100} title="Sexo" {...register('sexo')} />
+                <TextInput
+                  w={100}
+                  title="Sexo"
+                  {...register('sexo')}
+                  defaultValue={data.sexo}
+                />
               </div>
               <div>
                 <SelectOptions
                   w={200}
                   description="Situação"
                   data={dataSituacao}
+                  defaultValue={data.situacao}
                   {...register('situacao')}
                 />
               </div>
               <div>
-                <TextInput w={100} title="UF CRM" {...register('uf_crm')} />
+                <TextInput
+                  w={100}
+                  defaultValue={data.uf_crm}
+                  title="UF CRM"
+                  {...register('uf_crm')}
+                />
               </div>
 
               <div>
-                <TextInput w={180} title="CRM" {...register('crm')} />
+                <TextInput
+                  w={180}
+                  title="CRM"
+                  {...register('crm')}
+                  defaultValue={data.crm}
+                />
               </div>
             </Box>
 
@@ -449,12 +581,14 @@ export default function AssociadosCadastro({
               <TextInput
                 title="Nome Instituição de Ensino Graduação"
                 {...register('nome_instituicao_ensino_graduacao')}
+                defaultValue={data.nome_instituicao_ensino_graduacao}
               />
               <div>
                 <TextInput
                   w={180}
                   title="Ano de Conclusão Graduação"
                   {...register('ano_conclusao_graduacao')}
+                  defaultValue={data.ano_conclusao_graduacao}
                 />
               </div>
             </Box>
@@ -474,6 +608,7 @@ export default function AssociadosCadastro({
                   data={dataDays}
                   w={90}
                   {...register('dayInicioEspec')}
+                  defaultValue={{ label: dataInicio.dia }}
                   // defaultValue={{ label: newDateAnuidade.dia }}
                 />
 
@@ -482,6 +617,7 @@ export default function AssociadosCadastro({
                   description="Mês"
                   w={90}
                   {...register('monthInicioEspec')}
+                  defaultValue={{ label: dataInicio.mes }}
                   // defaultValue={{ label: newDateAnuidade.mes }}
                 />
 
@@ -490,6 +626,7 @@ export default function AssociadosCadastro({
                   description="Ano"
                   data={dataYears}
                   {...register('yearInicioEspec')}
+                  defaultValue={{ label: dataInicio.ano }}
                   // defaultValue={{ label: newDateAnuidade.ano }}
                 />
               </div>
@@ -509,6 +646,8 @@ export default function AssociadosCadastro({
                   data={dataDays}
                   w={90}
                   {...register('dayPrevConcl')}
+                  defaultValue={{ label: dataPrevisao.dia }}
+
                   // defaultValue={{ label: newDateAnuidade.dia }}
                 />
 
@@ -517,6 +656,7 @@ export default function AssociadosCadastro({
                   description="Mês"
                   w={90}
                   {...register('monthPrevConcl')}
+                  defaultValue={{ label: dataPrevisao.mes }}
                   // defaultValue={{ label: newDateAnuidade.mes }}
                 />
 
@@ -525,6 +665,8 @@ export default function AssociadosCadastro({
                   description="Ano"
                   data={dataYears}
                   {...register('yearPrevConcl')}
+                  defaultValue={{ label: dataPrevisao.ano }}
+
                   // defaultValue={{ label: newDateAnuidade.ano }}
                 />
               </div>
@@ -562,8 +704,6 @@ export default function AssociadosCadastro({
                     w={110}
                     title="Cep *"
                     {...register('cep')}
-                    helperText={errors.cep?.message}
-                    error={!!errors.cep?.message}
                     mask="99999-999"
                   />
                   <Button
@@ -581,6 +721,7 @@ export default function AssociadosCadastro({
                 disabled={disableCamposCepInvalido}
                 title="Logradouro *"
                 {...register('logradouro')}
+                defaultValue={data.logradouro}
               />
               <div>
                 <TextInput
@@ -590,12 +731,14 @@ export default function AssociadosCadastro({
                   {...register('numero', {
                     valueAsNumber: true,
                   })}
+                  defaultValue={data.numero}
                 />
               </div>
               <TextInput
                 disabled={disableCamposCepInvalido}
                 title="Complemento"
                 {...register('complemento')}
+                defaultValue={data.complemento}
               />
             </Box>
 
@@ -604,6 +747,7 @@ export default function AssociadosCadastro({
                 disabled={disableCamposCepInvalido}
                 title="Bairro *"
                 {...register('bairro')}
+                defaultValue={data.bairro}
               />
               <div>
                 <TextInput
@@ -611,6 +755,7 @@ export default function AssociadosCadastro({
                   w={220}
                   title="Cidade *"
                   {...register('cidade')}
+                  defaultValue={data.cidade}
                 />
               </div>
               <div>
@@ -619,11 +764,13 @@ export default function AssociadosCadastro({
                   w={50}
                   title="UF *"
                   {...register('uf')}
+                  defaultValue={data.uf}
                 />
               </div>
               <div>
                 <SelectOptions
                   data={dataPais}
+                  defaultValue={data.pais}
                   w={260}
                   description="País *"
                   {...register('pais')}
@@ -661,13 +808,17 @@ export default function AssociadosCadastro({
                   {...register('telefone_residencial')}
                 />
               </div>
-              <TextInput w={300} title="Email" {...register('email')} />
+              <TextInput
+                w={300}
+                title="Email"
+                {...register('email')}
+                defaultValue={data.email}
+              />
             </Box>
           </fieldset>
-
           <Button
             type="submit"
-            title={isSubmitting ? 'Enviando...' : 'Enviar'}
+            title={isSubmitting ? 'Atualizando...' : 'Atualizar'}
             disabled={isSubmitting}
           />
         </fieldset>
@@ -676,8 +827,26 @@ export default function AssociadosCadastro({
   )
 }
 
-export const getServerSideProps: GetServerSideProps = async () => {
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const { id }: any = context.params
   try {
+    const data = await prisma.associados.findFirst({
+      where: {
+        id: Number(id),
+      },
+    })
+    const convertBigIntToString = (obj: any) => {
+      for (const key in obj) {
+        if (typeof obj[key] === 'bigint') {
+          obj[key] = obj[key].toString()
+        }
+        if (obj[key] instanceof Date) {
+          obj[key] = format(obj[key], 'yyyy-MM-dd') // ou o formato desejado
+        }
+      }
+      return obj
+    }
+
     const categoriaAssociado = await prisma.tabelas.findMany({
       where: {
         codigo_tabela: 'Categoria_Associado',
@@ -714,7 +883,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
 
     return {
       props: {
-        data: [],
+        data: convertBigIntToString(data),
         dataCategoria,
         dataSituacao,
         dataPais,
@@ -725,7 +894,9 @@ export const getServerSideProps: GetServerSideProps = async () => {
     return {
       props: {
         data: [],
-        newDataCategory: [],
+        dataCategoria: [],
+        dataSituacao: [],
+        dataPais: [],
       },
     }
   }

@@ -210,6 +210,17 @@ export default function DataGridDemo({ data, w, dataTipoEmpresa }: any) {
   }
 
   return (
+
+ //   <Box sx={{ height: '100%', width: w, marginTop: '1rem' }}>
+  //    <DataGrid
+  //      rows={rows}
+  //      rowHeight={30}
+ //       columns={columns}
+  //      initialState={{
+ //         pagination: {
+ //           paginationModel: {
+  //            pageSize: 10,
+
     <Container>
       <Modal
         open={open}
@@ -277,6 +288,7 @@ export default function DataGridDemo({ data, w, dataTipoEmpresa }: any) {
               paginationModel: {
                 pageSize: 10,
               },
+
             },
           }}
           pageSizeOptions={[10]}

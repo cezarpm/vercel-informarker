@@ -10,7 +10,7 @@ interface schemaTextField {
   onChange?: any
   type?: string
   value?: string | number
-  defaultValue?: string
+  defaultValue?: any
   w?: number | string
   minW?: number | string
   messageError?: string

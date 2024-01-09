@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma'
+import { Logs } from '@/utils/Logs'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
 export default async function handler(
@@ -20,6 +21,10 @@ export default async function handler(
           in: data,
         },
       },
+    })
+    Logs({
+      modulo: 'DELETE EMPRESA',
+      descriptionLog: `empresa ID: ${data} usuario: ' TESTE ' `,
     })
     return res.status(201).end()
   } catch (error) {

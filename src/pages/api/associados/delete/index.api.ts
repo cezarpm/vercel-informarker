@@ -10,12 +10,12 @@ export default async function handler(
     return res.status(404).json({ message: 'invalid method' })
   }
   const data = req.body
-
+  // console.log(data)
   if (!Array.isArray(data) || data.length === 0) {
     return res.status(400).json({ message: 'Invalid data format' })
   }
   try {
-    await prisma.tabelas.deleteMany({
+    await prisma.associados.deleteMany({
       where: {
         id: {
           in: data,
@@ -23,8 +23,8 @@ export default async function handler(
       },
     })
     Logs({
-      modulo: 'TABELAS DELETE',
-      descriptionLog: `ITEM DELETADO ${data}`,
+      modulo: 'Associado Delete',
+      descriptionLog: `empresa ID: ${data} usuario: ' TESTE ' `,
     })
     return res.status(201).end()
   } catch (error) {
