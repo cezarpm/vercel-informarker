@@ -37,6 +37,11 @@ const schemaEmpresaForm = z.object({
   cargo_contato_secundario: z.string(),
   email_contato_secundario: z.string(),
   telefone_contato_secundario: z.string(),
+
+  home_page: z.string(),
+  inscricao_estadual: z.string(),
+  inscricao_municipal: z.string(),
+  observacoes: z.string(),
 })
 
 type SchemaEmpresaForm = z.infer<typeof schemaEmpresaForm>
@@ -94,12 +99,24 @@ export default function Vizualizar({ data }: schemaEmpresasProps) {
           </Box>
 
           <Box>
+            <TextInput
+              title="Inscrição Estadual"
+              value={data.inscricao_estadual}
+            />
+
+            <TextInput
+              title="Inscrição Municipal"
+              value={data.inscricao_municipal}
+            />
+          </Box>
+
+          <Box>
             <div style={{ width: '7%' }}>
               <TextInput type="number" title="CEP" value={data.cep} />
             </div>
 
             <TextInput title="Logadouro" value={data.logradouro} />
-            <TextInput title="Logadouro" value={data.complemento} />
+            <TextInput title="Complemento" value={data.complemento} />
             <div style={{ width: '8%' }}>
               <TextInput type="number" title="Numero" value={data.numero} />
             </div>
@@ -174,6 +191,10 @@ export default function Vizualizar({ data }: schemaEmpresasProps) {
                 value={data.telefone_contato_secundario}
               />
             </div>
+          </Box>
+          <Box>
+            <TextInput title="Observações" value={data.observacoes} />
+            <TextInput title="Home Page" value={data.home_page} />
           </Box>
         </fieldset>
       </form>

@@ -1,16 +1,17 @@
 import { Box, Container, Text } from './styled'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { Button } from '@/components/Button'
 import { TextInput } from '@/components/TextInput'
 import { SwitchInput } from '@/components/SwitchInput'
 import { prisma } from '@/lib/prisma'
-import { GetStaticProps } from 'next'
+import { GetServerSideProps } from 'next'
 import { SelectOptions } from '@/components/SelectOptions'
 import { CaretRight } from 'phosphor-react'
 import { api } from '@/lib/axios'
 import { toast } from 'react-toastify'
+import { useRouter } from 'next/router'
 
 interface schemaCategorias {
   label: string
@@ -45,10 +46,40 @@ const schemaParams = z.object({
 })
 
 type SchemaParametros = z.infer<typeof schemaParams>
+
+interface schemeDataParametros {
+  id: number
+  random: string
+  cep_invalido: boolean
+  data_limite_pgto_antecipado_anuidade: Date
+  percent_desc_pgto_antecipado_anuidade: any
+  taxa_pgto_atrasado_anuidade: any
+  categorias: string
+  parcelamento_permitido_anuidade: any
+  parcelamento_permitido_JAER: any
+  data_limite_pgto_antecipado_JAER: Date
+  percent_desc_pgto_antecipado_JAER: any
+  taxa_pgto_atrasado_JAER: any
+  presidente_pode_se_reeleger: boolean
+  demais_podem_se_reeleger: boolean
+  duracao_mandato: any
+  exite_listas_imediato: boolean
+  quantidade_linhas_listas: any
+  acesso_externo_sis: boolean
+  endereco_IP_primario: string
+  endereco_IP_secundario: string
+}
+
 interface schemaParametrosProps {
   newDataCategory: schemaCategorias[]
+  dataParametros: schemeDataParametros
 }
-export default function Parametros({ newDataCategory }: schemaParametrosProps) {
+export default function Parametros({
+  newDataCategory,
+  dataParametros,
+}: schemaParametrosProps) {
+  const router = useRouter()
+  // console.log()
   const {
     register,
     handleSubmit,
@@ -56,36 +87,48 @@ export default function Parametros({ newDataCategory }: schemaParametrosProps) {
     formState: { isSubmitting },
   } = useForm<SchemaParametros>()
 
+  const dateAnuidade = new Date(
+    dataParametros.data_limite_pgto_antecipado_anuidade,
+  )
+  const dateAnuidadeJaer = new Date(
+    dataParametros.data_limite_pgto_antecipado_JAER,
+  )
+
+  function DateDestructure(newDate: any) {
+    const dia = newDate.getUTCDate().toString()
+    const mes = (newDate.getUTCMonth() + 1).toString()
+    const ano = newDate.getUTCFullYear().toString()
+
+    return { dia, mes, ano }
+  }
+
+  const newDateAnuidade = DateDestructure(dateAnuidade)
+
+  const newDateAnuidadeJaer = DateDestructure(dateAnuidadeJaer)
+
   async function handleOnSubmit(data: SchemaParametros) {
     try {
       const dataLimitePagamentoAntecipadoAnuidade = `${data.year}-${data.month}-${data.day} 00:00:00`
       const dataLimitePagamentoAntecipadoAnuidadeDate: Date = new Date(
         dataLimitePagamentoAntecipadoAnuidade,
       )
-      setValue(
-        'data_limite_pgto_antecipado_anuidade',
-        dataLimitePagamentoAntecipadoAnuidadeDate,
-      )
 
       const dataLimitePagamentoAntecipadoJaer = `${data.yearJaer}-${data.monthJaer}-${data.dayJaer} 00:00:00`
       const dataLimitePagamentoAntecipadoComoDateJaerDate: Date = new Date(
         dataLimitePagamentoAntecipadoJaer,
       )
-      setValue(
-        'data_limite_pgto_antecipado_JAER',
-        dataLimitePagamentoAntecipadoComoDateJaerDate,
-      )
 
       const response = await api.put('/parametros/update', {
         cep_invalido: data.cep_invalido,
         data_limite_pgto_antecipado_anuidade:
-          data.data_limite_pgto_antecipado_anuidade,
+          dataLimitePagamentoAntecipadoAnuidadeDate,
         percent_desc_pgto_antecipado_anuidade:
           data.percent_desc_pgto_antecipado_anuidade,
         taxa_pgto_atrasado_anuidade: data.taxa_pgto_atrasado_anuidade,
         categorias: data.categorias,
         parcelamento_permitido_anuidade: data.parcelamento_permitido_anuidade,
-        data_limite_pgto_antecipado_JAER: data.data_limite_pgto_antecipado_JAER,
+        data_limite_pgto_antecipado_JAER:
+          dataLimitePagamentoAntecipadoComoDateJaerDate,
         percent_desc_pgto_antecipado_JAER:
           data.percent_desc_pgto_antecipado_JAER,
         taxa_pgto_atrasado_JAER: data.taxa_pgto_atrasado_JAER,
@@ -101,6 +144,7 @@ export default function Parametros({ newDataCategory }: schemaParametrosProps) {
       })
       if (response.status === 200) {
         toast.success('Alterado com sucesso!')
+        router.push('/')
       } else {
         toast.error('Algo deu errado')
       }
@@ -131,6 +175,29 @@ export default function Parametros({ newDataCategory }: schemaParametrosProps) {
     }
   })
 
+  function handleNextPage() {
+    router.push('/associados')
+  }
+
+  useEffect(() => {
+    setValue('day', newDateAnuidade.dia)
+    setValue('month', newDateAnuidade.mes)
+    setValue('year', newDateAnuidade.ano)
+
+    setValue('dayJaer', newDateAnuidadeJaer.dia)
+    setValue('monthJaer', newDateAnuidadeJaer.mes)
+    setValue('yearJaer', newDateAnuidadeJaer.ano)
+
+    setValue(
+      'parcelamento_permitido_JAER',
+      dataParametros.parcelamento_permitido_JAER,
+    )
+    setValue(
+      'parcelamento_permitido_anuidade',
+      dataParametros.parcelamento_permitido_anuidade,
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
   return (
     <Container>
       <form onSubmit={handleSubmit(handleOnSubmit)}>
@@ -141,11 +208,27 @@ export default function Parametros({ newDataCategory }: schemaParametrosProps) {
             <span>Atualizar</span>
           </legend>
           <Box>
-            <SwitchInput
-              title="Acesso externo ao sistema autorizado?"
-              {...register('acesso_externo_sis')}
-            />
-            <SwitchInput title="CEP inválido" {...register('cep_invalido')} />
+            <div style={{ flex: 1 }}>
+              <SwitchInput
+                title="Acesso externo ao sistema autorizado?"
+                {...register('acesso_externo_sis')}
+                defaultChecked={dataParametros.acesso_externo_sis}
+              />
+            </div>
+            <div style={{ flex: 1 }}>
+              <SwitchInput
+                title="CEP inválido"
+                {...register('cep_invalido')}
+                defaultChecked={dataParametros.cep_invalido}
+              />
+            </div>
+            <div style={{ flex: 1 }}>
+              <Button
+                type="button"
+                title="Associados"
+                onClick={handleNextPage}
+              />
+            </div>
           </Box>
           <Box>
             <div style={{ display: 'flex', alignItems: 'end', width: '38rem' }}>
@@ -158,6 +241,7 @@ export default function Parametros({ newDataCategory }: schemaParametrosProps) {
                 data={dataDays}
                 w={90}
                 {...register('day')}
+                defaultValue={{ label: newDateAnuidade.dia }}
               />
 
               <SelectOptions
@@ -165,6 +249,7 @@ export default function Parametros({ newDataCategory }: schemaParametrosProps) {
                 description="Mês"
                 w={90}
                 {...register('month')}
+                defaultValue={{ label: newDateAnuidade.mes }}
               />
 
               <SelectOptions
@@ -172,30 +257,36 @@ export default function Parametros({ newDataCategory }: schemaParametrosProps) {
                 description="Ano"
                 data={dataYears}
                 {...register('year')}
+                defaultValue={{ label: newDateAnuidade.ano }}
               />
             </div>
             <TextInput
               type="number"
               title="% Desconto Pgto Antecipado Anuidade"
-              {...register('percent_desc_pgto_antecipado_anuidade')}
+              {...register('percent_desc_pgto_antecipado_anuidade', {
+                valueAsNumber: true,
+              })}
+              defaultValue={
+                dataParametros.percent_desc_pgto_antecipado_anuidade
+              }
             />
 
             <TextInput
-              type="number"
               title="Taxa (valor) pagamento da Anuidade após o prazo"
-              {...register('taxa_pgto_atrasado_anuidade')}
+              {...register('taxa_pgto_atrasado_anuidade', {
+                valueAsNumber: true,
+              })}
+              defaultValue={dataParametros.taxa_pgto_atrasado_anuidade}
             />
 
-            {/* <TextInput
-              type="date"
-              title="Data limite para pagamento antecipado da Anuidade com desconto?"
-              {...register('Data_Limite_Pgto_Antecipado_Anuidade')}
-            /> */}
             <SelectOptions
               {...register('parcelamento_permitido_anuidade')}
               w={440}
               data={newDataCategory}
               description="Parcelamento Anuidade Permitido para Categorias"
+              defaultValue={{
+                label: dataParametros.parcelamento_permitido_anuidade,
+              }}
             />
           </Box>
 
@@ -210,6 +301,7 @@ export default function Parametros({ newDataCategory }: schemaParametrosProps) {
                 data={dataDays}
                 w={90}
                 {...register('dayJaer')}
+                defaultValue={{ label: newDateAnuidadeJaer.dia }}
               />
 
               <SelectOptions
@@ -217,6 +309,7 @@ export default function Parametros({ newDataCategory }: schemaParametrosProps) {
                 description="Mês"
                 w={90}
                 {...register('monthJaer')}
+                defaultValue={{ label: newDateAnuidadeJaer.mes }}
               />
 
               <SelectOptions
@@ -224,6 +317,7 @@ export default function Parametros({ newDataCategory }: schemaParametrosProps) {
                 description="Ano"
                 data={dataYears}
                 {...register('yearJaer')}
+                defaultValue={{ label: newDateAnuidadeJaer.ano }}
               />
             </div>
 
@@ -233,66 +327,48 @@ export default function Parametros({ newDataCategory }: schemaParametrosProps) {
               {...register('percent_desc_pgto_antecipado_JAER', {
                 valueAsNumber: true,
               })}
+              defaultValue={dataParametros.percent_desc_pgto_antecipado_JAER}
             />
             <TextInput
-              type="number"
               title="Taxa (valor) para pagamento JAER após o prazo"
               {...register('taxa_pgto_atrasado_JAER', {
                 valueAsNumber: true,
               })}
+              defaultValue={dataParametros.taxa_pgto_atrasado_JAER}
             />
             <SelectOptions
               data={newDataCategory}
               w={440}
               description="Parcelamento JAER Permitido para Categorias"
               {...register('parcelamento_permitido_JAER')}
+              defaultValue={{
+                label: dataParametros.parcelamento_permitido_JAER,
+              }}
             />
-
-            {/* <label style={{ display: `flex`, gap: `0.5rem` }}>
-                      Parcelamento Anuidade Permitido para Categorias
-                      <select
-                        {...register(
-                          'Parcelamento_Permitido_Anuidade_categoriaId',
-                          { valueAsNumber: true },
-                        )}
-                      >
-                        {category &&
-                          category?.map((item) => {
-                            return (
-                              <option key={item.id} value={item.id}>
-                                {item.name}
-                              </option>
-                            )
-                          })}
-                      </select>
-                    </label> */}
-
-            {/* <Input
-              type="datetime-local"
-              description="Data limite para pagamento antecipado da JAER com desconto?"
-              {...register('Data_Limite_Pgto_Antecipado_JAER')}
-            /> */}
           </Box>
 
           <Box>
             <TextInput
-              type="number"
               w={300}
               title="Duracao mandato da diretoria em anos"
               {...register('duracao_mandato', { valueAsNumber: true })}
+              defaultValue={dataParametros.duracao_mandato}
             />
             <SwitchInput
               title="Presidente pode se reeleger?"
               {...register('presidente_pode_se_reeleger')}
+              defaultChecked={dataParametros.presidente_pode_se_reeleger}
             />
 
             <SwitchInput
               title="Demais membros da diretoria podem se reeleger?"
               {...register('demais_podem_se_reeleger')}
+              defaultChecked={dataParametros.demais_podem_se_reeleger}
             />
             <SwitchInput
               title="Exibe listas na imediato ou aguarda clicar botao pesquisar"
               {...register('exite_listas_imediato')}
+              defaultChecked={dataParametros.exite_listas_imediato}
             />
             <TextInput
               type="number"
@@ -300,6 +376,7 @@ export default function Parametros({ newDataCategory }: schemaParametrosProps) {
               {...register('quantidade_linhas_listas', {
                 valueAsNumber: true,
               })}
+              defaultValue={dataParametros.quantidade_linhas_listas}
             />
           </Box>
 
@@ -309,6 +386,7 @@ export default function Parametros({ newDataCategory }: schemaParametrosProps) {
                 title="Endereco IP primario"
                 w={280}
                 {...register('endereco_IP_primario')}
+                defaultValue={dataParametros.endereco_IP_primario}
               />
             </div>
             <div>
@@ -316,6 +394,7 @@ export default function Parametros({ newDataCategory }: schemaParametrosProps) {
                 title="Endereco IP secundario SAERJ"
                 w={280}
                 {...register('endereco_IP_secundario')}
+                defaultValue={dataParametros.endereco_IP_secundario}
               />
             </div>
           </Box>
@@ -329,18 +408,54 @@ export default function Parametros({ newDataCategory }: schemaParametrosProps) {
   )
 }
 
-export const getStaticProps: GetStaticProps = async () => {
+export const getServerSideProps: GetServerSideProps = async () => {
   try {
-    const dataCategory = await prisma.categorias.findMany()
+    const dataCategory = await prisma.tabelas.findMany({
+      where: {
+        codigo_tabela: 'categoria',
+      },
+    })
     const newDataCategory = dataCategory.map((item) => {
       return {
-        label: item.name,
+        label: item.ocorrencia_tabela,
       }
     })
+    const dataParametros = await prisma.parametros.findMany({
+      where: {
+        id: 1,
+      },
+    })
+
+    const dataLimitePgtoAntecipadoAnuidade =
+      dataParametros[0].data_limite_pgto_antecipado_anuidade instanceof Date
+        ? dataParametros[0].data_limite_pgto_antecipado_anuidade
+        : null
+
+    const formattedDataLimitePgtoAntecipadoAnuidade =
+      dataLimitePgtoAntecipadoAnuidade
+        ? dataLimitePgtoAntecipadoAnuidade.toISOString()
+        : null
+
+    const dataLimitePgtoAntecipadoAnuidadeJAER =
+      dataParametros[0].data_limite_pgto_antecipado_JAER instanceof Date
+        ? dataParametros[0].data_limite_pgto_antecipado_JAER
+        : null
+
+    const formattedDataLimitePgtoAntecipadoAnuidadeJAER =
+      dataLimitePgtoAntecipadoAnuidadeJAER
+        ? dataLimitePgtoAntecipadoAnuidadeJAER.toISOString()
+        : null
 
     return {
       props: {
         newDataCategory,
+        dataParametros: {
+          ...dataParametros[0], // mantém as outras propriedades intactas
+          data_limite_pgto_antecipado_anuidade:
+            formattedDataLimitePgtoAntecipadoAnuidade,
+          data_limite_pgto_antecipado_JAER:
+            formattedDataLimitePgtoAntecipadoAnuidadeJAER,
+        },
       },
     }
   } catch (error) {
@@ -348,6 +463,7 @@ export const getStaticProps: GetStaticProps = async () => {
     return {
       props: {
         newDataCategory: [],
+        dataParametros: [],
       },
     }
   }

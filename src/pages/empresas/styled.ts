@@ -5,6 +5,9 @@ export const Container = styled('main', {
   h1: {
     fontFamily: 'Roboto',
   },
+  p: {
+    fontFamily: 'Roboto',
+  },
 })
 
 export const Box = styled('div', {

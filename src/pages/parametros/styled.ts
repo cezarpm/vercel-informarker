@@ -5,6 +5,7 @@ export const Container = styled('main', {
     padding: '2rem 4rem',
     fieldset: {
       legend: {
+        fontFamily: 'Roboto',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
