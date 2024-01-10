@@ -13,7 +13,7 @@ import dayjs from 'dayjs'
 
 
 
-export default function eleicaoList({ data }: any) {
+export default function EleicaoList({ data }: any) {
   const router = useRouter()
   const { selectedRowIds } = useId()
 

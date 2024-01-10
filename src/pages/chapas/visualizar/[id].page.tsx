@@ -25,7 +25,9 @@ const schemaChapaForm = z.object({
 
 type SchemaChapaForm = z.infer<typeof schemaChapaForm>
 
-export default function VotacaoAtualizar({ data }) {
+
+
+export default function VotacaoAtualizar({ data }: any) {
   const {
     register,
     setValue,
@@ -46,7 +48,7 @@ export default function VotacaoAtualizar({ data }) {
   }, [data, setValue])
 
   console.log(data);
-  
+
 
   return (
     <Container>
@@ -69,7 +71,7 @@ export default function VotacaoAtualizar({ data }) {
           </Link>
         </Box>
         <fieldset>
-        <legend>
+          <legend>
             <span>
               <Link href={'/chapas'}>Chapas</Link>
             </span>
@@ -101,7 +103,8 @@ export default function VotacaoAtualizar({ data }) {
                       height: 150,
                       objectFit: 'cover',
                     }}
-                    src={membro.image} />
+
+                      src={membro.image} />
 
 
                     <Typography style={{

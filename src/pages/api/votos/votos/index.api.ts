@@ -8,37 +8,49 @@ export default async function handler(
     res: NextApiResponse,
 ) {
 
-    try {
-        const id = parseInt(req.query.id) 
+    if (req.method !== `GET`) {
+        const MessageErrorMethodInvalid = `Error method invalid`
+        return res.status(405).json({ message: `${MessageErrorMethodInvalid}` })
+    }
 
-        if(!id) {
+
+    try {
+        if (!req.query.id) {
             return res.status(400).json({ message: 'id is required' })
         }
 
+        const { id } = req.query
+
         const eleicao = await prisma.votacao.findFirst({
             where: {
-                id,
+                id: Number(id),
             },
         })
-        
-        const chapaNomes = eleicao?.chapas.chapas.map((chapa) => chapa.nome_chapa);
+
+
+        if (!eleicao) {
+            return res.status(404).json({ message: 'not found' })
+        }
+
+        const chapas = eleicao.chapas as any
+
+        const chapaNomes = chapas.chapas.map((chapa: any) => chapa.nome_chapa);
 
         const votosCount = await prisma.voto.count({
             where: {
-                votacao_id: id,
+                votacao_id: Number(id),
             },
         })
 
-        const votosChapasPromise = chapaNomes?.map(async (chapaNome) => {
+        const votosChapasPromise = chapaNomes?.map(async (chapaNome: string) => {
 
             const res = await prisma.voto.count({
                 where: {
-                    votacao_id: id,
+                    votacao_id: Number(id),
                     nome_chapa: chapaNome,
                 },
             })
 
-            console.log(res);
 
             return {
                 chapaNome,
@@ -51,14 +63,14 @@ export default async function handler(
 
         const votosBranco = await prisma.voto.count({
             where: {
-                votacao_id: id,
+                votacao_id: Number(id),
                 nome_chapa: 'BRANCO',
             },
         })
 
         const votosNulo = await prisma.voto.count({
             where: {
-                votacao_id: id,
+                votacao_id: Number(id),
                 nome_chapa: 'NULO',
             },
         })

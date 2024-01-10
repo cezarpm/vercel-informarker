@@ -15,14 +15,17 @@ import {
 } from './styled'
 import { Avatar, Typography } from '@mui/material'
 import { Button } from '@/components/Button'
-import {  useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { api } from '@/lib/axios'
 import { GetServerSideProps } from 'next'
 import { prisma } from '@/lib/prisma'
 
-export default function Votacao({data,alreadyVoted}) {
-  
+type Votation = {
+  data: any
+  alreadyVoted: any
+}
 
+export default function Votacao({ data, alreadyVoted }: Votation) {
   const [userAlreadyVoted, setUserAlreadyVoted] = useState(alreadyVoted)
   const [open, setOpen] = useState(true)
   const [showVotation, setShowVotation] = useState(false)
@@ -52,7 +55,7 @@ export default function Votacao({data,alreadyVoted}) {
 
   const expandCandidates = (index: number) => {
 
-    const expanded = votation.chapas.chapas.map((item, i) => {
+    const expanded = votation.chapas.chapas.map((item: any, i: number) => {
       if (i === index) {
         return {
           ...item,
@@ -146,64 +149,63 @@ export default function Votacao({data,alreadyVoted}) {
   return (
     <Container>
 
-      <h1 style={{textAlign:'center'}}>Votação {votation?.matricula_saerj}</h1>
+      <h1 style={{ textAlign: 'center' }}>Votação {votation?.matricula_saerj}</h1>
 
 
       <Dialog open={open} onClose={() => setOpen(false)} setOpen={setOpen}>
         <WelcomeModal>
-         
+
           {votation ? (
             <div>
-            <Typography id="modal-modal-title" variant="h6" component="h2">
-            Bem-Vindo as Eleições {votation?.matricula_saerj}
-            </Typography>
+              <Typography id="modal-modal-title" variant="h6" component="h2">
+                Bem-Vindo as Eleições {votation?.matricula_saerj}
+              </Typography>
 
-            <Typography id="modal-modal-title" variant="h6" component="h2">
-              Perído de Votação
-            </Typography>
-            <Typography id="modal-modal-title" variant="h6" component="h2">
-              Início : {new Date(votation?.data_votacao_inicio).toLocaleDateString()}
-            </Typography>
-            <Typography id="modal-modal-title" variant="h6" component="h2">
-              Encerramento: {new Date(votation?.data_votacao_fim).toLocaleDateString()}
-            </Typography>
+              <Typography id="modal-modal-title" variant="h6" component="h2">
+                Perído de Votação
+              </Typography>
+              <Typography id="modal-modal-title" variant="h6" component="h2">
+                Início : {new Date(votation?.data_votacao_inicio).toLocaleDateString()}
+              </Typography>
+              <Typography id="modal-modal-title" variant="h6" component="h2">
+                Encerramento: {new Date(votation?.data_votacao_fim).toLocaleDateString()}
+              </Typography>
 
               {userAlreadyVoted ? (
-              <Typography style={{ marginTop: 10 }} variant="h6" component="h5">
-                Você já votou nessa eleição
-              </Typography>
-            ) : (
-              <button
-                style={{
-                  backgroundColor: 'rgb(82, 128, 53)',
-                  border: 0,
-                  width: 110,
-                  height: 40,
-                  borderRadius: 5,
-                  marginRight: 10,
-                  marginTop: 10,
-                  color: '#fff',
-                }}
-                onClick={() => setOpen(false)}
-              >
-                Ir para votação
-              </button>
-            )}
+                <Typography style={{ marginTop: 10 }} variant="h6" component="h5">
+                  Você já votou nessa eleição
+                </Typography>
+              ) : (
+                <button
+                  style={{
+                    backgroundColor: 'rgb(82, 128, 53)',
+                    border: 0,
+                    width: 110,
+                    height: 40,
+                    borderRadius: 5,
+                    marginRight: 10,
+                    marginTop: 10,
+                    color: '#fff',
+                  }}
+                  onClick={() => setOpen(false)}
+                >
+                  Ir para votação
+                </button>
+              )}
             </div>
-          ):
-          <div>
-            <Typography id="modal-modal-title" variant="h6" component="h2">
-            Bem-Vindo as Eleições da SAERJ
-            </Typography>
+          ) :
+            <div>
+              <Typography id="modal-modal-title" variant="h6" component="h2">
+                Bem-Vindo as Eleições da SAERJ
+              </Typography>
 
-            <Typography id="modal-modal-title" variant="h6" component="h2">
-              Ainda não existe nenhuma eleição ativa
-            </Typography>
+              <Typography id="modal-modal-title" variant="h6" component="h2">
+                Ainda não existe nenhuma eleição ativa
+              </Typography>
 
-
-          </div>
+            </div>
           }
-        
+
         </WelcomeModal>
       </Dialog>
 
@@ -254,55 +256,55 @@ export default function Votacao({data,alreadyVoted}) {
       </Dialog>
 
       <Container>
-        {votation && votation.chapas?.chapas?.map((item, index) => (
+        {votation && votation.chapas?.chapas?.map((item: any, index: number) => (
           <>
-          <div key={index}>
-            <BoxOptions >
-              <Checkbox
-                onClick={() => handleClick(item.nome_chapa)}
-                type="radio"
-                name="voto"
-                value="1"
-                checked={selected === item.nome_chapa}
-              />
+            <div key={index}>
+              <BoxOptions >
+                <Checkbox
+                  onClick={() => handleClick(item.nome_chapa)}
+                  type="radio"
+                  name="voto"
+                  value="1"
+                  checked={selected === item.nome_chapa}
+                />
 
-              <div style={{ flex: 1 }}>
-                <BoxOptionName onClick={() => expandCandidates(index)}>
-                  <p>{item.nome_chapa}</p>
+                <div style={{ flex: 1 }}>
+                  <BoxOptionName onClick={() => expandCandidates(index)}>
+                    <p>{item.nome_chapa}</p>
 
-                  <Typography
-                    onClick={() => expandCandidates(index)}
-                    id="modal-modal-title"
-                    variant="h6"
-                    component="h2"
-                  >
-                    +
-                  </Typography>
-                </BoxOptionName>
+                    <Typography
+                      onClick={() => expandCandidates(index)}
+                      id="modal-modal-title"
+                      variant="h6"
+                      component="h2"
+                    >
+                      +
+                    </Typography>
+                  </BoxOptionName>
 
-                {item.expandend && (
-                  <div>
-                    {item.membros_chapa.map((canditate, index) => (
-                      <BoxCandidates key={index}>
-                        <Avatar alt="Remy Sharp" src={canditate.image} />
+                  {item.expandend && (
+                    <div>
+                      {item.membros_chapa.map((canditate: any, index: number) => (
+                        <BoxCandidates key={index}>
+                          <Avatar alt="Remy Sharp" src={canditate.image} />
 
-                        <CanditateName>{canditate.nome}</CanditateName>
-                        <CanditatePosition>
-                          {canditate.cargo}
-                        </CanditatePosition>
-                      </BoxCandidates>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </BoxOptions>
-          </div>
+                          <CanditateName>{canditate.nome}</CanditateName>
+                          <CanditatePosition>
+                            {canditate.cargo}
+                          </CanditatePosition>
+                        </BoxCandidates>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </BoxOptions>
+            </div>
           </>
         ))}
 
         {votation && (
-        <>
-          <BoxOptions>
+          <>
+            <BoxOptions>
               <Checkbox
                 onClick={() => handleClick('BRANCO')}
                 checked={selected === 'BRANCO'}
@@ -313,9 +315,9 @@ export default function Votacao({data,alreadyVoted}) {
               <WhiteButton>
                 <p>BRANCO</p>
               </WhiteButton>
-          </BoxOptions>
+            </BoxOptions>
 
-          <BoxOptions>
+            <BoxOptions>
               <Checkbox
                 onClick={() => handleClick('NULO')}
                 type="radio"
@@ -326,30 +328,30 @@ export default function Votacao({data,alreadyVoted}) {
               <NulableButton>
                 <p>NULO</p>
               </NulableButton>
-          </BoxOptions>
-        </>
+            </BoxOptions>
+          </>
         )}
       </Container>
 
-      {!votation && ( 
-      <Typography style={{textAlign:'center'}} variant="h6" component="h2">
-        Ainda não existe nenhuma eleição ativa para votação, volte mais tarde.
-      </Typography>
+      {!votation && (
+        <Typography style={{ textAlign: 'center' }} variant="h6" component="h2">
+          Ainda não existe nenhuma eleição ativa para votação, volte mais tarde.
+        </Typography>
       )}
     </Container>
   )
 }
 
 
-export const getServerSideProps: GetServerSideProps = async (context) => {
+export const getServerSideProps: GetServerSideProps = async () => {
   try {
     const data = await prisma.votacao.findFirst({
       where: {
-        status: 'ATIVO'
+        status: 'ATIVA'
       },
     })
 
-    if(!data) return {props:{data:null}}
+    if (!data) return { props: { data: null } }
 
     const alreadyVoted = await prisma.voto.findFirst({
       where: {
@@ -358,12 +360,6 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       },
     })
 
-    console.log(alreadyVoted,'alreadyVoted');
-    
-
-
-    console.log(data.chapas.chapas[0].membros_chapa,'data');
-    
     return {
       props: {
         data,

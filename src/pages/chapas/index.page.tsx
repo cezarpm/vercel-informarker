@@ -10,11 +10,9 @@ import { GetServerSideProps } from 'next'
 import { Typography } from '@mui/material'
 import { prisma } from '@/lib/prisma'
 
-export default function chapasList({ data }: any) {
+export default function ChapasList({ data }: any) {
   const router = useRouter()
   const { selectedRowIds } = useId()
-
-  console.log(data)
 
   const columns: GridColDef[] = [
     {
@@ -95,13 +93,6 @@ export default function chapasList({ data }: any) {
           redirectRouter="/chapas"
         />
 
-        {/* <Button
-          title="Retornar"
-          style={{ backgroundColor: '#b34db2' }}
-          onClick={() => {
-            router.push('/')
-          }}
-        /> */}
       </Box>
     </Container>
   )

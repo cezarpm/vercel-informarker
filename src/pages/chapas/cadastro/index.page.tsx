@@ -97,7 +97,7 @@ export default function VotacaoCreate() {
           <Box>
             <h1>Composição da chapa</h1>
             <Button
-              onClick={() => append({ cargo:'', nome:'', image: placeHolderImage[Math.floor(Math.random() * placeHolderImage.length)] })}
+              onClick={() => append({ cargo: '', nome: '', image: placeHolderImage[Math.floor(Math.random() * placeHolderImage.length)] })}
               type="button"
               title="+ Adicionar membro"
               style={{ margin: '0px', width: '100%', fontSize: '12px' }}
@@ -131,6 +131,7 @@ export default function VotacaoCreate() {
                   title="Nome do membro *"
                   {...register(`membros_chapa.${index}.nome` as const)}
                   error={!!errorForFieldText2}
+                  helperText={errorForFieldText2}
                 />
 
                 <TextInput

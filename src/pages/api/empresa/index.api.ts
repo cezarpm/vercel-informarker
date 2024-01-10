@@ -10,7 +10,10 @@ export default async function handler(
     const MessageErrorMethodInvalid = `Error method invalid`
     return res.status(405).json({ message: `${MessageErrorMethodInvalid}` })
   }
+
+
   const { id } = req.query
+
   try {
     const response = await prisma.empresa.findFirst({
       where: {

@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 import { prisma } from '@/lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
 
@@ -8,7 +9,7 @@ export default async function handler(
 ) {
     try {
 
-        const { nome_chapa, usuario_id, votacao_id} = req.body
+        const { nome_chapa, usuario_id, votacao_id } = req.body
 
         await prisma.voto.create({
             data: {

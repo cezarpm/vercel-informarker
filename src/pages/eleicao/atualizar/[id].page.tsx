@@ -1,7 +1,7 @@
-import { Container, Box,Text } from './styled'
+import { Container, Box, Text } from './styled'
 import React, { useEffect } from 'react'
 import { z } from 'zod'
-import { Controller, useFieldArray, useForm } from 'react-hook-form'
+import { useFieldArray, useForm } from 'react-hook-form'
 import { Button } from '@/components/Button'
 import { TextInput } from '@/components/TextInput'
 import { ArrowBendDownLeft, CaretRight } from 'phosphor-react'
@@ -14,19 +14,19 @@ import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
 import { SelectOptions } from '@/components/SelectOptions'
 import { Typography } from '@mui/material'
-import { DateTimePicker } from '@mui/x-date-pickers'
-import dayjs from 'dayjs'
 
- // array dias
- const days = Array.from({ length: 31 }, (_, index) => ({
+// array dias
+const days = Array.from({ length: 31 }, (_, index) => ({
   label: (index + 1).toString(),
 }))
+
 const dataDays = days.map((item) => item)
 
 // array mes
 const months = Array.from({ length: 12 }, (_, index) => ({
   label: (index + 1).toString(),
 }))
+
 const dataMonths = months.map((item) => item)
 
 // array anos
@@ -51,36 +51,36 @@ const schemaChapaForm = z.object({
     .string()
     .min(1, { message: 'O campo nome da chapa é obrigatório' }),
   chapas: z.array(integranteSchema).nonempty(),
-  start_day: z.string(),
-  start_month: z.string(),
-  start_year: z.string(),
-  end_day: z.string(),
-  end_month: z.string(),
-  end_year: z.string(),
+  start_day: z.string().min(1, { message: 'O campo dia é obrigatório' }),
+  start_month: z.string().min(1, { message: 'O campo mês é obrigatório' }),
+  start_year: z.string().min(1, { message: 'O campo ano é obrigatório' }),
+  end_day: z.string().min(1, { message: 'O campo dia é obrigatório' }),
+  end_month: z.string().min(1, { message: 'O campo mês é obrigatório' }),
+  end_year: z.string().min(1, { message: 'O campo ano é obrigatório' }),
   status: z.string().min(1, { message: 'O campo status é obrigatório' }),
 })
 
 
 type SchemaChapaForm = z.infer<typeof schemaChapaForm>
 
-export default function VotacaoAtualizar({ data, chapas }) {
+
+type VotacaoAtualizarProps = {
+  data: any
+  chapas: any
+}
+
+export default function VotacaoAtualizar({ data, chapas }: VotacaoAtualizarProps) {
   const newDate = new Date(data.data_votacao_inicio)
   const diaMes = String(newDate.getDate())
   const mesAno = String(newDate.getMonth() + 1)
   const anoTotal = String(newDate.getFullYear())
-
-
-  
 
   const endData = new Date(data.data_votacao_fim)
   const diaMesEnd = String(endData.getDate())
   const mesAnoEnd = String(endData.getMonth() + 1)
   const anoTotalEnd = String(endData.getFullYear())
 
-  
-
   const router = useRouter()
-
   const { id }: any = router.query
 
 
@@ -94,22 +94,17 @@ export default function VotacaoAtualizar({ data, chapas }) {
     resolver: zodResolver(schemaChapaForm),
   })
 
-  
+
 
   async function handleOnSubmit(data: SchemaChapaForm) {
     const concatDate = `${data.start_month}-${data.start_day}-${data.start_year}`
 
-    console.log(concatDate, 'concatDate');
-
     const newDate = new Date(concatDate).toISOString()
-
-    
-
     const concatDateEnd = `${data.end_month}-${data.end_day}-${data.end_year}`
     const newDateEnd = new Date(concatDateEnd).toISOString()
 
     const selectedChapas = data.chapas.map((chapa) => {
-      const chapaSelected = chapas.find((item) => item.nome_chapa === chapa.nome_chapa)
+      const chapaSelected = chapas.find((item: any) => item.nome_chapa === chapa.nome_chapa)
       return chapaSelected
     })
 
@@ -121,21 +116,19 @@ export default function VotacaoAtualizar({ data, chapas }) {
       chapas: selectedChapas,
       status: data.status,
     }
-    
+
     await api.put('/eleicao/update', body)
 
-    router.push('/chapas')
-    return toast.success('Chapa cadastrada!')
+    router.push('/eleicao/lista')
+    return toast.success('Eleição atualizada!')
   }
 
-  const { fields, append, remove } = useFieldArray({
+  const { fields, append } = useFieldArray({
     name: 'chapas',
     control,
   })
 
   useEffect(() => {
-    console.log(data, 'data');
-
     if (data) {
       setValue('matricula_saerj', data.matricula_saerj)
       setValue('chapas', data.chapas.chapas)
@@ -171,21 +164,24 @@ export default function VotacaoAtualizar({ data, chapas }) {
           </Link>
         </Box>
         <fieldset>
-        <legend>
+          <legend>
             <span>
               <Link href={'/eleicao/lista'}>Eleição</Link>
             </span>
             <CaretRight size={14} />
             <span>Atualizar</span>
           </legend>
+
+
           <Box>
             <div style={{ width: '30%' }}>
               <TextInput
                 title="Nome da eleição *"
                 {...register('matricula_saerj')}
+                error={errors.matricula_saerj?.message}
               />
 
-             
+
             </div>
 
             <div style={{ display: 'flex', alignItems: 'end', width: '31rem' }}>
@@ -199,6 +195,8 @@ export default function VotacaoAtualizar({ data, chapas }) {
                 defaultValue={diaMes}
                 w={90}
                 {...register('start_day')}
+                error={errors.start_day?.message}
+
               />
 
               <SelectOptions
@@ -207,6 +205,8 @@ export default function VotacaoAtualizar({ data, chapas }) {
                 defaultValue={mesAno}
                 w={90}
                 {...register('start_month')}
+                error={errors.start_month?.message}
+
               />
 
               <SelectOptions
@@ -215,6 +215,8 @@ export default function VotacaoAtualizar({ data, chapas }) {
                 defaultValue={anoTotal}
                 data={dataYears}
                 {...register('start_year')}
+                error={errors.start_year?.message}
+
               />
             </div>
 
@@ -229,6 +231,9 @@ export default function VotacaoAtualizar({ data, chapas }) {
                 defaultValue={diaMesEnd}
                 w={90}
                 {...register('end_day')}
+                error={errors.end_day?.message}
+
+
               />
 
               <SelectOptions
@@ -237,6 +242,8 @@ export default function VotacaoAtualizar({ data, chapas }) {
                 defaultValue={mesAnoEnd}
                 w={90}
                 {...register('end_month')}
+                error={errors.end_month?.message}
+
               />
 
               <SelectOptions
@@ -245,22 +252,26 @@ export default function VotacaoAtualizar({ data, chapas }) {
                 data={dataYears}
                 defaultValue={anoTotalEnd}
                 {...register('end_year')}
+                error={errors.end_year?.message}
+
               />
             </div>
 
             <SelectOptions
-                description="Selecione a chapa"
-                data={['ATIVO', 'INATIVO']}
-                w={280}
-                defaultValue={data.status}
-                {...register('status')}
-              />
+              description="Selecione a chapa"
+              data={['ATIVO', 'INATIVO']}
+              w={280}
+              defaultValue={data.status}
+              {...register('status')}
+              error={errors.status?.message}
+
+            />
 
           </Box>
 
           <Box>
             <Typography variant="h6" component="div">
-            Adicionar chapas na eleição
+              Adicionar chapas na eleição
             </Typography>
 
             <Button
@@ -275,19 +286,21 @@ export default function VotacaoAtualizar({ data, chapas }) {
 
 
           {fields.map((membro, index) =>
-           <Box key={index}>
+            <Box key={index}>
               <SelectOptions
                 description="Selecione a chapa"
-                data={chapas.map((chapa) => chapa.nome_chapa)}
+                data={chapas.map((chapa: any) => chapa.nome_chapa)}
                 w={280}
                 defaultValue={membro.nome_chapa}
                 {...register(`chapas.${index}.nome_chapa` as const)}
+                error={errors.chapas?.[index]?.nome_chapa?.message}
               />
-             </Box>
-            )}
+            </Box>
+          )}
 
           <Button
             title={isSubmitting ? 'Enviando...' : 'Enviar'}
+            disabled={isSubmitting}
             type="submit"
           />
         </fieldset>

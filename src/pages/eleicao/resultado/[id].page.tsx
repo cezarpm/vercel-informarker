@@ -4,16 +4,27 @@ import { Link, Typography } from '@mui/material'
 import { api } from '@/lib/axios'
 import { useRouter } from 'next/router'
 import { ArrowBendDownLeft, CaretRight } from 'phosphor-react'
+type Votation = {
+  id: number
+  name: string
+  votosCount: number
+  votosBranco: number
+  votosNulo: number
+  votosChapas: {
+    chapaNome: string
+    count: number
+  }[]
+}
 
 export default function Resultado() {
   const router = useRouter()
 
   const { id }: any = router.query
 
-  const [votation, setVotation] = React.useState(null)
+  const [votation, setVotation] = React.useState<Votation>({} as Votation)
 
   const getResults = async () => {
-    if(!id) return
+    if (!id) return
 
     const { data } = await api.get(`/votos/votos?id=${id}`)
 
@@ -21,7 +32,7 @@ export default function Resultado() {
   }
 
   const calculatePercentage = (count: number) => {
-    if(!votation?.votosCount) return 0
+    if (!votation?.votosCount) return 0
 
     const percentage = (count / votation?.votosCount) * 100
 
@@ -30,7 +41,7 @@ export default function Resultado() {
   }
 
   const calculatePercentageOfValidVotes = (count: number) => {
-    if(!votation?.votosCount) return 0
+    if (!votation?.votosCount) return 0
     const total = votation?.votosChapas[0].count + votation?.votosChapas[1].count
 
     console.log(total, 'deca');
@@ -50,7 +61,7 @@ export default function Resultado() {
 
   return (
     <Container>
-    <Box>
+      <Box>
         <Link
           href="/eleicao/lista"
           style={{
@@ -66,14 +77,14 @@ export default function Resultado() {
           <ArrowBendDownLeft size={32} />
           Retornar
         </Link>
-    </Box>
+      </Box>
       <legend>
-          <span>
-            <Link href={'/eleicao/lista'}>Eleicão</Link>
-          </span>
-          <CaretRight size={14} />
-          <span>Resultados</span>
-        </legend>
+        <span>
+          <Link href={'/eleicao/lista'}>Eleicão</Link>
+        </span>
+        <CaretRight size={14} />
+        <span>Resultados</span>
+      </legend>
 
       <Typography
         style={{
@@ -108,11 +119,11 @@ export default function Resultado() {
         </thead>
         <tbody>
 
-          {votation?.votosChapas.map((item, index) => (
+          {votation?.votosChapas?.map((item, index) => (
             <tr key={index}>
               <td>{item.chapaNome}</td>
               <td>{item.count}</td>
-              <td>{calculatePercentage(item.count, votation?.votosCount)}%</td>
+              <td>{calculatePercentage(item.count)}%</td>
               <td>{calculatePercentageOfValidVotes(item.count)}%</td>
             </tr>
           ))}
@@ -121,12 +132,12 @@ export default function Resultado() {
           <tr>
             <td>Brancos</td>
             <td>{votation?.votosBranco}</td>
-            <td>{calculatePercentage(votation?.votosBranco, votation?.votosCount)}%</td>
+            <td>{calculatePercentage(votation?.votosBranco)}%</td>
           </tr>
           <tr>
             <td>Nulos</td>
             <td>{votation?.votosNulo}</td>
-            <td>{calculatePercentage(votation?.votosNulo, votation?.votosCount)}%</td>
+            <td>{calculatePercentage(votation?.votosNulo)}%</td>
           </tr>
         </tbody>
         <tfoot>

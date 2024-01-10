@@ -15,8 +15,8 @@ import { SelectOptions } from '@/components/SelectOptions'
 import { prisma } from '@/lib/prisma'
 import { GetServerSideProps } from 'next'
 
- // array dias
- const days = Array.from({ length: 31 }, (_, index) => ({
+// array dias
+const days = Array.from({ length: 31 }, (_, index) => ({
   label: (index + 1).toString(),
 }))
 const dataDays = days.map((item) => item)
@@ -48,17 +48,17 @@ const schemaChapaForm = z.object({
     .string()
     .min(1, { message: 'O campo nome da chapa é obrigatório' }),
   chapas: z.array(integranteSchema).nonempty(),
-  start_day: z.string(),
-  start_month: z.string(),
-  start_year: z.string(),
-  end_day: z.string(),
-  end_month: z.string(),
-  end_year: z.string(),
+  start_day: z.string().min(1, { message: 'O campo dia é obrigatório' }),
+  start_month: z.string().min(1, { message: 'O campo mês é obrigatório' }),
+  start_year: z.string().min(1, { message: 'O campo mês é obrigatório' }),
+  end_day: z.string().min(1, { message: 'O campo mês é obrigatório' }),
+  end_month: z.string().min(1, { message: 'O campo mês é obrigatório' }),
+  end_year: z.string().min(1, { message: 'O campo mês é obrigatório' }),
 })
 
 type SchemaChapaForm = z.infer<typeof schemaChapaForm>
 
-export default function VotacaoCreate({ chapas }) {
+export default function VotacaoCreate({ chapas }: any) {
   const router = useRouter()
 
   const {
@@ -71,8 +71,6 @@ export default function VotacaoCreate({ chapas }) {
   })
 
 
-  console.log(errors);
-
   async function handleOnSubmit(data: SchemaChapaForm) {
     const concatDate = `${data.start_month}-${data.start_day}-${data.start_year}`
     const newDate = new Date(concatDate).toISOString()
@@ -82,22 +80,22 @@ export default function VotacaoCreate({ chapas }) {
 
 
     const selectedChapas = data.chapas.map((chapa) => {
-      const chapaSelected = chapas.find((item) => item.nome_chapa === chapa.nome_chapa)
+      const chapaSelected = chapas.find((item: any) => item.nome_chapa === chapa.nome_chapa)
       return chapaSelected
     })
 
     const body = {
-      nome_da_chapa: data.matricula_saerj,
+      matricula_saerj: data.matricula_saerj,
       data_votacao_inicio: newDate,
       data_votacao_fim: newDateEnd,
       chapas: selectedChapas,
       status: 'ATIVO'
     }
 
-    await api.post('/chapas/cadastro', body)
+    await api.post('/eleicao/cadastro', body)
 
     router.push('/eleicao/lista')
-    return toast.success('Chapa cadastrada!')
+    return toast.success('Eleição cadastrada!')
   }
 
   const { fields, append } = useFieldArray({
@@ -127,7 +125,7 @@ export default function VotacaoCreate({ chapas }) {
           </Link>
         </Box>
         <fieldset>
-        <legend>
+          <legend>
             <span>
               <Link href={'/eleicao/lista'}>Eleição</Link>
             </span>
@@ -139,6 +137,7 @@ export default function VotacaoCreate({ chapas }) {
               <TextInput
                 title="Nome da eleição *"
                 {...register('matricula_saerj')}
+                error={errors.matricula_saerj?.message}
               />
             </div>
 
@@ -152,6 +151,8 @@ export default function VotacaoCreate({ chapas }) {
                 data={dataDays}
                 w={90}
                 {...register('start_day')}
+                error={errors.start_day?.message}
+                messageError='O campo nome da eleição é obrigatório'
               />
 
               <SelectOptions
@@ -159,6 +160,8 @@ export default function VotacaoCreate({ chapas }) {
                 description="Mês"
                 w={90}
                 {...register('start_month')}
+                error={errors.start_month?.message}
+                messageError='O campo nome da eleição é obrigatório'
               />
 
               <SelectOptions
@@ -166,6 +169,8 @@ export default function VotacaoCreate({ chapas }) {
                 description="Ano"
                 data={dataYears}
                 {...register('start_year')}
+                error={errors.start_year?.message}
+                messageError='O campo nome da eleição é obrigatório'
               />
             </div>
 
@@ -179,6 +184,8 @@ export default function VotacaoCreate({ chapas }) {
                 data={dataDays}
                 w={90}
                 {...register('end_day')}
+                error={errors.end_day?.message}
+                messageError='O campo nome da eleição é obrigatório'
               />
 
               <SelectOptions
@@ -186,6 +193,8 @@ export default function VotacaoCreate({ chapas }) {
                 description="Mês"
                 w={90}
                 {...register('end_month')}
+                error={errors.end_month?.message}
+                messageError='O campo nome da eleição é obrigatório'
               />
 
               <SelectOptions
@@ -193,6 +202,8 @@ export default function VotacaoCreate({ chapas }) {
                 description="Ano"
                 data={dataYears}
                 {...register('end_year')}
+                error={errors.end_year?.message}
+                messageError='O campo nome da eleição é obrigatório'
               />
             </div>
 
@@ -200,11 +211,11 @@ export default function VotacaoCreate({ chapas }) {
 
           <Box>
             <Typography variant="h6" component="div">
-            Adicionar chapas na eleição
+              Adicionar chapas na eleição
             </Typography>
 
             <Button
-              onClick={() => append({ nome: '' })}
+              onClick={() => append({ nome_chapa: '' })}
               type="button"
               title="+ Adicionar"
               style={{ margin: '0px', width: '100%', fontSize: '12px' }}
@@ -215,15 +226,17 @@ export default function VotacaoCreate({ chapas }) {
 
 
           {fields.map((membro, index) =>
-           <Box key={index}>
+            <Box key={index}>
               <SelectOptions
                 description="Selecione a chapa"
-                data={chapas.map((chapa) => chapa.nome_chapa)}
+                data={chapas.map((chapa: any) => chapa.nome_chapa)}
                 w={280}
                 {...register(`chapas.${index}.nome_chapa` as const)}
+                messageError='O campo nome da eleição é obrigatório'
+                error={errors.chapas?.[index]?.nome_chapa?.message}
               />
-             </Box>
-            )}
+            </Box>
+          )}
 
           <Button
             title={isSubmitting ? 'Enviando...' : 'Enviar'}
