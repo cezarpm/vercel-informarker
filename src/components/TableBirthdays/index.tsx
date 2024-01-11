@@ -210,10 +210,10 @@ const TableBirthdays = ({ rows, columns, w }: any) => {
                 </ContainerFilters> */}
 
                 <ContainerFilters>
-                    <InputLabel sx={{ fontSize: '12px' }}>Filtros</InputLabel>
+                    <InputLabel sx={{ fontSize: '12px' }}>Por favor selecione um filtro</InputLabel>
                     <Select
                         size="small"
-                        sx={{ width: '100%', fontSize: '12px' }}
+                        sx={{ width: '30%', fontSize: '12px' }}
                         defaultValue={filter}
                         label={"Filtros"}
                         onChange={handleFilterChange}
@@ -234,7 +234,7 @@ const TableBirthdays = ({ rows, columns, w }: any) => {
                 }
             </HeaderBirthdays>
 
-            {filter != "0" ? 
+            {filter != "0" &&
                 <Box sx={{ height: '60vh', width: w, marginTop: '1rem' }}>
                     <DataGrid
                     rows={filteredData}
@@ -253,8 +253,7 @@ const TableBirthdays = ({ rows, columns, w }: any) => {
                     onRowSelectionModelChange={handleSelectionModelChange}
                     />
                 </Box> 
-            : 
-                <TextNoFilter>Por favor selecione um filtro.</TextNoFilter>
+            
             }
 
 

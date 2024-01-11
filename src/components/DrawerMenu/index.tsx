@@ -21,6 +21,8 @@ import {
   User,
   ArchiveBox,
   UsersFour,
+  Balloon,
+  Article
 
 } from 'phosphor-react'
 import { useRouter } from 'next/navigation'
@@ -54,13 +56,15 @@ export function TemporaryDrawer() {
 
     }else if (text === 'Aniversariantes') {
       router.push('/associados/aniversariantes')
+    }else if (text === 'Protocolos') {
+      router.push('/protocolos')
+    }
     } else if (text === 'Chapas') {
       router.push('/chapas')
     } else if (text === 'Diretorias') {
       router.push('/diretorias')
     } else if (text === 'Eleicoes') {
       router.push('/eleicoes')
-
     } 
 
   }
@@ -100,6 +104,10 @@ export function TemporaryDrawer() {
       <ArchiveTray size={30} color="#fff" />
     </>,
     <>
+
+      <Article size={30} color="#fff" /> 
+    </>
+  ]
       <User size={30} color="#fff" />
     </>,
     <>
@@ -139,12 +147,14 @@ export function TemporaryDrawer() {
       </div>
 
       <List>
+
         {[
           'Parametros',
           'Empresas',
           'Tabelas',
           'Associados',
           'Aniversariantes',
+          'Protocolos',
           'Chapas',
           'Diretorias',
           'Eleicoes',

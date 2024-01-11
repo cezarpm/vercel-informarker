@@ -1,5 +1,5 @@
 import { Button } from '@/components/Button'
-import { Container, Box } from './styled'
+import { Container, Box, ButtonEtiqueta } from './styled'
 import { useRouter } from 'next/router'
 import DataGridDemo from '@/components/TableList'
 import { prisma } from '@/lib/prisma'
@@ -11,8 +11,14 @@ import Modal from '@/components/Modal'
 import SelectNoComplete from '@/components/SelectNoComplete'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { Modal as ModalMui } from '@mui/material'
+import { Button as ButtonReact } from '@ignite-ui/react'
+import { useEffect, useState } from 'react'
+import { EtiquetaPDFCompany } from '@/utils/ticketsCompany'
+import ModalTickets from '@/components/ModalTickets'
 import { formatCNPJ } from '@/utils/formatCnpj'
 import { useState } from 'react'
+
 
 const shemaFilter = z.object({
   tipo_empresa_filter: z.string(),
@@ -20,6 +26,41 @@ const shemaFilter = z.object({
   faculdade_anestesiologia_filter: z.string(),
   empresa_ativa_filter: z.string(),
 })
+
+interface EtiquetaProps {
+  id: number;
+  cod_empresa?: string;
+  tipo_empresa?: string;
+  patrocinadora?: boolean;
+  faculdade_anestesiologia?: boolean;
+  empresa_ativa?: boolean;
+  cnpj?: string;
+  razao_social?: string;
+  nome_fantasia?: string;
+  cep?: string;
+  logradouro?: string;
+  numero?: number;
+  complemento?: string;
+  cidade?: string;
+  uf?: string;
+  pais?: string;
+  bairro?: string;
+  telefone_comercial?: string;
+  tratamento_contato_primario?: string;
+  nome_contato_primario?: string;
+  cargo_contato_primario?: string;
+  email_contato_primario?: string;
+  telefone_contato_primario?: string;
+  tratamento_contato_secundario?: string;
+  nome_contato_secundario?: string;
+  cargo_contato_secundario?: string;
+  email_contato_secundario?: string;
+  telefone_contato_secundario?: string;
+  home_page?: string;
+  inscricao_estadual?: string;
+  inscricao_municipal?: string;
+  observacoes?: string;
+}
 
 type SchemaFilter = z.infer<typeof shemaFilter>
 
@@ -196,87 +237,172 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
     },
   ]
 
-  // console.log(dataTipoEmpresa)
+
+
+  const columns: GridColDef[] = [
+    {
+      field: 'id',
+      headerName: 'id',
+      disableColumnMenu: true,
+      width: 80,
+    },
+    {
+      field: 'tipo_empresa',
+      headerName: 'Tipo Empresa',
+      width: 120,
+    },
+    {
+      field: 'patrocinadora',
+      headerName: 'Patrocinadora',
+      width: 120,
+    },
+    {
+      field: 'faculdade_anestesiologia',
+      headerName: 'Faculdade Anestesiologia',
+      width: 220,
+      disableColumnMenu: true,
+    },
+    {
+      field: 'empresa_ativa',
+      headerName: 'Empresa Ativa',
+      width: 120,
+      disableColumnMenu: true,
+    },
+    {
+      field: 'razao_social',
+      headerName: 'Razão Social',
+      flex: 1,
+      disableColumnMenu: true,
+    },
+    {
+      field: 'nome_fantasia',
+      headerName: 'Nome Fantasia',
+      flex: 1,
+      disableColumnMenu: true,
+    },
+    {
+      field: 'cnpj',
+      headerName: 'Cnpj',
+      width: 140,
+      disableColumnMenu: true,
+    },
+    {
+      field: 'cidade',
+      headerName: 'Cidade',
+      width: 120,
+      disableColumnMenu: true,
+    },
+    {
+      field: 'uf',
+      headerName: 'Uf',
+      width: 50,
+      disableColumnMenu: true,
+    },
+
+    {
+      field: 'nome_contato_primario',
+      headerName: 'Nome Contato Primário',
+      width: 180,
+      disableColumnMenu: true,
+    },
+    {
+      field: 'email_contato_primario',
+      headerName: 'Email Contato Primário',
+      width: 180,
+      disableColumnMenu: true,
+    },
+  ]
+
+  const { register, watch } = useForm<SchemaFilter>()
+
+  const TipoEmpresaFilter = watch('tipo_empresa_filter')
+  const PatrocinadoraFilter = watch('patrocinarora_filter')
+  const FaculdadeAnestesiologiaFilter = watch('faculdade_anestesiologia_filter')
+  const EmpresaAtivaFilter = watch('empresa_ativa_filter')
+
+  const filteredData = data.filter((item: any) => {
+    const tipoEmpresaMatch =
+      TipoEmpresaFilter === undefined ||
+      TipoEmpresaFilter === 'Todos' ||
+      item.tipo_empresa === TipoEmpresaFilter
+
+    const patrocinadoraMatch =
+      PatrocinadoraFilter === undefined ||
+      PatrocinadoraFilter === 'Todos' ||
+      item.patrocinadora === PatrocinadoraFilter
+
+    const faculdadeMatch =
+      FaculdadeAnestesiologiaFilter === undefined ||
+      FaculdadeAnestesiologiaFilter === 'Todos' ||
+      item.faculdade_anestesiologia === FaculdadeAnestesiologiaFilter
+
+    const empresaAtivaMatch =
+      EmpresaAtivaFilter === undefined ||
+      EmpresaAtivaFilter === 'Todos' ||
+      item.empresa_ativa === EmpresaAtivaFilter
+
+    return (
+      tipoEmpresaMatch &&
+      patrocinadoraMatch &&
+      faculdadeMatch &&
+      empresaAtivaMatch
+    )
+  })
+  const dataSimNao = [
+    {
+      id: 1,
+      ocorrencia_tabela: 'sim',
+    },
+    {
+      id: 2,
+      ocorrencia_tabela: 'não',
+    },
+  ]
+
   return (
     <Container>
+      
+
       <p>Empresas</p>
-
-      <div>
-        <Box
-          style={{
-            marginTop: '1rem',
-            justifyContent: 'flex-start',
-            alignItems: 'end',
-          }}
-        >
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <SelectNoComplete
-              value="Todos"
-              title="Tipo Empresa"
-              data={dataTipoEmpresa}
-              {...register('tipo_empresa_filter')}
-            />
-            <SelectNoComplete
-              value="Todos"
-              title="Patrocinadora"
-              {...register('patrocinarora_filter')}
-              data={dataSimNao}
-            />
-            <SelectNoComplete
-              value="Todos"
-              title="Faculdade Anestesiologia"
-              {...register('faculdade_anestesiologia_filter')}
-              data={dataSimNao}
-            />
-            <SelectNoComplete
-              value="Todos"
-              title="Empresa Ativa"
-              {...register('empresa_ativa_filter')}
-              data={dataSimNao}
-            />
-          </div>
-          <Button
-            style={{
-              margin: '0px',
-              fontSize: '12px',
-              width: '5rem',
-              border: 'solid 1px',
-              padding: '0.5rem',
-            }}
-            title="Buscar"
-            onClick={BuscarFiltro}
-     />     
-      // <DataGridDemo dataTipoEmpresa={dataTipoEmpresa} data={data} w="100%" />
-
       <form>
         <Box style={{ marginTop: '1rem' }}>
-//          <SelectNoComplete
-//            value="Todos"
-//            title="Tipo Empresa"
-  //          data={dataTipoEmpresa}
-    //        {...register('tipo_empresa_filter')}
-  //        />
-    //      <SelectNoComplete
-  //          value="Todos"
-    //        title="Patrocinadora"
-   //         {...register('patrocinarora_filter')}
-   //         data={dataSimNao}
-   //       />
-   //       <SelectNoComplete
-   //         value="Todos"
-   //         title="Faculdade Anestesiologia"
-   //         {...register('faculdade_anestesiologia_filter')}
-    //        data={dataSimNao}
-     //     />
-     //     <SelectNoComplete
-     //       value="Todos"
-    //        title="Empresa Ativa"
-      //      {...register('empresa_ativa_filter')}
-        //    data={dataSimNao}
-         // />
+          <SelectNoComplete
+            value="Todos"
+            title="Tipo Empresa"
+            data={dataTipoEmpresa}
+            {...register('tipo_empresa_filter')}
+          />
+          <SelectNoComplete
+            value="Todos"
+            title="Patrocinadora"
+            {...register('patrocinarora_filter')}
+            data={dataSimNao}
+          />
+          <SelectNoComplete
+            value="Todos"
+            title="Faculdade Anestesiologia"
+            {...register('faculdade_anestesiologia_filter')}
+            data={dataSimNao}
+          />
+          <SelectNoComplete
+            value="Todos"
+            title="Empresa Ativa"
+            {...register('empresa_ativa_filter')}
+            data={dataSimNao}
+          />
         </Box>
-      </div>
-      <DataGridDemo columns={columns} rows={list} w="100%" />
+      </form>
+
+      {selectedRowIds.length > 0 && 
+      <Box style={{display: 'flex', alignItems: 'center', justifyContent: 'flex-end'}}>
+        <ModalTickets
+          title="Gerar Etiqueta"
+          bgColor="#0da9a4"
+          data={selectedRowIds}
+          route="/api/empresa/get/"
+        />
+      </Box>}
+      <DataGridDemo columns={columns} rows={filteredData} w="100%" />
 
 
       <Box>
@@ -314,7 +440,7 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
           onClick={() => {
             router.push('/empresas/cadastro')
           }}
-        />
+        />       
 
         <Modal
           title="Excluir"
