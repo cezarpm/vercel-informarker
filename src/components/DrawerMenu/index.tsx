@@ -16,7 +16,8 @@ import {
   SignOut,
   Table,
   UsersFour,
-  Balloon
+  Balloon,
+  Article
 } from 'phosphor-react'
 import { useRouter } from 'next/navigation'
 import { Twirl as Hamburger } from 'hamburger-react'
@@ -42,6 +43,8 @@ export function TemporaryDrawer() {
       router.push('/associados')
     }else if (text === 'Aniversariantes') {
       router.push('/associados/aniversariantes')
+    }else if (text === 'Protocolos') {
+      router.push('/protocolos')
     }
   }
 
@@ -76,6 +79,9 @@ export function TemporaryDrawer() {
     <>
       <Balloon size={30} color="#fff" />
     </>,
+    <>
+      <Article size={30} color="#fff" /> 
+    </>
   ]
 
   const list = (anchor: Anchor) => (
@@ -102,7 +108,7 @@ export function TemporaryDrawer() {
         <Image src={logo} alt="logo" width={210} quality={100} />
       </div>
       <List>
-        {['Parametros', 'Empresas', 'Tabelas', 'Associados', 'Aniversariantes'].map(
+        {['Parametros', 'Empresas', 'Tabelas', 'Associados', 'Aniversariantes', 'Protocolos'].map(
           (text, index) => (
             <ListItem key={text} disablePadding>
               <ListItemButton

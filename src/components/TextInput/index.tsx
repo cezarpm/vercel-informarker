@@ -31,6 +31,7 @@ export const TextInput = forwardRef<HTMLInputElement, schemaTextField>(
       helperText,
       error,
       mask,
+      messageError,
       ...rest
     } = props
     return (
@@ -54,6 +55,7 @@ export const TextInput = forwardRef<HTMLInputElement, schemaTextField>(
             defaultValue={defaultValue}
             disabled={disabled}
             helperText={helperText}
+            messageerror={messageError}
             {...rest}
             error={error}
             InputLabelProps={{ shrink: true }}
