@@ -1,5 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { prisma } from '@/lib/prisma'
+import { Logs } from '@/utils/Logs'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { z } from 'zod'
 
@@ -47,6 +48,10 @@ export default async function handler(
         ...data,
         numero: Number(data.numero),
       },
+    })
+    Logs({
+      modulo: 'EMPRESA Cadastro',
+      descriptionLog: `codigo empresa:${data.cod_empresa} usuario: 'teste' `,
     })
     return res.status(201).end()
   } catch (error) {

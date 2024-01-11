@@ -13,9 +13,17 @@ import logo from '@/assets/logo.png'
 import {
   Buildings,
   CloudArrowUp,
+  Function,
   SignOut,
   Table,
+  Balloon,
+  ArchiveTray,
+  User,
+  ArchiveBox,
   UsersFour,
+  Balloon,
+  Article
+
 } from 'phosphor-react'
 import { useRouter } from 'next/navigation'
 import { Twirl as Hamburger } from 'hamburger-react'
@@ -30,6 +38,8 @@ export function TemporaryDrawer() {
 
   const router = useRouter()
 
+  // const { Logs } = useId()
+
   function handleNextPage(text: string): void {
     if (text === 'Parametros') {
       router.push('/parametros')
@@ -39,7 +49,24 @@ export function TemporaryDrawer() {
       router.push('/tabelas')
     } else if (text === 'Associados') {
       router.push('/associados')
+
+    } else if (text === 'Logs') {
+      router.push('/logs')
     }
+
+    }else if (text === 'Aniversariantes') {
+      router.push('/associados/aniversariantes')
+    }else if (text === 'Protocolos') {
+      router.push('/protocolos')
+    }
+    } else if (text === 'Chapas') {
+      router.push('/chapas')
+    } else if (text === 'Diretorias') {
+      router.push('/diretorias')
+    } else if (text === 'Eleicoes') {
+      router.push('/eleicoes')
+    } 
+
   }
 
   const toggleDrawer =
@@ -68,10 +95,33 @@ export function TemporaryDrawer() {
       <Table size={30} color="#fff" />
     </>,
     <>
+
       <UsersFour size={30} color="#fff" />
     </>,
-  ]
+    <>
+      <Balloon size={30} color="#fff" />
 
+      <ArchiveTray size={30} color="#fff" />
+    </>,
+    <>
+
+      <Article size={30} color="#fff" /> 
+    </>
+  ]
+      <User size={30} color="#fff" />
+    </>,
+    <>
+      <ArchiveBox size={30} color="#fff" />
+
+      <UsersFour size={30} color="#fff" />
+
+    </>,
+  ]
+  const arrayIconsTwoList = [
+    <>
+      <Function size={30} color="#fff" />
+    </>,
+  ]
   const list = (anchor: Anchor) => (
     <Box
       sx={{ width: 250 }}
@@ -95,36 +145,49 @@ export function TemporaryDrawer() {
       >
         <Image src={logo} alt="logo" width={210} quality={100} />
       </div>
-      <List>
-        {['Parametros', 'Empresas', 'Tabelas', 'Associados'].map(
-          (text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton
-                onClick={() => {
-                  handleNextPage(text)
-                }}
-              >
-                <ListItemIcon>{arrayIcons[index]}</ListItemIcon>
-                <ListItemText primary={text} style={{ color: '#fff' }} />
-              </ListItemButton>
-            </ListItem>
-          ),
-        )}
-      </List>
 
-      <Divider />
-      {/* <List>
-        {['All mail', 'Trash', 'Spam'].map((text, index) => (
+      <List>
+
+        {[
+          'Parametros',
+          'Empresas',
+          'Tabelas',
+          'Associados',
+          'Aniversariantes',
+          'Protocolos',
+          'Chapas',
+          'Diretorias',
+          'Eleicoes',
+         ].map((text, index) => (
           <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemIcon>
-                {index % 2 === 0 ? 'Icone 2' : 'icone'}
-              </ListItemIcon>
-              <ListItemText primary={text} />
+            <ListItemButton
+              onClick={() => {
+                handleNextPage(text)
+              }}
+            >
+              <ListItemIcon>{arrayIcons[index]}</ListItemIcon>
+              <ListItemText primary={text} style={{ color: '#fff' }} />
             </ListItemButton>
           </ListItem>
         ))}
-      </List> */}
+
+      </List>
+      <Divider />
+      {/* two list */}
+      <List>
+        {['Logs'].map((text, index) => (
+          <ListItem key={text} disablePadding>
+            <ListItemButton
+              onClick={() => {
+                handleNextPage(text)
+              }}
+            >
+              <ListItemIcon>{arrayIconsTwoList[index]}</ListItemIcon>
+              <ListItemText primary={text} style={{ color: '#fff' }} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
     </Box>
   )
 
