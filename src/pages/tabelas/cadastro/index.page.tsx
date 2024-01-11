@@ -47,7 +47,7 @@ export default function CadastroTabelas() {
   return (
     <Container>
       <form onSubmit={handleSubmit(OnSubmit)}>
-        <Box>
+        <Box style={{ justifyContent: 'flex-end' }}>
           <Link
             href="/tabelas"
             style={{

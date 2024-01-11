@@ -55,7 +55,7 @@ export default function Vizualizar({ data }: schemaEmpresasProps) {
   return (
     <Container>
       <form>
-        <Box>
+        <Box style={{ justifyContent: 'end' }}>
           <Link
             href="/empresas"
             style={{

@@ -24,7 +24,7 @@ export default function Vizualizar({ data }: schemaCargos) {
   return (
     <Container>
       <form>
-        <Box>
+        <Box style={{ justifyContent: 'flex-end' }}>
           <Link
             href="/tabelas"
             style={{

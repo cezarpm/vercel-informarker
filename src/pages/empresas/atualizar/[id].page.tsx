@@ -14,7 +14,6 @@ import { api } from '@/lib/axios'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/router'
 import axios from 'axios'
-import { TextArea } from '@ignite-ui/react'
 
 const schemaEmpresaForm = z.object({
   id: z.number(),
@@ -70,6 +69,19 @@ export default function Vizualizar({
   dataTratamento,
 }: any) {
   const router = useRouter()
+
+
+  async function OnSubmit(data: any) {
+    try {
+      await api.put('/empresa/update', { ...data })
+      toast.success('Empresa atualizada!')
+      router.push('/empresas')
+    } catch (error) {
+      console.log(error)
+    }
+  }
+  const newDataTipoEmpresa = dataTipoEmpresa?.map((item: any) => {
+
   const [cepInvalido, setCepInvalido] = useState()
   const [disabledButtonCep, setDisabledButtonCep] = useState(false)
 
@@ -214,7 +226,7 @@ export default function Vizualizar({
   return (
     <Container>
       <form onSubmit={handleSubmit(OnSubmit)}>
-        <Box>
+        <Box style={{ justifyContent: 'end' }}>
           <Link
             href="/empresas"
             style={{

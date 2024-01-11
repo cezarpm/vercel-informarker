@@ -1,0 +1,207 @@
+import { Container, Box } from './styled'
+import React from 'react'
+import { z } from 'zod'
+import { Controller, useFieldArray, useForm } from 'react-hook-form'
+import { Button } from '@/components/Button'
+import { TextInput } from '@/components/TextInput'
+import { ArrowBendDownLeft } from 'phosphor-react'
+import Link from 'next/link'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { api } from '@/lib/axios'
+import { useRouter } from 'next/router'
+import { toast } from 'react-toastify'
+import { Typography } from '@mui/material'
+import { SelectOptions } from '@/components/SelectOptions'
+import { prisma } from '@/lib/prisma'
+import { GetServerSideProps } from 'next'
+import { DateTimePicker } from '@mui/x-date-pickers'
+import dayjs from 'dayjs'
+
+const integranteSchema = z.object({
+  nome: z.string().min(1, { message: 'O campo nome é obrigatório' }),
+})
+
+const schemaChapaForm = z.object({
+  nome_da_chapa: z
+    .string()
+    .min(1, { message: 'O campo nome da chapa é obrigatório' }),
+  data_inicio: z.coerce.date(),
+  data_fim: z.coerce.date(),
+  chapas: z.array(integranteSchema).nonempty(),
+})
+
+type SchemaChapaForm = z.infer<typeof schemaChapaForm>
+
+export default function VotacaoCreate({ chapas }) {
+  const router = useRouter()
+
+  const {
+    register,
+    handleSubmit,
+    formState: { isSubmitting, errors },
+    control,
+  } = useForm<SchemaChapaForm>({
+    resolver: zodResolver(schemaChapaForm),
+  })
+
+
+  console.log(errors);
+
+  async function handleOnSubmit(data: SchemaChapaForm) {
+    const selectedChapas = data.chapas.map((chapa) => {
+      const chapaSelected = chapas.find((item) => item.nome_chapa === chapa.nome)
+      return chapaSelected
+    })
+
+    const body = {
+      nome_da_chapa: data.nome_da_chapa,
+      data_inicio: new Date(data.data_inicio).toISOString(),
+      data_fim: new Date(data.data_fim).toISOString(),
+      chapas: selectedChapas,
+      status: 'ATIVA'
+    }
+
+    await api.post('/eleicao/cadastro', body)
+
+    // router.push('/eleicao/lista')
+    // return toast.success('Chapa cadastrada!')
+  }
+
+  const { fields, append } = useFieldArray({
+    name: 'chapas',
+    control,
+  })
+
+
+  return (
+    <Container>
+      <form onSubmit={handleSubmit(handleOnSubmit)}>
+        <Box>
+          <Link
+            href="/votacao/lista"
+            style={{
+              textDecoration: 'none',
+              fontFamily: 'Roboto',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              marginBottom: '1rem',
+              color: '#000',
+            }}
+          >
+            <ArrowBendDownLeft size={32} />
+            Retornar
+          </Link>
+        </Box>
+        <fieldset>
+          <Box>
+            <TextInput
+              title="Nome da eleicao *"
+              {...register('nome_da_chapa')}
+            />
+
+            <Controller
+              control={control}
+              name="data_inicio"
+              rules={{
+                required: {
+                  value: true,
+                  message: "Start date is required",
+                },
+              }}
+
+              render={({ field: { onChange, value, ref } }) => (
+                <DateTimePicker
+                  label="Start Date"
+                  disablePast
+                  onChange={onChange}
+                  onAccept={onChange}
+                  value={value}
+                  inputRef={ref}
+                />
+              )}
+            />
+
+            <Controller
+              control={control}
+              name="data_fim"
+              rules={{
+                required: {
+                  value: true,
+                  message: "Start date is required",
+                },
+              }}
+
+              render={({ field: { onChange, value, ref } }) => (
+                <DateTimePicker
+                  label="Start Date"
+                  disablePast
+                  onChange={onChange}
+                  onAccept={onChange}
+                  value={value}
+                  inputRef={ref}
+                />
+              )}
+            />
+
+          </Box>
+
+          <Box>
+
+            <Typography variant="h6" component="div">
+              Selecione a chapa
+            </Typography>
+
+            <Button
+              onClick={() => append({ nome: '' })}
+              type="button"
+              title="+ Adicionar membro"
+              style={{ margin: '0px', width: '100%', fontSize: '12px' }}
+            />
+
+            {fields.map((membro, index) =>
+              <SelectOptions
+                key={index}
+                description="Tipo Empresa"
+                data={chapas.map((chapa) => chapa.nome_chapa)}
+                w={280}
+                {...register(`chapas.${index}.nome` as const)}
+              />
+            )}
+
+
+
+          </Box>
+
+          <Button
+            title={isSubmitting ? 'Enviando...' : 'Enviar'}
+            type="submit"
+          />
+        </fieldset>
+      </form>
+    </Container>
+  )
+}
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+
+  try {
+    const data = await prisma.chapas.findMany()
+
+
+    return {
+      props: {
+        chapas: data,
+      },
+    }
+  } catch (error) {
+    console.error('Erro ao obter dados de tipo de empresa:', error)
+    return {
+      props: {
+        data: [],
+      },
+    }
+  } finally {
+    prisma.$disconnect()
+  }
+}

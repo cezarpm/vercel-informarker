@@ -12,6 +12,7 @@ export default function DataGridDemo({ rows, columns, w }: any) {
   }
 
   return (
+
     <Box sx={{ height: '60vh', width: w, marginTop: '1rem' }}>
       <DataGrid
         rows={rows}
