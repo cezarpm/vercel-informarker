@@ -11,13 +11,9 @@ import Modal from '@/components/Modal'
 import SelectNoComplete from '@/components/SelectNoComplete'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { Modal as ModalMui } from '@mui/material'
-import { Button as ButtonReact } from '@ignite-ui/react'
-import { useEffect, useState } from 'react'
-import { EtiquetaPDFCompany } from '@/utils/ticketsCompany'
+import { useState } from 'react'
 import ModalTickets from '@/components/ModalTickets'
 import { formatCNPJ } from '@/utils/formatCnpj'
-import { useState } from 'react'
 
 
 const shemaFilter = z.object({
@@ -68,81 +64,6 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
   const router = useRouter()
   const { selectedRowIds } = useId()
   const [list, setList] = useState(data)
-  const columns: GridColDef[] = [
-    {
-      field: 'id',
-      headerName: 'id',
-      disableColumnMenu: true,
-      width: 80,
-    },
-    {
-      field: 'tipo_empresa',
-      headerName: 'Tipo Empresa',
-      width: 120,
-    },
-    {
-      field: 'patrocinadora',
-      headerName: 'Patrocinadora',
-      width: 120,
-    },
-    {
-      field: 'faculdade_anestesiologia',
-      headerName: 'Fac Anest',
-      width: 100,
-      disableColumnMenu: true,
-    },
-    {
-      field: 'empresa_ativa',
-      headerName: 'Ativa',
-      width: 80,
-      disableColumnMenu: true,
-    },
-    {
-      field: 'razao_social',
-      headerName: 'Razão Social',
-      width: 220,
-      disableColumnMenu: true,
-    },
-    {
-      field: 'nome_fantasia',
-      headerName: 'Nome Fantasia',
-      width: 220,
-      disableColumnMenu: true,
-    },
-    {
-      field: 'cnpj',
-      headerName: 'CNPJ',
-      width: 150,
-      disableColumnMenu: true,
-    },
-    {
-      field: 'cidade',
-      headerName: 'Cidade',
-      width: 120,
-      disableColumnMenu: true,
-    },
-    {
-      field: 'uf',
-      headerName: 'Uf',
-      width: 50,
-      disableColumnMenu: true,
-    },
-
-    {
-      field: 'nome_contato_primario',
-      headerName: 'Contato Primário',
-      width: 180,
-      disableColumnMenu: true,
-    },
-    {
-      field: 'email_contato_primario',
-      headerName: 'Email Primário',
-      width: 180,
-      disableColumnMenu: true,
-    },
-  ]
-
-  const { register, watch } = useForm<SchemaFilter>()
 
   // const TipoEmpresaFilter = watch('tipo_empresa_filter')
   // const PatrocinadoraFilter = watch('patrocinarora_filter')
@@ -226,16 +147,7 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
   //     empresaAtivaMatch
   //   )
   // })
-  const dataSimNao = [
-    {
-      id: 1,
-      ocorrencia_tabela: 'sim',
-    },
-    {
-      id: 2,
-      ocorrencia_tabela: 'não',
-    },
-  ]
+
 
 
 
@@ -361,7 +273,7 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
 
   return (
     <Container>
-      
+
 
       <p>Empresas</p>
       <form>
@@ -393,15 +305,15 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
         </Box>
       </form>
 
-      {selectedRowIds.length > 0 && 
-      <Box style={{display: 'flex', alignItems: 'center', justifyContent: 'flex-end'}}>
-        <ModalTickets
-          title="Gerar Etiqueta"
-          bgColor="#0da9a4"
-          data={selectedRowIds}
-          route="/api/empresa/get/"
-        />
-      </Box>}
+      {selectedRowIds.length > 0 &&
+        <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+          <ModalTickets
+            title="Gerar Etiqueta"
+            bgColor="#0da9a4"
+            data={selectedRowIds}
+            route="/api/empresa/get/"
+          />
+        </Box>}
       <DataGridDemo columns={columns} rows={filteredData} w="100%" />
 
 
@@ -440,7 +352,7 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
           onClick={() => {
             router.push('/empresas/cadastro')
           }}
-        />       
+        />
 
         <Modal
           title="Excluir"
