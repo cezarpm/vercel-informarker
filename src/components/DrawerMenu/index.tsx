@@ -130,13 +130,13 @@ export function TemporaryDrawer() {
 
   const arrayIconsTwoList = [
     <>
-      <Function size={30} color="#fff" />
+      <Table size={30} color="#fff" />
     </>,
     <>
       <CloudArrowUp size={30} color="#fff" />
     </>,
     <>
-      <Table size={30} color="#fff" />
+      <Function size={30} color="#fff" />
     </>,
   ]
 
@@ -192,7 +192,7 @@ export function TemporaryDrawer() {
       <Divider />
       {/* two list */}
       <List>
-        {['Logs', 'Parametros', 'Tabelas',].map((text, index) => (
+        {['Tabelas', 'Parametros', 'Logs',].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton
               onClick={() => {
