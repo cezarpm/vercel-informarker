@@ -28,7 +28,6 @@ export const TextInput = forwardRef<HTMLInputElement, schemaTextField>(
       value,
       defaultValue,
       w,
-      messageError,
       minW,
       disabled,
       helperText,

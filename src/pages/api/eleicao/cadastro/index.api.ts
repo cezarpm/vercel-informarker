@@ -1,3 +1,4 @@
+/* eslint-disable camelcase */
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { prisma } from '@/lib/prisma'
 import type { NextApiRequest, NextApiResponse } from 'next'
@@ -9,16 +10,13 @@ export default async function handler(
 ) {
 
     try {
-        const { nome_da_chapa, data_inicio, data_fim, chapas, status } = req.body
-
-        console.log('olha euu');
-
+        const { data_votacao_inicio, data_votacao_fim, chapas, matricula_saerj } = req.body
 
         await prisma.votacao.create({
             data: {
-                data_votacao_fim: new Date(data_fim).toISOString(),
-                data_votacao_inicio: new Date(data_inicio).toISOString(),
-                matricula_saerj: nome_da_chapa,
+                matricula_saerj,
+                data_votacao_fim,
+                data_votacao_inicio,
                 chapas: {
                     chapas: [
                         ...chapas

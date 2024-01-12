@@ -8,41 +8,49 @@ export default async function handler(
     res: NextApiResponse,
 ) {
 
+    if (req.method !== `GET`) {
+        const MessageErrorMethodInvalid = `Error method invalid`
+        return res.status(405).json({ message: `${MessageErrorMethodInvalid}` })
+    }
+
+
     try {
+        if (!req.query.id) {
+            return res.status(400).json({ message: 'id is required' })
+        }
+
+        const { id } = req.query
 
         const eleicao = await prisma.votacao.findFirst({
             where: {
-                id: 1,
+                id: Number(id),
             },
         })
 
 
-        const chapaNomes = eleicao?.chapas.chapas.map((chapa) => chapa.name);
+        if (!eleicao) {
+            return res.status(404).json({ message: 'not found' })
+        }
 
+        const chapas = eleicao.chapas as any
 
-        const votos = await prisma.voto.findMany({
-            where: {
-                votacao_id: 1,
-            },
-        })
+        const chapaNomes = chapas.chapas.map((chapa: any) => chapa.nome_chapa);
 
         const votosCount = await prisma.voto.count({
             where: {
-                votacao_id: 1,
+                votacao_id: Number(id),
             },
         })
 
-        const votosChapasPromise = chapaNomes?.map(async (chapaNome) => {
-            console.log(chapaNome);
+        const votosChapasPromise = chapaNomes?.map(async (chapaNome: string) => {
 
             const res = await prisma.voto.count({
                 where: {
-                    votacao_id: 1,
+                    votacao_id: Number(id),
                     nome_chapa: chapaNome,
                 },
             })
 
-            console.log(res);
 
             return {
                 chapaNome,
@@ -55,21 +63,21 @@ export default async function handler(
 
         const votosBranco = await prisma.voto.count({
             where: {
-                votacao_id: 1,
+                votacao_id: Number(id),
                 nome_chapa: 'BRANCO',
             },
         })
 
         const votosNulo = await prisma.voto.count({
             where: {
-                votacao_id: 1,
+                votacao_id: Number(id),
                 nome_chapa: 'NULO',
             },
         })
 
 
         const response = {
-            votos,
+            name: eleicao?.matricula_saerj,
             votosCount,
             votosChapas,
             votosBranco,

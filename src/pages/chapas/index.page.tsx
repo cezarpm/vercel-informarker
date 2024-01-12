@@ -1,96 +1,98 @@
-import React from 'react'
 import { Button } from '@/components/Button'
-import { Box, Container } from './styled'
-import DataGridDemo from '@/components/TableList'
-import { GridColDef } from '@mui/x-data-grid'
-import { CaretRight } from 'phosphor-react'
-import Modal from '@/components/Modal'
-import { toast } from 'react-toastify'
-
-import Link from 'next/link'
+import { Container, Box } from './styled'
 import { useRouter } from 'next/router'
+import DataGridDemo from '@/components/TableList'
 import { useId } from '@/context'
+import { GridColDef } from '@mui/x-data-grid'
+import { toast } from 'react-toastify'
+import Modal from '@/components/Modal'
 import { GetServerSideProps } from 'next'
+import { Typography } from '@mui/material'
 import { prisma } from '@/lib/prisma'
-import { format } from 'date-fns'
 
 export default function ChapasList({ data }: any) {
-  const { selectedRowIds } = useId()
   const router = useRouter()
+  const { selectedRowIds } = useId()
+
   const columns: GridColDef[] = [
-    { field: 'titulo_chapa', headerName: 'Titulo da chapa', flex: 1 },
     {
-      field: 'nome_presidente',
-      headerName: 'Presidente da chapa',
-      flex: 1,
+      field: 'id',
+      headerName: 'id',
+      disableColumnMenu: true,
+      width: 80,
     },
     {
-      field: 'data_formacao',
-      headerName: 'Data de formacao',
-      flex: 1,
+      field: 'nome_chapa',
+      headerName: 'Nome da chapa',
+      width: 150,
     },
     {
-      field: 'pessoas_compoe',
-      headerName: 'Pessoas que compoe a chapa',
-      flex: 1,
+      field: 'membros_chapa',
+      headerName: 'Membros da chapa',
+      width: 270,
+      renderCell: ({ row }) => {
+        return (
+          <Typography>
+            {row.membros_chapa.map((membro: any,) => (
+              `${membro.nome}, `
+            ))}
+          </Typography>
+        )
+      },
     },
   ]
 
-  const dataFormattedDate = data.map((item: any) => ({
-    ...item,
-    data_formacao: format(new Date(item.data_formacao), 'dd/MM/yyyy'),
-  }))
-
   return (
     <Container>
-      <p>
-        <span>Chapas</span>
-      </p>
-      <Box>
-        <DataGridDemo columns={columns} rows={dataFormattedDate} w="90%" />
-      </Box>
-      <Box>
-        <Button
-          title="Cadastrar"
-          style={{ backgroundColor: '#f67200' }}
-          onClick={() => {
-            router.push('/chapas/cadastro')
-          }}
-        />
+      <p>Chapas</p>
 
+      <DataGridDemo columns={columns} rows={data} w="100%" />
+
+      <Box>
         <Button
+          style={{ backgroundColor: '#4471C6' }}
           title="Visualizar"
           onClick={() => {
             if (selectedRowIds.length === 0) {
-              toast.warn('você não selecionou o cargo para visualizar')
+              toast.warn('você não selecionou a chapa para visualizar')
             } else if (selectedRowIds.length >= 2) {
-              toast.warn('selecione 1 cargo para visualizar')
+              toast.warn('selecione 1 chapa para visualizar')
             } else {
               router.push(`/chapas/visualizar/${selectedRowIds}`)
             }
           }}
         />
+
         <Button
           title="Atualizar"
-          style={{ backgroundColor: '#6f9622' }}
+          style={{ backgroundColor: '#528035' }}
           onClick={() => {
             if (selectedRowIds.length === 0) {
-              toast.warn('você não selecionou o cargo para atualizar')
+              toast.warn('você não selecionou a chapa para atualizar')
             } else if (selectedRowIds.length >= 2) {
-              toast.warn('selecione 1 cargo para atualizar')
+              toast.warn('selecione 1 chapa para atualizar')
             } else {
               router.push(`/chapas/atualizar/${selectedRowIds}`)
             }
           }}
         />
 
+        <Button
+          title="Incluir"
+          style={{ backgroundColor: '#ED7D31' }}
+          onClick={() => {
+            router.push('/chapas/cadastro')
+          }}
+        />
+
         <Modal
-          title="Deletar"
-          bgColor="#ff0000"
-          routeDelete="/chapas/delete"
+          title="Excluir"
+          bgColor="#BE0000"
+          routeDelete="/votacao/delete"
           data={selectedRowIds}
           redirectRouter="/chapas"
         />
+
       </Box>
     </Container>
   )
@@ -98,17 +100,7 @@ export default function ChapasList({ data }: any) {
 
 export const getServerSideProps: GetServerSideProps = async () => {
   try {
-    const response = await prisma.chapas.findMany()
-
-    const data = response.map((item) => {
-      return {
-        id: item.id,
-        titulo_chapa: item.titulo_chapa,
-        nome_presidente: item.nome_presidente,
-        data_formacao: item.data_formacao.toString(),
-        pessoas_compoe: item.pessoas_compoe,
-      }
-    })
+    const data = await prisma.chapas.findMany()
 
     return {
       props: {
@@ -116,10 +108,11 @@ export const getServerSideProps: GetServerSideProps = async () => {
       },
     }
   } catch (error) {
-    console.error('Erro ao obter dados das diretorias:', error)
+    console.error('Erro ao obter dados da chapa:', error)
     return {
       props: {
         data: [],
+        dataTipochapa: [],
       },
     }
   }

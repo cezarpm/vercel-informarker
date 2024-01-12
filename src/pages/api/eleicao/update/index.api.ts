@@ -11,16 +11,23 @@ export default async function handler(
     const MessageErrorMethodInvalid = `Error method invalid`
     return res.status(405).json({ message: `${MessageErrorMethodInvalid}` })
   }
-  const { id, membros_chapa, nome_chapa } = req.body
+  const { id, matricula_saerj, data_votacao_inicio, data_votacao_fim, chapas, status } = req.body
+
 
   try {
-    await prisma.chapas.update({
+    await prisma.votacao.update({
       where: { id },
       data: {
-        id,
-        membros_chapa,
-        nome_chapa
-      }
+        data_votacao_fim: new Date(data_votacao_fim).toISOString(),
+        data_votacao_inicio: new Date(data_votacao_inicio).toISOString(),
+        matricula_saerj,
+        chapas: {
+          chapas: [
+            ...chapas
+          ]
+        },
+        status
+      },
     })
     return res.status(200).end()
   } catch (error) {

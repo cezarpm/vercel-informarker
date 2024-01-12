@@ -5,9 +5,11 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
+
   const data = req.body
+
   try {
-    await prisma.chapas.deleteMany({
+    await prisma.votacao.deleteMany({
       where: {
         id: {
           in: data,

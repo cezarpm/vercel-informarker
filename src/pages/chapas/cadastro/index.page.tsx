@@ -1,189 +1,155 @@
-import Link from 'next/link'
-import { Box, Container, Text } from './styled'
-import { CaretRight } from 'phosphor-react'
-import { MenuItem, Select } from '@mui/material'
-
-import { SelectOptions } from '@/components/SelectOptions'
-
+import { Container, Box } from './styled'
+import React from 'react'
 import { z } from 'zod'
-import { useForm, Controller } from 'react-hook-form'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { toast } from 'react-toastify'
+import { useFieldArray, useForm } from 'react-hook-form'
 import { Button } from '@/components/Button'
 import { TextInput } from '@/components/TextInput'
+import { ArrowBendDownLeft, CaretRight } from 'phosphor-react'
+import Link from 'next/link'
+import { zodResolver } from '@hookform/resolvers/zod'
 import { api } from '@/lib/axios'
 import { useRouter } from 'next/router'
+import { toast } from 'react-toastify'
+
+
+const placeHolderImage = [
+  "https://this-person-does-not-exist.com/img/avatar-gen11080ba46e2948ca0f20c6c9463f302e.jpg",
+  "https://this-person-does-not-exist.com/img/avatar-gen114548412138b56a953eaf4a109c9278.jpg",
+  "https://this-person-does-not-exist.com/img/avatar-gen1cd8f7740afa986a8905887813e1045a.jpg"
+]
+
+const integranteSchema = z.object({
+  nome: z.string().min(1, { message: 'O campo nome é obrigatório' }),
+  cargo: z.string().min(1, { message: 'O campo cargo é obrigatório' }),
+  image: z.string().min(1, { message: 'O campo imagem é obrigatório' }),
+})
 
 const schemaChapaForm = z.object({
-  titulo_chapa: z.string().min(2, 'Informe o nome da chapa'),
-  nome_presidente: z.string().min(2, 'Informe o nome da chapa'),
-  pessoas_compoe: z.array(z.string()).nullable(),
-  day: z.string(),
-  month: z.string(),
-  year: z.string(),
+  nome_chapa: z
+    .string()
+    .min(1, { message: 'O campo nome da chapa é obrigatório' }),
+  membros_chapa: z.array(integranteSchema).nonempty(),
 })
 
 type SchemaChapaForm = z.infer<typeof schemaChapaForm>
 
-export default function Cadastro() {
+export default function VotacaoCreate() {
   const router = useRouter()
-  const names = [
-    'Oliver Hansen',
-    'Van Henry',
-    'April Tucker',
-    'Ralph Hubbard',
-    'Omar Alexander',
-    'Carlos Abbott',
-    'Miriam Wagner',
-    'Bradley Wilkerson',
-    'Virginia Andrews',
-    'Kelly Snyder',
-  ]
 
   const {
     register,
     handleSubmit,
-    control,
-    watch,
     formState: { isSubmitting, errors },
+    control,
   } = useForm<SchemaChapaForm>({
     resolver: zodResolver(schemaChapaForm),
-    defaultValues: {
-      titulo_chapa: '',
-      nome_presidente: '',
-      pessoas_compoe: [],
-    },
   })
 
-  async function handleOnSubmit(dataForm: SchemaChapaForm) {
-    const concatDate = `${dataForm.day}-${dataForm.month}-${dataForm.year}`
-    const newDate = new Date(concatDate)
-    const pessoasString = dataForm.pessoas_compoe?.join(',')
-    const data = {
-      titulo_chapa: dataForm.titulo_chapa,
-      nome_presidente: dataForm.nome_presidente,
-      pessoas_compoe: pessoasString,
-      data_formacao: newDate,
-    }
+  const { fields, append, remove } = useFieldArray({
+    name: 'membros_chapa',
+    control,
+  })
 
-    try {
-      await api.post('/chapas/cadastro', { data })
-      router.push('/chapas')
-      return toast.success('Chapa cadastrada!')
-    } catch (error) {
-      return toast.error('Ops algo deu errado...')
-    }
+  async function handleOnSubmit(data: SchemaChapaForm) {
+    await api.post('/votacao/cadastro', data)
+
+    router.push('/chapas')
+    return toast.success('Chapa cadastrada!')
   }
-
-  // array dias
-  const days = Array.from({ length: 31 }, (_, index) => ({
-    label: (index + 1).toString(),
-  }))
-  const dataDays = days.map((item) => item)
-
-  // array mes
-  const months = Array.from({ length: 12 }, (_, index) => ({
-    label: (index + 1).toString(),
-  }))
-  const dataMonths = months.map((item) => item)
-
-  // array anos
-  const yearCurrent = new Date().getFullYear()
-  const years = Array.from({ length: 10 }, (_, index) =>
-    (yearCurrent + index).toString(),
-  )
-  const dataYears = years.map((year) => {
-    return {
-      label: year,
-    }
-  })
 
   return (
     <Container>
       <form onSubmit={handleSubmit(handleOnSubmit)}>
+        <Box style={{ justifyContent: 'end' }}>
+          <Link
+            href="/chapas"
+            style={{
+              textDecoration: 'none',
+              fontFamily: 'Roboto',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              marginBottom: '1rem',
+              color: '#000',
+            }}
+          >
+            <ArrowBendDownLeft size={32} />
+            Retornar
+          </Link>
+        </Box>
         <fieldset>
           <legend>
-            <Link href={'/chapas'}>Chapas</Link>
+            <span>
+              <Link href={'/chapas'}>Chapas</Link>
+            </span>
             <CaretRight size={14} />
-            <span>Cadastro</span>
+            <span>Incluir</span>
           </legend>
-
           <Box>
             <TextInput
-              title="Nome da Chapa"
-              messageError={errors.titulo_chapa?.message}
-              {...register('titulo_chapa')}
-              minW={'20rem'}
+              title="Nome da chapa *"
+              {...register('nome_chapa')}
+              helperText={errors.nome_chapa?.message}
+              error={!!errors.nome_chapa?.message}
             />
-            <TextInput
-              title="Nome do presidente"
-              {...register('nome_presidente')}
-              minW={'20rem'}
-              messageError={errors.nome_presidente?.message}
-            />
-
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'end',
-                width: '32rem',
-              }}
-            >
-              <Text>Data de formação da chapa:</Text>
-              <SelectOptions
-                description="Dia"
-                data={dataDays}
-                w={90}
-                {...register('day')}
-              />
-              <SelectOptions
-                description="Mes"
-                data={dataMonths}
-                w={90}
-                {...register('month')}
-              />
-              <SelectOptions
-                description="Ano"
-                data={dataYears}
-                w={120}
-                {...register('year')}
-              />
-            </div>
-
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'end',
-                flex: 1,
-                minWidth: '20rem',
-              }}
-            >
-              <Text>Pessoas que compõe a chapa:</Text>
-              <Controller
-                control={control}
-                name="pessoas_compoe"
-                render={({ field: { onChange, value } }) => (
-                  <Select
-                    sx={{
-                      borderBottom: '1px solid',
-                      borderRadius: '0',
-                      borderBottomColor: '#A9A9B2',
-                      color: '#A9A9B2',
-                    }}
-                    value={value instanceof Array ? [...value] : []}
-                    multiple
-                    onChange={onChange}
-                  >
-                    {names.map((name) => (
-                      <MenuItem key={name} value={name}>
-                        {name}
-                      </MenuItem>
-                    ))}
-                  </Select>
-                )}
-              />
-            </div>
           </Box>
+
+          <Box>
+            <h1>Composição da chapa</h1>
+            <Button
+              onClick={() => append({ cargo: '', nome: '', image: placeHolderImage[Math.floor(Math.random() * placeHolderImage.length)] })}
+              type="button"
+              title="+ Adicionar membro"
+              style={{ margin: '0px', width: '100%', fontSize: '12px' }}
+            />
+          </Box>
+
+          {fields.map((membro, index) => {
+            const errorForFieldText2 =
+              errors?.membros_chapa?.[index]?.nome?.message
+
+            const errorForFieldText3 =
+              errors?.membros_chapa?.[index]?.cargo?.message
+
+            return (
+              <Box key={index}>
+                <div>
+                  <p
+                    style={{
+                      marginBottom: 16,
+                      fontFamily: 'Roboto',
+                      fontSize: '12px',
+                      color: 'rgba(0, 0, 0, 0.6)',
+                    }}
+                  >
+                    Foto do membro
+                  </p>
+                  <input type="file" />
+                </div>
+
+                <TextInput
+                  title="Nome do membro *"
+                  {...register(`membros_chapa.${index}.nome` as const)}
+                  error={!!errorForFieldText2}
+                  helperText={errorForFieldText2}
+                />
+
+                <TextInput
+                  title="Cargo do membro *"
+                  {...register(`membros_chapa.${index}.cargo` as const)}
+                  error={!!errorForFieldText3}
+                />
+
+                <Button
+                  onClick={() => remove(index)}
+                  type="button"
+                  title="Remover membro"
+                  style={{ margin: '0px', width: '100%', fontSize: '12px' }}
+                />
+              </Box>
+            )
+          })}
+
           <Button
             title={isSubmitting ? 'Enviando...' : 'Enviar'}
             type="submit"
