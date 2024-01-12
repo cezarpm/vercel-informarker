@@ -252,11 +252,11 @@ model Protocolos {
   usuario_encerramento_protocolo       String?
 }
 
-// model Chapas {
-//   id            Int    @id @default(autoincrement())
-//   nome_chapa    String
-//   membros_chapa Json
-// }
+model Chapas {
+  id            Int    @id @default(autoincrement())
+  nome_chapa    String
+  membros_chapa Json
+}
 
 enum Status {
   ATIVA
@@ -288,13 +288,13 @@ model Chapas_Eleicoes {
   chapa_vencedora  Boolean? @default(false)
 }
 
-model Chapas {
-  id              Int      @id @default(autoincrement())
-  titulo_chapa    String
-  nome_presidente String
-  data_formacao   DateTime
-  pessoas_compoe  String
-}
+// model Chapas {
+//   id              Int      @id @default(autoincrement())
+//   titulo_chapa    String
+//   nome_presidente String
+//   data_formacao   DateTime
+//   pessoas_compoe  String
+// }
 
 model Diretorias {
   id              Int    @id @default(autoincrement())

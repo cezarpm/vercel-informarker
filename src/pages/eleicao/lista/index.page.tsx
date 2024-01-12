@@ -17,8 +17,6 @@ export default function EleicaoList({ data }: any) {
   const router = useRouter()
   const { selectedRowIds } = useId()
 
-  console.log(data)
-
   const columns: GridColDef[] = [
     {
       field: 'id',
@@ -78,9 +76,9 @@ export default function EleicaoList({ data }: any) {
           title="Visualizar"
           onClick={() => {
             if (selectedRowIds.length === 0) {
-              toast.warn('você não selecionou a chapa para visualizar')
+              toast.warn('Você não selecionou a eleição para visualizar')
             } else if (selectedRowIds.length >= 2) {
-              toast.warn('selecione 1 chapa para visualizar')
+              toast.warn('selecione 1 eleição para visualizar')
             } else {
               router.push(`/eleicao/visualizar/${selectedRowIds}`)
             }
@@ -92,9 +90,9 @@ export default function EleicaoList({ data }: any) {
           style={{ backgroundColor: '#528035' }}
           onClick={() => {
             if (selectedRowIds.length === 0) {
-              toast.warn('você não selecionou a chapa para atualizar')
+              toast.warn('Você não selecionou a eleição para atualizar')
             } else if (selectedRowIds.length >= 2) {
-              toast.warn('selecione 1 chapa para atualizar')
+              toast.warn('selecione 1 eleição para atualizar')
             } else {
               router.push(`/eleicao/atualizar/${selectedRowIds}`)
             }
@@ -122,9 +120,9 @@ export default function EleicaoList({ data }: any) {
           style={{ backgroundColor: '#b34db2' }}
           onClick={() => {
             if (selectedRowIds.length === 0) {
-              toast.warn('você não selecionou a chapa para atualizar')
+              toast.warn('Você não selecionou a eleição para ver resultado')
             } else if (selectedRowIds.length >= 2) {
-              toast.warn('selecione 1 chapa para atualizar')
+              toast.warn('selecione 1 eleição para ver resultado')
             } else {
               router.push(`/eleicao/resultado/${selectedRowIds}`)
             }

@@ -72,7 +72,7 @@ export default function VotacaoAtualizar({ data }: Props) {
   return (
     <Container>
       <form onSubmit={handleSubmit(handleOnSubmit)}>
-        <Box>
+        <Box style={{ justifyContent: 'end' }}>
           <Link
             href="/chapas"
             style={{

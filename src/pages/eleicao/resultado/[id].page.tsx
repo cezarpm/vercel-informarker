@@ -4,6 +4,7 @@ import { Link, Typography } from '@mui/material'
 import { api } from '@/lib/axios'
 import { useRouter } from 'next/router'
 import { ArrowBendDownLeft, CaretRight } from 'phosphor-react'
+
 type Votation = {
   id: number
   name: string
@@ -44,9 +45,6 @@ export default function Resultado() {
     if (!votation?.votosCount) return 0
     const total = votation?.votosChapas[0].count + votation?.votosChapas[1].count
 
-    console.log(total, 'deca');
-
-
     const percentage = (count / total) * 100
 
     return percentage.toFixed(2)
@@ -56,12 +54,9 @@ export default function Resultado() {
     getResults()
   }, [id])
 
-  console.log(votation);
-
-
   return (
     <Container>
-      <Box>
+      <Box style={{ justifyContent: 'end' }}>
         <Link
           href="/eleicao/lista"
           style={{

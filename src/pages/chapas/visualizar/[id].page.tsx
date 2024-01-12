@@ -53,7 +53,7 @@ export default function VotacaoAtualizar({ data }: any) {
   return (
     <Container>
       <form>
-        <Box>
+        <Box style={{ justifyContent: 'end' }}>
           <Link
             href="/chapas"
             style={{

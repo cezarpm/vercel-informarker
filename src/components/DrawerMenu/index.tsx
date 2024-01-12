@@ -17,12 +17,11 @@ import {
   SignOut,
   Table,
   ArchiveTray,
-  User,
-  ArchiveBox,
+  Receipt,
   UsersFour,
-  Balloon,
-  Article
-
+  Article,
+  UserFocus,
+  User
 } from 'phosphor-react'
 import { useRouter } from 'next/navigation'
 import { Twirl as Hamburger } from 'hamburger-react'
@@ -77,11 +76,11 @@ export function TemporaryDrawer() {
       router.push('/diretorias')
     }
 
-    else if (text === 'Eleicoes') {
-      router.push('/eleicoes')
+    else if (text === 'Eleições') {
+      router.push('/eleicao/lista')
     }
 
-    else if (text === 'Eleição') {
+    else if (text === 'Votação') {
       router.push('/eleicao')
     }
   }
@@ -104,13 +103,7 @@ export function TemporaryDrawer() {
 
   const arrayIcons = [
     <>
-      <CloudArrowUp size={30} color="#fff" />
-    </>,
-    <>
       <Buildings size={30} color="#fff" />
-    </>,
-    <>
-      <Table size={30} color="#fff" />
     </>,
     <>
       <UsersFour size={30} color="#fff" />
@@ -124,11 +117,26 @@ export function TemporaryDrawer() {
     <>
       <UsersFour size={30} color="#fff" />
     </>,
+    <>
+      <UserFocus size={30} color="#fff" />
+    </>,
+    <>
+      <Receipt size={30} color="#fff" />
+    </>,
+    <>
+      <User size={30} color="#fff" />
+    </>
   ]
 
   const arrayIconsTwoList = [
     <>
       <Function size={30} color="#fff" />
+    </>,
+    <>
+      <CloudArrowUp size={30} color="#fff" />
+    </>,
+    <>
+      <Table size={30} color="#fff" />
     </>,
   ]
 
@@ -159,16 +167,14 @@ export function TemporaryDrawer() {
       <List>
 
         {[
-          'Parametros',
           'Empresas',
-          'Tabelas',
           'Associados',
           'Aniversariantes',
           'Protocolos',
           'Chapas',
-          'Diretorias',
-          'Eleicoes',
-          'Eleição'
+          'Eleições',
+          'Votação',
+          'Diretorias'
         ].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton
@@ -186,7 +192,7 @@ export function TemporaryDrawer() {
       <Divider />
       {/* two list */}
       <List>
-        {['Logs'].map((text, index) => (
+        {['Logs', 'Parametros', 'Tabelas',].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton
               onClick={() => {

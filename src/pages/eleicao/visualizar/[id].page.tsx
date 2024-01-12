@@ -9,9 +9,6 @@ import { SelectOptions } from '@/components/SelectOptions'
 import { Typography } from '@mui/material'
 
 
-
-
-
 export default function VotacaoRead({ data }: any) {
   const newDate = new Date(data.data_votacao_inicio)
   const diaMes = String(newDate.getDate())
@@ -26,7 +23,7 @@ export default function VotacaoRead({ data }: any) {
   return (
     <Container>
       <form>
-        <Box>
+        <Box style={{ justifyContent: 'end' }}>
           <Link
             href="/eleicao/lista"
             style={{

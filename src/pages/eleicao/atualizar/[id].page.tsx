@@ -34,13 +34,12 @@ const yearCurrent = new Date().getFullYear()
 const years = Array.from({ length: 10 }, (_, index) =>
   (yearCurrent + index).toString(),
 )
+
 const dataYears = years.map((year) => {
   return {
     label: year,
   }
 })
-
-
 
 const integranteSchema = z.object({
   nome_chapa: z.string().min(1, { message: 'O campo nome é obrigatório' }),
@@ -146,7 +145,7 @@ export default function VotacaoAtualizar({ data, chapas }: VotacaoAtualizarProps
   return (
     <Container>
       <form onSubmit={handleSubmit(handleOnSubmit)}>
-        <Box>
+        <Box style={{ justifyContent: 'end' }}>
           <Link
             href="/eleicao/lista"
             style={{

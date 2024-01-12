@@ -107,7 +107,7 @@ export default function VotacaoCreate({ chapas }: any) {
   return (
     <Container>
       <form onSubmit={handleSubmit(handleOnSubmit)}>
-        <Box>
+        <Box style={{ justifyContent: 'end' }}>
           <Link
             href="/eleicao/lista"
             style={{
