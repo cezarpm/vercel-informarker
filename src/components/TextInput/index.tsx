@@ -17,6 +17,7 @@ interface schemaTextField {
   helperText?: any
   error?: any
   mask?: any
+  style?: any
 }
 
 // eslint-disable-next-line react/display-name
@@ -31,6 +32,7 @@ export const TextInput = forwardRef<HTMLInputElement, schemaTextField>(
       helperText,
       error,
       mask,
+      style,
       ...rest
     } = props
     return (

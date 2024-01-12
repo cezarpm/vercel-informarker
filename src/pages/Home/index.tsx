@@ -13,7 +13,6 @@ export default function Home() {
     <>
       <Container className={montserrat.className}>
         <BolinhasFlutuantes>
-          <Bola />
           <Bola style={{ top: '300px', left: '400px' }} />
           <Bola style={{ top: '400px', left: '800px' }} />
           <Bola style={{ top: '200px', left: '500px' }} />

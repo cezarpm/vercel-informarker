@@ -8,7 +8,6 @@ export default function DataGridDemo({ rows, columns, w }: any) {
 
   const handleSelectionModelChange = (newSelectionModel: any) => {
     setSelection(newSelectionModel)
-    // console.log(newSelectionModel)
   }
 
   return (
@@ -24,6 +23,7 @@ export default function DataGridDemo({ rows, columns, w }: any) {
             },
           },
         }}
+        // sx={{fontFamily: 'Roboto'}}
         pageSizeOptions={[10]}
         checkboxSelection
         disableRowSelectionOnClick

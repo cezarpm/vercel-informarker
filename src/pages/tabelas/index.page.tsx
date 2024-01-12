@@ -96,9 +96,9 @@ export default function EmpresaList({ data }: any) {
           title="Visualizar"
           onClick={() => {
             if (selectedRowIds.length === 0) {
-              toast.warn('você não selecionou a empresa para visualizar')
+              toast.warn('você não selecionou nenhum item para visualizar')
             } else if (selectedRowIds.length >= 2) {
-              toast.warn('selecione 1 empresa para visualizar')
+              toast.warn('selecione 1 item para visualizar')
             } else {
               router.push(`/tabelas/visualizar/${selectedRowIds}`)
             }
@@ -110,9 +110,9 @@ export default function EmpresaList({ data }: any) {
           style={{ backgroundColor: '#528035' }}
           onClick={() => {
             if (selectedRowIds.length === 0) {
-              toast.warn('você não selecionou a empresa para atualizar')
+              toast.warn('você não selecionou nenhum para atualizar')
             } else if (selectedRowIds.length >= 2) {
-              toast.warn('selecione 1 campo para atualizar')
+              toast.warn('selecione 1 item para atualizar')
             } else {
               router.push(`/tabelas/atualizar/${selectedRowIds}`)
             }

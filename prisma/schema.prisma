@@ -154,7 +154,7 @@ model Pagamentos {
   data_pagto_parcela_1  String
   valor_pagto_parcela_1 String
   data_pagto_parcela_2  String
-  valor_pagto_parcela_2 String
+  valor_pagto_parcela_2 String 
   data_pagto_parcela_3  String
   valor_pagto_parcela_3 String
 }
