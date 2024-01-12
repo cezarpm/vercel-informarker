@@ -11,10 +11,10 @@ export default function DataGridDemo({ rows, columns, w }: any) {
   }
 
   return (
-    <Box sx={{ height: '100%', width: w, marginTop: '1rem' }}>
+
+    <Box sx={{ height: '60vh', width: w, marginTop: '1rem' }}>
       <DataGrid
         rows={rows}
-        rowHeight={30}
         columns={columns}
         initialState={{
           pagination: {
@@ -23,8 +23,8 @@ export default function DataGridDemo({ rows, columns, w }: any) {
             },
           },
         }}
-        // sx={{fontFamily: 'Roboto'}}
         pageSizeOptions={[10]}
+
         checkboxSelection
         disableRowSelectionOnClick
         rowSelectionModel={selectedRowIds}

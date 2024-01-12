@@ -207,6 +207,7 @@ export default function AssociadoList({
     </Suspense>
   )
 }
+
 export const getServerSideProps: GetServerSideProps = async () => {
   try {
     const notViewId = 1
@@ -261,3 +262,31 @@ export const getServerSideProps: GetServerSideProps = async () => {
     }
   }
 }
+
+// export const getServerSideProps: GetServerSideProps = async () => {
+//   try {
+//     const response = await prisma.associados.findMany()
+//     const data = response.map((item) => {
+//       return {
+//         ...item,
+//       }
+//     })
+
+//     let dataSituacao
+
+//     return {
+//       props: {
+//         data,
+//         dataSituacao,
+//       },
+//     }
+//   } catch (error) {
+//     console.error('Erro ao obter dados da empresa:', error)
+//     return {
+//       props: {
+//         data: [],
+//       },
+//     }
+//   }
+
+

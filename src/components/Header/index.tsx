@@ -11,14 +11,6 @@ export function Header() {
         <Link href={'/'}>
           <Image src={logo} alt="logo" height={50} />
         </Link>
-        {/* <SubMenus title="Sobre nós" />
-        <Link href="#">Seja sócio</Link>
-        <Link href="#">46ª JAERJ</Link>
-        <SubMenus title="Educação" />
-        <SubMenus title="A anestesia" />
-        <Link href="#">Novidades</Link>
-        <Link href="#">Contato</Link>
-        <Link href="#">Área do associado</Link> */}
         <TemporaryDrawer />
       </nav>
     </Container>

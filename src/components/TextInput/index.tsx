@@ -12,6 +12,7 @@ interface schemaTextField {
   value?: string | number
   defaultValue?: any
   w?: number | string
+  minW?: number | string
   messageError?: string
   disabled?: any
   helperText?: any
@@ -28,11 +29,12 @@ export const TextInput = forwardRef<HTMLInputElement, schemaTextField>(
       value,
       defaultValue,
       w,
+      minW,
       disabled,
       helperText,
       error,
       mask,
-      style,
+      messageError,
       ...rest
     } = props
     return (
@@ -52,10 +54,11 @@ export const TextInput = forwardRef<HTMLInputElement, schemaTextField>(
             ref={ref}
             variant="standard"
             value={value}
-            sx={{ width: w }}
+            sx={{ width: w, minW }}
             defaultValue={defaultValue}
             disabled={disabled}
             helperText={helperText}
+            messageerror={messageError}
             {...rest}
             error={error}
             InputLabelProps={{ shrink: true }}
