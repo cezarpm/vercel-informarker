@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { Box, Container, Text } from './styled'
+import { Box, Container, Text, Fieldset } from './styled'
 import React, { useEffect, useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
@@ -18,6 +18,7 @@ import { useArrayDate } from '@/utils/useArrayDate'
 import SelectNoComplete from '@/components/SelectNoComplete'
 import axios from 'axios'
 import { format } from 'date-fns'
+import Checkbox from '@mui/material/Checkbox'
 
 const schemaAssociados = z.object({
   numero_proposta_SBA: z.number(),
@@ -121,14 +122,18 @@ interface schemaAssociados {
     diploma_medicina: string
     certidao_quitacao_crm: string
     certificado_conclusao_especializacao: string
-    declaro_verdadeiras: string
-    declaro_quite_SAERJ: string
+    declaro_verdadeiras: any
+    declaro_quite_SAERJ: any
     pendencias_SAERJ: string
     nome_presidente_regional: string
     sigla_regional: string
   }
+  dataSituacao: any[]
 }
-export default function AssociadosCadastro({ data }: schemaAssociados) {
+export default function AssociadosCadastro({
+  data,
+  dataSituacao,
+}: schemaAssociados) {
   const router = useRouter()
 
   const dataInicio = useArrayDate.DesestruturarDate(
@@ -139,6 +144,7 @@ export default function AssociadosCadastro({ data }: schemaAssociados) {
   )
   const dataNascimento = useArrayDate.DesestruturarDate(data.data_nascimento)
 
+  console.log(dataNascimento)
   return (
     <Container>
       <form>
@@ -165,159 +171,42 @@ export default function AssociadosCadastro({ data }: schemaAssociados) {
             <CaretRight size={14} />
             <span>Vizualizar</span>
           </legend>
-
-          <fieldset
-            style={{
-              border: 'solid 1px',
-              padding: '2rem',
-              marginTop: '1rem',
-              borderRadius: '8px',
-            }}
-          >
+          {/* GERAIS */}
+          <Fieldset>
             <legend>
               <h2>Gerais</h2>
             </legend>
 
             <Box>
               <div>
-                <TextInput
-                  w={180}
-                  title="Número proposta SBA"
-                  defaultValue={data.numero_proposta_SBA}
-                />
+                <TextInput w={120} title="UF CRM" value={data.uf_crm} />
               </div>
               <div>
-                <TextInput
-                  w={180}
-                  defaultValue={data.matricula_SAERJ}
-                  title="Matrícula SAERJ"
-                />
+                <TextInput w={180} title="CRM" value={data.crm} />
               </div>
-              <div>
-                <TextInput
-                  w={180}
-                  title="Matrícula SBA"
-                  defaultValue={data.matricula_SBA}
-                />
-              </div>
-              <TextInput
-                w={260}
-                title="Categoria"
-                defaultValue={data.categoria}
-                // data={() => []}
-              />
-            </Box>
 
-            <Box>
-              <TextInput
-                title="Residencia MEC-CNRM"
-                defaultValue={data.residencia_mec_cnrm}
-              />
-              <TextInput
-                title="Nível Residencia"
-                defaultValue={data.nivel_residencia}
-              />
-              <TextInput
-                defaultValue={data.nome_hospital_mec}
-                title="Nome Hospital MEC"
-              />
-              <TextInput title="UF PRM" defaultValue={data.uf_prm} />
-              <TextInput
-                defaultValue={data.comprovante_endereco}
-                title="Comprovante Endereço"
-              />
-              <TextInput
-                defaultValue={data.carta_indicacao_2_membros}
-                title="Carta Indicação 2 membros"
-              />
-              <TextInput
-                defaultValue={data.declaracao_hospital}
-                title="Declaração Hospital"
-              />
-            </Box>
-
-            <Box>
-              <TextInput
-                defaultValue={data.diploma_medicina}
-                title="Diploma Medicina"
-              />
-
-              <TextInput
-                defaultValue={data.certidao_quitacao_crm}
-                title="Certidão Quitação CRM"
-              />
-              <div>
-                <TextInput
-                  w={220}
-                  defaultValue={data.certificado_conclusao_especializacao}
-                  title="Certificado Conclusão Especialização"
-                />
-              </div>
-              <TextInput
-                defaultValue={data.declaro_verdadeiras}
-                title="Declaro Verdadeiras"
-              />
-              <TextInput
-                defaultValue={data.declaro_quite_SAERJ}
-                title="Declaro Quite SAERJ"
-              />
-              <TextInput
-                title="Pendências SERJ"
-                defaultValue={data.pendencias_SAERJ}
-              />
-              <div>
-                <TextInput
-                  w={180}
-                  defaultValue={data.nome_presidente_regional}
-                  title="Nome Presidente Regional"
-                />
-              </div>
-              <TextInput
-                defaultValue={data.sigla_regional}
-                title="Sigla Regional"
-              />
-            </Box>
-          </fieldset>
-
-          <fieldset
-            style={{
-              border: 'solid 1px',
-              padding: '2rem',
-              marginTop: '-2rem',
-              borderRadius: '8px',
-            }}
-          >
-            <legend>
-              <h2>Pessoais</h2>
-            </legend>
-
-            <Box>
-              <TextInput
-                defaultValue={data.nome_completo}
-                title="Nome Completo"
-              />
+              <TextInput title="Nome Completo" value={data.nome_completo} />
               <div>
                 <TextInput
                   w={140}
-                  value={data.cpf}
                   title="CPF"
                   mask={'999.999.999-99'}
+                  value={data.cpf}
                 />
+              </div>
+            </Box>
+
+            <Box>
+              <div>
+                <TextInput w={100} title="Sexo" value={data.sexo} />
               </div>
               <div>
                 <TextInput
-                  w={220}
-                  defaultValue={data.comprovante_cpf}
-                  title="Comprovante CPF"
+                  w={330}
+                  title="Nome Profissional"
+                  value={data.nome_profissional}
                 />
               </div>
-
-              {/* <div>
-                <TextInput
-                  title="Data nascimento"
-                 
-                />
-              </div> */}
 
               <div
                 style={{ display: 'flex', alignItems: 'end', width: '28rem' }}
@@ -326,224 +215,370 @@ export default function AssociadosCadastro({ data }: schemaAssociados) {
 
                 <SelectOptions
                   description="Dia"
-                  w={90}
                   data={useArrayDate.Dia()}
+                  w={90}
                   defaultValue={{ label: dataNascimento.dia }}
+                  // defaultValue={{ label: newDateAnuidade.dia }}
                 />
 
                 <SelectOptions
+                  // data={dataMonths}
+                  data={useArrayDate.Mes()}
                   description="Mês"
                   w={90}
-                  data={useArrayDate.Mes()}
                   defaultValue={{ label: dataNascimento.mes }}
+                  // defaultValue={{ label: newDateAnuidade.mes }}
                 />
 
                 <SelectOptions
                   w={120}
                   description="Ano"
+                  // data={dataYears}
                   data={useArrayDate.AnoAtualMenor()}
                   defaultValue={{ label: dataNascimento.ano }}
+                  // defaultValue={{ label: newDateAnuidade.ano }}
+                />
+              </div>
+              <div
+                style={{
+                  width: '20%',
+                  border: 'solid 1px',
+                  fontSize: '14px',
+                  borderColor:
+                    'transparent transparent rgb(169, 169, 178) transparent',
+                }}
+              >
+                <TextInput
+                  // data={dataCategoria}
+                  title="Categoria"
+                  value={data.categoria}
                 />
               </div>
             </Box>
+          </Fieldset>
+          {/* Dados de endereço */}
 
+          <Fieldset>
+            <legend>
+              <h2>Dados de endereço</h2>
+            </legend>
             <Box>
-              <TextInput
-                title="Nome Profissional"
-                defaultValue={data.nome_profissional}
-              />
               <div>
-                <TextInput w={100} title="Sexo" defaultValue={data.sexo} />
+                <TextInput
+                  w={260}
+                  title="País onde reside *"
+                  value={data.pais}
+                />
               </div>
               <div>
                 <TextInput
                   w={200}
-                  title="Situação"
-                  defaultValue={data.situacao}
+                  title="Cep *"
+                  value={data.cep}
+                  mask="99999-999"
+                />
+              </div>
+
+              <TextInput title="Logradouro *" value={data.logradouro} />
+              <div>
+                <TextInput w={90} title="Número *" value={data.numero} />
+              </div>
+              <div>
+                <TextInput
+                  title="Complemento"
+                  w={200}
+                  value={data.complemento}
+                />
+              </div>
+            </Box>
+            <Box>
+              <div>
+                <TextInput w={300} title="Bairro *" value={data.bairro} />
+              </div>
+              <div>
+                <TextInput w={400} title="Cidade *" value={data.cidade} />
+              </div>
+              <div>
+                <TextInput w={100} title="UF *" value={data.uf} />
+              </div>
+            </Box>
+          </Fieldset>
+
+          <Fieldset>
+            <legend>
+              <h2>Dados de contato</h2>
+            </legend>
+
+            <Box>
+              <div>
+                <TextInput
+                  w={300}
+                  title="Telefone Celular"
+                  mask={'(99) 9.9999-9999'}
+                  value={data.telefone_celular}
                 />
               </div>
               <div>
-                <TextInput w={100} title="UF CRM" defaultValue={data.uf_crm} />
+                <TextInput
+                  w={300}
+                  title="Telefone Residencial"
+                  mask={'(99) 9999-9999'}
+                  value={data.telefone_residencial}
+                />
               </div>
+              <TextInput w={320} title="Email" value={data.email} />
 
-              <div>
-                <TextInput w={180} title="CRM" defaultValue={data.crm} />
-              </div>
+              {/* <TextInput title="Confirmação email" /> */}
+            </Box>
+          </Fieldset>
+
+          <Fieldset>
+            <legend>
+              <h2>Dados referente a formação acadêmica</h2>
+            </legend>
+            <>
+              <Box>
+                <div>
+                  <TextInput
+                    w={400}
+                    title="Nome Instituição de Ensino Graduação"
+                    value={data.nome_instituicao_ensino_graduacao}
+                  />
+                </div>
+                <div>
+                  <TextInput
+                    w={180}
+                    title="Ano de Conclusão Graduação"
+                    value={data.ano_conclusao_graduacao}
+                  />
+                </div>
+
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'end',
+                    width: '25rem',
+                  }}
+                >
+                  <Text>Data Início Especialização</Text>
+
+                  <SelectOptions
+                    description="Dia"
+                    data={useArrayDate.Dia()}
+                    w={90}
+                    defaultValue={{ label: dataInicio.dia }}
+                  />
+
+                  <SelectOptions
+                    data={useArrayDate.Mes()}
+                    description="Mês"
+                    w={90}
+                    defaultValue={{ label: dataInicio.mes }}
+                  />
+
+                  <SelectOptions
+                    w={120}
+                    description="Ano"
+                    data={useArrayDate.AnoAtualMenor()}
+                    defaultValue={{ label: dataInicio.ano }}
+                  />
+                </div>
+                <div
+                  style={{
+                    display: 'flex',
+                    alignItems: 'end',
+                    width: '25rem',
+                  }}
+                >
+                  <Text>Data Previsão Conclusão</Text>
+
+                  <SelectOptions
+                    description="Dia"
+                    data={useArrayDate.Dia()}
+                    w={90}
+                    value={dataPrevisao.dia}
+                    defaultValue={{ label: dataPrevisao.dia }}
+                  />
+
+                  <SelectOptions
+                    data={useArrayDate.Mes()}
+                    description="Mês"
+                    w={90}
+                    defaultValue={{ label: dataPrevisao.mes }}
+                  />
+
+                  <SelectOptions
+                    w={120}
+                    description="Ano"
+                    data={useArrayDate.AnoAtualMaior()}
+                    value={dataPrevisao.ano}
+                    defaultValue={{ label: dataPrevisao.ano }}
+                  />
+                </div>
+                <div>
+                  <TextInput
+                    w={130}
+                    title="Residencia MEC-CNRM"
+                    value={data.residencia_mec_cnrm}
+                  />
+                </div>
+
+                <div>
+                  <TextInput w={120} title="UF PRM" value={data.uf_prm} />
+                </div>
+              </Box>
+            </>
+          </Fieldset>
+
+          <Fieldset>
+            <legend>
+              <h2>Histórico do Proponente</h2>
+            </legend>
+
+            <Box>
+              <TextInput
+                title="Nível Residencia"
+                value={data.nivel_residencia}
+              />
+              <TextInput title="UF PRM" value={data.uf_prm} />
+              <TextInput
+                title="Nome Hospital MEC"
+                value={data.nome_hospital_mec}
+              />
+            </Box>
+          </Fieldset>
+
+          <Fieldset>
+            <legend>
+              <h2>Documentos Comprobatórios</h2>
+            </legend>
+            <h3
+              style={{ display: 'flex', alignItems: 'center', width: '100%' }}
+            >
+              <div style={{ flex: 1 }}>Documentos</div>
+              <div style={{ flex: 1 }}>Arquivo(.pdf)</div>
+            </h3>
+
+            <Box>
+              <TextInput title="Comprovante CFF" value={data.comprovante_cpf} />
             </Box>
 
             <Box>
               <TextInput
-                defaultValue={data.nome_instituicao_ensino_graduacao}
-                title="Nome Instituição de Ensino Graduação"
+                title="Comprovante Endereço"
+                value={data.comprovante_endereco}
+              />
+            </Box>
+            <Box>
+              <TextInput
+                title="Certidão de Quitação CRM"
+                value={data.certidao_quitacao_crm}
+              />
+            </Box>
+
+            <Box>
+              <TextInput
+                title="Certificado Conclusão Especialização"
+                value={data.certificado_conclusao_especializacao}
+              />
+            </Box>
+
+            <Box>
+              <TextInput
+                title="Carta Indicação 2 Membros"
+                value={data.carta_indicacao_2_membros}
+              />
+            </Box>
+            <Box>
+              <TextInput
+                title="Diploma Medicina"
+                value={data.diploma_medicina}
+              />
+            </Box>
+
+            <Box>
+              <TextInput
+                title="declaracao_hospital"
+                value={data.declaracao_hospital}
+              />
+            </Box>
+          </Fieldset>
+
+          <Fieldset>
+            <legend>
+              <h2>Declaração veracidade das informações</h2>
+            </legend>
+            <Box>
+              <div>
+                <TextInput
+                  w={180}
+                  title="Número proposta SBA"
+                  value={data.numero_proposta_SBA}
+                />
+              </div>
+              <div>
+                <TextInput
+                  w={180}
+                  title="Matrícula SAERJ"
+                  value={data.matricula_SAERJ}
+                />
+              </div>
+              <div>
+                <TextInput
+                  w={180}
+                  title="Matrícula SBA"
+                  value={data.matricula_SBA}
+                />
+              </div>
+
+              <TextInput
+                title="Pendências SERJ"
+                value={data.pendencias_SAERJ}
               />
               <div>
                 <TextInput
                   w={180}
-                  title="Ano de Conclusão Graduação"
-                  defaultValue={data.ano_conclusao_graduacao}
-                />
-              </div>
-            </Box>
-            <Box>
-              {/* <TextInput
-                title="Data Início Especialização"
-               
-              /> */}
-
-              <div
-                style={{ display: 'flex', alignItems: 'end', width: '30rem' }}
-              >
-                <Text>Data Início Especialização</Text>
-
-                <SelectOptions
-                  description="Dia"
-                  data={useArrayDate.Dia()}
-                  w={90}
-                  defaultValue={{ label: dataInicio.dia }}
-                />
-
-                <SelectOptions
-                  data={useArrayDate.Mes()}
-                  description="Mês"
-                  w={90}
-                  defaultValue={{ label: dataInicio.mes }}
-                />
-
-                <SelectOptions
-                  w={120}
-                  description="Ano"
-                  data={useArrayDate.AnoAtualMenor()}
-                  defaultValue={{ label: dataInicio.ano }}
-                />
-              </div>
-
-              {/* <TextInput
-                title="Data Previsão Conclusão"
-               
-              /> */}
-
-              <div
-                style={{ display: 'flex', alignItems: 'end', width: '30rem' }}
-              >
-                <Text>Data Previsão Conclusão</Text>
-
-                <SelectOptions
-                  description="Dia"
-                  data={useArrayDate.Dia()}
-                  w={90}
-                  defaultValue={{ label: dataPrevisao.dia }}
-                />
-
-                <SelectOptions
-                  data={useArrayDate.Mes()}
-                  description="Mês"
-                  w={90}
-                  defaultValue={{ label: dataPrevisao.mes }}
-                />
-
-                <SelectOptions
-                  w={120}
-                  description="Ano"
-                  data={useArrayDate.AnoAtualMaior()}
-                  defaultValue={{ label: dataPrevisao.ano }}
-                />
-              </div>
-            </Box>
-          </fieldset>
-
-          <fieldset
-            style={{
-              border: 'solid 1px',
-              padding: '2rem',
-              marginTop: '-2rem',
-              borderRadius: '8px',
-            }}
-          >
-            <legend>
-              <h2>Endereço</h2>
-            </legend>
-
-            <Box>
-              <div>
-                {/* <TextInput
-                  title="Cep *"
-                  w={110}
-                 
-                  mask={'99999-999'}
-                /> */}
-                <div
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    gap: '0.5rem',
-                  }}
-                >
-                  <TextInput
-                    w={110}
-                    title="Cep *"
-                    value={data.cep}
-                    mask="99999-999"
-                  />
-                </div>
-              </div>
-
-              <TextInput title="Logradouro *" defaultValue={data.logradouro} />
-              <div>
-                <TextInput w={90} title="Número *" defaultValue={data.numero} />
-              </div>
-              <TextInput title="Complemento" defaultValue={data.complemento} />
-            </Box>
-
-            <Box>
-              <TextInput title="Bairro *" defaultValue={data.bairro} />
-              <div>
-                <TextInput
-                  w={220}
-                  title="Cidade *"
-                  defaultValue={data.cidade}
-                />
-              </div>
-              <div>
-                <TextInput w={50} title="UF *" defaultValue={data.uf} />
-              </div>
-              <div>
-                <TextInput defaultValue={data.pais} w={260} title="País *" />
-              </div>
-            </Box>
-          </fieldset>
-
-          <fieldset
-            style={{
-              border: 'solid 1px',
-              padding: '2rem',
-              marginTop: '-2rem',
-              borderRadius: '8px',
-            }}
-          >
-            <legend>
-              <h2>Contato</h2>
-            </legend>
-
-            <Box>
-              <div>
-                <TextInput
-                  w={140}
-                  value={data.telefone_celular}
-                  title="Telefone Celular"
-                  mask={'(99) 9.9999-9999'}
+                  title="Nome Presidente Regional"
+                  value={data.nome_presidente_regional}
                 />
               </div>
               <div>
                 <TextInput
-                  w={140}
-                  title="Telefone Residencial"
-                  value={data.telefone_residencial}
-                  mask={'(99) 9999-9999'}
+                  w={100}
+                  title="Sigla Regional"
+                  value={data.sigla_regional}
                 />
               </div>
-              <TextInput w={300} title="Email" defaultValue={data.email} />
+
+              <div>
+                <SelectOptions
+                  w={200}
+                  description="Situação"
+                  data={dataSituacao}
+                  defaultValue={{ label: data.situacao }}
+                />
+              </div>
             </Box>
-          </fieldset>
+
+            <Box>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <Checkbox
+                  title="Declaro Verdadeiras"
+                  defaultChecked={data.declaro_verdadeiras}
+                />
+                <p style={{ color: ' rgba(0, 0, 0, 0.6)' }}>
+                  Declaro Verdadeiras
+                </p>
+                <Checkbox
+                  title="Declaro Quite SAERJ"
+                  defaultChecked={data.declaro_quite_SAERJ}
+                />
+                <p style={{ color: ' rgba(0, 0, 0, 0.6)' }}>
+                  Declaro Quite SAERJ
+                </p>
+              </div>
+            </Box>
+          </Fieldset>
         </fieldset>
       </form>
     </Container>
@@ -564,6 +599,17 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     //   return obj
     // }
 
+    const situacao = await prisma.tabelas.findMany({
+      where: {
+        codigo_tabela: 'Situação_Associado',
+      },
+    })
+    const dataSituacao = situacao.map((item) => {
+      return {
+        label: item.ocorrencia_tabela,
+      }
+    })
+
     const convertBigIntToString = (obj: any) => {
       for (const key in obj) {
         if (typeof obj[key] === 'bigint') {
@@ -579,6 +625,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     return {
       props: {
         data: convertBigIntToString(data),
+        dataSituacao,
       },
     }
   } catch (error) {

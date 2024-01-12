@@ -48,3 +48,28 @@ export const Box = styled('div', {
   flexWrap: 'wrap',
   alignItems: 'end',
 })
+export const Fieldset = styled('fieldset', {
+  border: 'solid 1px',
+  marginTop: '1rem',
+  borderRadius: '8px',
+  boxShadow: 'rgba(99, 99, 99, 0.2) 0px 2px 8px 0px',
+  paddingBottom: '2rem',
+  fontFamily: 'Roboto',
+  h3: {
+    padding: '0.5rem 1.5rem',
+  },
+  legend: {
+    padding: '0.5rem 1.5rem',
+    color: '#fff',
+    backgroundColor: 'rgb(13, 169, 164)',
+    marginBottom: '2rem',
+    width: '100%',
+    borderRadius: '4px 4px 0px 0px',
+    h2: {
+      width: '100%',
+    },
+  },
+  '>div': {
+    padding: '0.5rem 1.5rem',
+  },
+})

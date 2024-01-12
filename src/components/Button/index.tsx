@@ -7,10 +7,13 @@ interface schemaButton extends ButtonProps {
   title: string
 }
 
-export function Button({ title, ...rest }: schemaButton) {
+export function Button({ title, children, ...rest }: schemaButton) {
   return (
     <Container className={montserrat.style}>
-      <button {...rest}>{title}</button>
+      <button {...rest}>
+        {title}
+        <>{children}</>
+      </button>
     </Container>
   )
 }

@@ -18,6 +18,7 @@ interface schemaTextField {
   helperText?: any
   error?: any
   mask?: any
+  style?: any
 }
 
 // eslint-disable-next-line react/display-name
