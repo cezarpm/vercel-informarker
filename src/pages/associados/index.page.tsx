@@ -164,9 +164,11 @@ export default function AssociadoList({
             title="Visualizar"
             onClick={() => {
               if (selectedRowIds.length === 0) {
-                toast.warn('Você não selecionou a empresa para visualizar')
+                toast.warn(
+                  'Você não selecionou nenhum associado para visualizar',
+                )
               } else if (selectedRowIds.length >= 2) {
-                toast.warn('Selecione apenas 1 empresa para visualizar')
+                toast.warn('Selecione apenas 1 associado para visualizar')
               } else {
                 router.push(`/associados/visualizar/${selectedRowIds}`)
               }
@@ -178,9 +180,11 @@ export default function AssociadoList({
             style={{ backgroundColor: '#528035' }}
             onClick={() => {
               if (selectedRowIds.length === 0) {
-                toast.warn('você não selecionou a empresa para atualizar')
+                toast.warn(
+                  'Você não selecionou nenhum associado para atualizar',
+                )
               } else if (selectedRowIds.length >= 2) {
-                toast.warn('selecione 1 associados para atualizar')
+                toast.warn('Selecione 1 associados para atualizar')
               } else {
                 router.push(`/associados/atualizar/${selectedRowIds}`)
               }

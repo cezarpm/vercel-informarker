@@ -103,11 +103,6 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
 
   const { register, watch } = useForm<SchemaFilter>()
 
-  // const TipoEmpresaFilter = watch('tipo_empresa_filter')
-  // const PatrocinadoraFilter = watch('patrocinarora_filter')
-  // const FaculdadeAnestesiologiaFilter = watch('faculdade_anestesiologia_filter')
-  // const EmpresaAtivaFilter = watch('empresa_ativa_filter')
-
   function BuscarFiltro() {
     const TipoEmpresaFilter = watch('tipo_empresa_filter')
     const PatrocinadoraFilter = watch('patrocinarora_filter')
@@ -154,37 +149,9 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
     setList(filteredList)
 
     // Imprima a lista filtrada (opcional, apenas para fins de depuração)
-    console.log(filteredList)
+    // console.log(filteredList)
   }
 
-  // const filteredData = data.filter((item: any) => {
-  //   const tipoEmpresaMatch =
-  //     TipoEmpresaFilter === undefined ||
-  //     TipoEmpresaFilter === 'Todos' ||
-  //     item.tipo_empresa === TipoEmpresaFilter
-
-  //   const patrocinadoraMatch =
-  //     PatrocinadoraFilter === undefined ||
-  //     PatrocinadoraFilter === 'Todos' ||
-  //     item.patrocinadora === PatrocinadoraFilter
-
-  //   const faculdadeMatch =
-  //     FaculdadeAnestesiologiaFilter === undefined ||
-  //     FaculdadeAnestesiologiaFilter === 'Todos' ||
-  //     item.faculdade_anestesiologia === FaculdadeAnestesiologiaFilter
-
-  //   const empresaAtivaMatch =
-  //     EmpresaAtivaFilter === undefined ||
-  //     EmpresaAtivaFilter === 'Todos' ||
-  //     item.empresa_ativa === EmpresaAtivaFilter
-
-  //   return (
-  //     tipoEmpresaMatch &&
-  //     patrocinadoraMatch &&
-  //     faculdadeMatch &&
-  //     empresaAtivaMatch
-  //   )
-  // })
   const dataSimNao = [
     {
       id: 1,
@@ -195,7 +162,7 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
       ocorrencia_tabela: 'não',
     },
   ]
-  // console.log(dataTipoEmpresa)
+
   return (
     <Container>
       <p>Empresas</p>
@@ -209,24 +176,28 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
         >
           <div style={{ display: 'flex', gap: '0.5rem' }}>
             <SelectNoComplete
+              p="0px 0px 0px 0.5rem"
               value="Todos"
               title="Tipo Empresa"
               data={dataTipoEmpresa}
               {...register('tipo_empresa_filter')}
             />
             <SelectNoComplete
+              p="0px 0px 0px 0.5rem"
               value="Todos"
               title="Patrocinadora"
               {...register('patrocinarora_filter')}
               data={dataSimNao}
             />
             <SelectNoComplete
+              p="0px 0px 0px 0.5rem"
               value="Todos"
               title="Faculdade Anestesiologia"
               {...register('faculdade_anestesiologia_filter')}
               data={dataSimNao}
             />
             <SelectNoComplete
+              p="0px 0px 0px 0.5rem"
               value="Todos"
               title="Empresa Ativa"
               {...register('empresa_ativa_filter')}

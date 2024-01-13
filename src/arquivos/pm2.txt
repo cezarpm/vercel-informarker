@@ -19,7 +19,7 @@ Inicie o aplicativo usando o PM2:
 
 bash
 code terminal
-pm2 start npm --name "nome-do-app" -- start
+pm2 start npm --name saerj -- run dev
 Substitua "nome-do-app" pelo nome desejado para o seu aplicativo.
 
 Salve a configuração do PM2 para persistir entre reinicializações:
