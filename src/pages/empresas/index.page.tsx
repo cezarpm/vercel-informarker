@@ -267,7 +267,7 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
         }
 
       </div>
-      <DataGridDemo columns={columns} rows={filteredData} w="100%" />
+      <DataGridDemo columns={columns} rows={list} w="100%" />
 
       <Box>
         <Button
