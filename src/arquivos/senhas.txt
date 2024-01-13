@@ -18,3 +18,9 @@ saerj
 In@2023#er
 
 para servidor ficar rodando em segundo plano  PM2 (GLOBAL)
+npm i @mui/x-date-pickers
+npm i jspdf
+
+ "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.8.1",
+    "jspdf-react": "^1.0.11",
