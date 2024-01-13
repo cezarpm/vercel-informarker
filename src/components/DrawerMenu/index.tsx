@@ -21,7 +21,6 @@ import {
   User,
   ArchiveBox,
   UsersFour,
-  Balloon,
   Article
 
 } from 'phosphor-react'
@@ -52,14 +51,11 @@ export function TemporaryDrawer() {
 
     } else if (text === 'Logs') {
       router.push('/logs')
-    }
-
-    }else if (text === 'Aniversariantes') {
+    } else if (text === 'Aniversariantes') {
       router.push('/associados/aniversariantes')
     }else if (text === 'Protocolos') {
       router.push('/protocolos')
-    }
-    } else if (text === 'Chapas') {
+    }else if (text === 'Chapas') {
       router.push('/chapas')
     } else if (text === 'Diretorias') {
       router.push('/diretorias')
@@ -95,26 +91,22 @@ export function TemporaryDrawer() {
       <Table size={30} color="#fff" />
     </>,
     <>
-
       <UsersFour size={30} color="#fff" />
     </>,
     <>
-      <Balloon size={30} color="#fff" />
-
       <ArchiveTray size={30} color="#fff" />
     </>,
     <>
-
       <Article size={30} color="#fff" /> 
-    </>
-  ]
+    </>,
+    <>
       <User size={30} color="#fff" />
     </>,
     <>
       <ArchiveBox size={30} color="#fff" />
-
+    </>,
+    <>
       <UsersFour size={30} color="#fff" />
-
     </>,
   ]
   const arrayIconsTwoList = [
