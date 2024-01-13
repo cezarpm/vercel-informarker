@@ -16,12 +16,13 @@ import {
   Function,
   SignOut,
   Table,
-  Balloon,
   ArchiveTray,
-  User,
-  ArchiveBox,
+  Receipt,
   UsersFour,
-  Article
+
+  Article,
+  UserFocus,
+  User
 
 } from 'phosphor-react'
 import { useRouter } from 'next/navigation'
@@ -42,53 +43,78 @@ export function TemporaryDrawer() {
   function handleNextPage(text: string): void {
     if (text === 'Parametros') {
       router.push('/parametros')
-    } else if (text === 'Empresas') {
+    }
+
+    else if (text === 'Empresas') {
       router.push('/empresas')
-    } else if (text === 'Tabelas') {
+    }
+
+    else if (text === 'Tabelas') {
       router.push('/tabelas')
-    } else if (text === 'Associados') {
+    }
+
+    else if (text === 'Associados') {
       router.push('/associados')
 
-    } else if (text === 'Logs') {
-      router.push('/logs')
-    } else if (text === 'Aniversariantes') {
-      router.push('/associados/aniversariantes')
-    }else if (text === 'Protocolos') {
-      router.push('/protocolos')
-    }else if (text === 'Chapas') {
-      router.push('/chapas')
-    } else if (text === 'Diretorias') {
-      router.push('/diretorias')
-    } else if (text === 'Eleicoes') {
-      router.push('/eleicoes')
-    } 
+    }
 
+    else if (text === 'Logs') {
+      router.push('/logs')
+
+    } else if (text === 'Aniversariantes') {
+
+      router.push('/associados/aniversariantes')
+    }
+
+    else if (text === 'Protocolos') {
+      router.push('/protocolos')
+
+    }else if (text === 'Chapas') {
+
+      router.push('/chapas')
+    }
+
+    else if (text === 'Diretorias') {
+      router.push('/diretorias')
+    }
+
+    else if (text === 'Eleições') {
+      router.push('/eleicao/lista')
+    }
+
+    else if (text === 'Votação') {
+      router.push('/eleicao')
+    }
   }
+
 
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
-    (event: React.KeyboardEvent | React.MouseEvent) => {
-      if (
-        event.type === 'keydown' &&
-        ((event as React.KeyboardEvent).key === 'Tab' ||
-          (event as React.KeyboardEvent).key === 'Shift')
-      ) {
-        return
+      (event: React.KeyboardEvent | React.MouseEvent) => {
+        if (
+          event.type === 'keydown' &&
+          ((event as React.KeyboardEvent).key === 'Tab' ||
+            (event as React.KeyboardEvent).key === 'Shift')
+        ) {
+          return
+        }
+
+        setState({ ...state, [anchor]: open })
+        setOpen(open)
       }
 
-      setState({ ...state, [anchor]: open })
-      setOpen(open)
-    }
-
   const arrayIcons = [
-    <>
-      <CloudArrowUp size={30} color="#fff" />
-    </>,
     <>
       <Buildings size={30} color="#fff" />
     </>,
     <>
-      <Table size={30} color="#fff" />
+      <UsersFour size={30} color="#fff" />
+    </>,
+    <>
+      <ArchiveTray size={30} color="#fff" />
+    </>,
+    <>
+      <Article size={30} color="#fff" />
     </>,
     <>
       <UsersFour size={30} color="#fff" />
@@ -108,12 +134,26 @@ export function TemporaryDrawer() {
     <>
       <UsersFour size={30} color="#fff" />
     </>,
+    <>
+      <Receipt size={30} color="#fff" />
+    </>,
+    <>
+      <User size={30} color="#fff" />
+    </>
   ]
+
   const arrayIconsTwoList = [
+    <>
+      <Table size={30} color="#fff" />
+    </>,
+    <>
+      <CloudArrowUp size={30} color="#fff" />
+    </>,
     <>
       <Function size={30} color="#fff" />
     </>,
   ]
+
   const list = (anchor: Anchor) => (
     <Box
       sx={{ width: 250 }}
@@ -141,16 +181,15 @@ export function TemporaryDrawer() {
       <List>
 
         {[
-          'Parametros',
           'Empresas',
-          'Tabelas',
           'Associados',
           'Aniversariantes',
           'Protocolos',
           'Chapas',
-          'Diretorias',
-          'Eleicoes',
-         ].map((text, index) => (
+          'Eleições',
+          'Votação',
+          'Diretorias'
+        ].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton
               onClick={() => {
@@ -167,7 +206,7 @@ export function TemporaryDrawer() {
       <Divider />
       {/* two list */}
       <List>
-        {['Logs'].map((text, index) => (
+        {['Tabelas', 'Parametros', 'Logs',].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton
               onClick={() => {

@@ -5,13 +5,8 @@ export const Container = styled('main', {
   h1: {
     fontFamily: 'Roboto',
   },
-
   p: {
     fontFamily: 'Roboto',
-    display: 'flex',
-    alignItems: 'center',
-    gap: '0.5rem',
-    marginBottom: '1rem',
   },
 })
 

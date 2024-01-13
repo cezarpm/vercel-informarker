@@ -5,14 +5,7 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse,
 ) {
-  if (req.method !== 'DELETE') {
-    return res.status(404).json({ message: 'invalid method' })
-  }
   const data = req.body
-  // console.log(data)
-  if (!Array.isArray(data) || data.length === 0) {
-    return res.status(400).json({ message: 'Invalid data format' })
-  }
   try {
     await prisma.chapas.deleteMany({
       where: {

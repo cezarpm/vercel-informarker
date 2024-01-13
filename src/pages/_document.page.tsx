@@ -17,6 +17,12 @@ export default function Document() {
       <body>
         <Main />
         <NextScript />
+        {/* <footer>
+          <p>
+            Todos os direitos reservados <Copyright size={12} />
+            2024
+          </p>
+        </footer> */}
       </body>
     </Html>
   )

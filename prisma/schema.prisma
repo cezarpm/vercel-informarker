@@ -76,7 +76,7 @@ model Tabelas {
 }
 
 model Associados {
-  id                                   Int     @id @default(autoincrement())
+  id                                   Int       @id @default(autoincrement())
   data_nascimento                      DateTime?
   data_inicio_especializacao           DateTime?
   data_previsao_conclusao              DateTime?
@@ -157,100 +157,98 @@ model Pagamentos {
   valor_pagto_parcela_2 String 
   data_pagto_parcela_3  String
   valor_pagto_parcela_3 String
-
 }
 
-model Chapas {
-  id            Int    @id @default(autoincrement())
-  nome_chapa    String
-  membros_chapa Json
-}
+// model Chapas {
+//   id            Int    @id @default(autoincrement())
+//   nome_chapa    String
+//   membros_chapa Json
+// }
 
-enum Status {
-  ATIVA
-  INATIVA
-}
+// enum Status {
+//   ATIVO
+//   INATIVO
+// }
 
-model Votacao {
-  id                  Int    @id @default(autoincrement())
-  matricula_saerj     String
-  data_votacao_inicio String
-  data_votacao_fim    String
-  chapas              Json
-  status              Status @default(ATIVA)
-}
+// model Votacao {
+//   id                  Int    @id @default(autoincrement())
+//   matricula_saerj     String
+//   data_votacao_inicio String
+//   data_votacao_fim    String
+//   chapas              Json
+//   status              Status @default(ATIVO)
+// }
 
-model Voto {
-  id         Int    @id @default(autoincrement())
-  nome_chapa String
-  usuario_id Int
-  votacao_id Int
-}
+// model Voto {
+//   id         Int    @id @default(autoincrement())
+//   nome_chapa String
+//   usuario_id Int
+//   votacao_id Int
+// }
 
-model Chapas_Eleicoes {
-  cod_chapa        String   @id
-  numero_eleicao   Int
-  titulo_chapa     String   @db.VarChar(50)
-  descricao_chapa  String?  @db.VarChar(255)
-  quantidade_votos Int?
-  chapa_vencedora  Boolean? @default(false)
-}
+// model Chapas_Eleicoes {
+//   cod_chapa        String   @id
+//   numero_eleicao   Int
+//   titulo_chapa     String   @db.VarChar(50)
+//   descricao_chapa  String?  @db.VarChar(255)
+//   quantidade_votos Int?
+//   chapa_vencedora  Boolean? @default(false)
+// }
 
-model Chapas {
-  id              Int      @id @default(autoincrement())
-  titulo_chapa    String
-  nome_presidente String
-  data_formacao   DateTime
-  pessoas_compoe  String
-}
+// model Chapas {
+//   id              Int      @id @default(autoincrement())
+//   titulo_chapa    String
+//   nome_presidente String
+//   data_formacao   DateTime
+//   pessoas_compoe  String
+// }
 
-model Diretorias {
-  id              Int    @id @default(autoincrement())
-  numero_eleicao  Int
-  cod_chapa       String @db.VarChar(255)
-  matricula_saerj Int
-  candidato_cargo String @db.VarChar(255)
-}
+// model Diretorias {
+//   id              Int    @id @default(autoincrement())
+//   numero_eleicao  Int
+//   cod_chapa       String @db.VarChar(255)
+//   matricula_saerj Int
+//   candidato_cargo String @db.VarChar(255)
+// }
 
-model Eleicoes {
-  numero_eleicao Int      @id
-  titulo_eleicao String   @db.VarChar(255)
-  votacao_inicio DateTime
-  votacao_fim    DateTime
-  mandato_inicio DateTime
-  mandato_fim    DateTime
+// model Eleicoes {
+//   numero_eleicao Int      @id
+//   titulo_eleicao String   @db.VarChar(255)
+//   votacao_inicio DateTime
+//   votacao_fim    DateTime
+//   mandato_inicio DateTime
+//   mandato_fim    DateTime
+// }
 
-}
-
-model Logs {
-  id             Int      @id @default(autoincrement())
-  cod_log        String
-  ocorrencia_log String
-  data_hora_log  DateTime
-}
+// model Logs {
+//   id             Int      @id @default(autoincrement())
+//   cod_log        String
+//   ocorrencia_log String
+//   data_hora_log  DateTime
+// }
 
 model Protocolos {
-  id                                   Int       @id @default(autoincrement())
+  id                                   Int      @id @default(autoincrement())
   num_protocolo                        String?
   assunto_protocolo                    String?
   tipo_protocolo                       String?
   remetente                            String?
   destinatario                         String?
-  data_recebimento_dia                     Int?
-  data_recebimento_mes                     Int?
-  data_recebimento_ano                     Int?
-  data_envio_dia                           Int?
-  data_envio_mes                           Int?
-  data_envio_ano                           Int?
+  data_recebimento_dia                 Int?
+  data_recebimento_mes                 Int?
+  data_recebimento_ano                 Int?
+  data_envio_dia                       Int?
+  data_envio_mes                       Int?
+  data_envio_ano                       Int?
   meio_recebimento                     String?
   meio_envio                           String?
   quem_redigiu_documento_a_ser_enviado String?
   entregue_em_maos                     Boolean?
   doc_entrada_requer_resposta          Boolean?
   anexos                               String?
-  data_encerramento_protocolo_dia          Int?
-  data_encerramento_protocolo_mes          Int?
-  data_encerramento_protocolo_ano          Int?
+  data_encerramento_protocolo_dia      Int?
+  data_encerramento_protocolo_mes      Int?
+  data_encerramento_protocolo_ano      Int?
   usuario_encerramento_protocolo       String?
 }
 
@@ -313,7 +311,6 @@ model Eleicoes {
   votacao_fim    DateTime
   mandato_inicio DateTime
   mandato_fim    DateTime
-
 }
 
 model Logs {

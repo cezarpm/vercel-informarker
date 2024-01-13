@@ -11,7 +11,8 @@ import Modal from '@/components/Modal'
 import SelectNoComplete from '@/components/SelectNoComplete'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { useEffect, useState } from 'react'
+import { Suspense, useState } from 'react'
+import { Loading } from './loading'
 
 const shemaFilter = z.object({
   categoria_filter: z.string(),
@@ -110,93 +111,104 @@ export default function AssociadoList({
 
   console.log(List)
   return (
-    <Container>
-      <p>Associados</p>
-      <ContainerFormFilter>
-        <Box style={{ justifyContent: 'start', alignItems: 'end' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <SelectNoComplete
-              value="Todos"
-              title="Situação"
-              data={situacaoAssociado}
-              {...register('situacao_filter')}
+    <Suspense fallback={<Loading />}>
+      <Container>
+        <p>Associados</p>
+        <ContainerFormFilter>
+          <Box style={{ justifyContent: 'start', alignItems: 'end' }}>
+            <div
+              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+            >
+              <SelectNoComplete
+                p="0px 0px 0px 0.5rem"
+                value="Todos"
+                title="Situação"
+                data={situacaoAssociado}
+                {...register('situacao_filter')}
+              />
+              <SelectNoComplete
+                p="0px 0px 0px 0.5rem"
+                value="Todos"
+                title="Categoria"
+                {...register('categoria_filter')}
+                data={categoriaAssociado}
+              />
+              <SelectNoComplete
+                p="0px 0px 0px 0.5rem"
+                value="Todos"
+                title="Pendência Associado"
+                {...register('pendenciaAssociado_filter')}
+                data={dataSimNao}
+              />
+            </div>
+
+            <Button
+              style={{
+                margin: '0px',
+                fontSize: '12px',
+                width: '5rem',
+                border: 'solid 1px',
+                padding: '0.5rem',
+              }}
+              title="Buscar"
+              onClick={BuscarFiltro}
             />
-            <SelectNoComplete
-              value="Todos"
-              title="Categoria"
-              {...register('categoria_filter')}
-              data={categoriaAssociado}
-            />
-            <SelectNoComplete
-              value="Todos"
-              title="Pendência Associado"
-              {...register('pendenciaAssociado_filter')}
-              data={dataSimNao}
-            />
-          </div>
+          </Box>
+        </ContainerFormFilter>
+
+        <DataGridDemo columns={columns} rows={List} w="100%" />
+
+        <Box>
+          <Button
+            style={{ backgroundColor: '#4471C6' }}
+            title="Visualizar"
+            onClick={() => {
+              if (selectedRowIds.length === 0) {
+                toast.warn(
+                  'Você não selecionou nenhum associado para visualizar',
+                )
+              } else if (selectedRowIds.length >= 2) {
+                toast.warn('Selecione apenas 1 associado para visualizar')
+              } else {
+                router.push(`/associados/visualizar/${selectedRowIds}`)
+              }
+            }}
+          />
 
           <Button
-            style={{
-              margin: '0px',
-              fontSize: '12px',
-              width: '5rem',
-              border: 'solid 1px',
-              padding: '0.5rem',
+            title="Atualizar"
+            style={{ backgroundColor: '#528035' }}
+            onClick={() => {
+              if (selectedRowIds.length === 0) {
+                toast.warn(
+                  'Você não selecionou nenhum associado para atualizar',
+                )
+              } else if (selectedRowIds.length >= 2) {
+                toast.warn('Selecione 1 associados para atualizar')
+              } else {
+                router.push(`/associados/atualizar/${selectedRowIds}`)
+              }
             }}
-            title="Buscar"
-            onClick={BuscarFiltro}
+          />
+
+          <Button
+            title="Incluir"
+            style={{ backgroundColor: '#ED7D31' }}
+            onClick={() => {
+              router.push('/associados/cadastro')
+            }}
+          />
+
+          <Modal
+            title="Excluir"
+            bgColor="#BE0000"
+            routeDelete="/associados/delete/"
+            data={selectedRowIds}
+            redirectRouter="/associados"
           />
         </Box>
-      </ContainerFormFilter>
-
-      <DataGridDemo columns={columns} rows={List} w="100%" />
-
-      <Box>
-        <Button
-          style={{ backgroundColor: '#4471C6' }}
-          title="Visualizar"
-          onClick={() => {
-            if (selectedRowIds.length === 0) {
-              toast.warn('Você não selecionou a empresa para visualizar')
-            } else if (selectedRowIds.length >= 2) {
-              toast.warn('Selecione apenas 1 empresa para visualizar')
-            } else {
-              router.push(`/associados/visualizar/${selectedRowIds}`)
-            }
-          }}
-        />
-
-        <Button
-          title="Atualizar"
-          style={{ backgroundColor: '#528035' }}
-          onClick={() => {
-            if (selectedRowIds.length === 0) {
-              toast.warn('você não selecionou a empresa para atualizar')
-            } else if (selectedRowIds.length >= 2) {
-              toast.warn('selecione 1 associados para atualizar')
-            } else {
-              router.push(`/associados/atualizar/${selectedRowIds}`)
-            }
-          }}
-        />
-
-        <Button
-          title="Incluir"
-          style={{ backgroundColor: '#ED7D31' }}
-          onClick={() => {
-            router.push('/associados/cadastro')
-          }}
-        />
-
-        <Modal
-          title="Excluir"
-          bgColor="#BE0000"
-          routeDelete="/associados/delete/"
-          data={selectedRowIds}
-          redirectRouter="/associados"
-        />
-      </Box>
-    </Container>
+      </Container>
+    </Suspense>
   )
 }
 

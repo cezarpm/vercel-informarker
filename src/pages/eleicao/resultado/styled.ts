@@ -4,6 +4,11 @@ export const Container = styled('main', {
   maxWidth: '1500px',
   margin: '0 auto',
   padding: '2rem',
+  legend: {
+    fontFamily: 'Roboto',
+    display: 'flex',
+    gap: '0.3rem',
+  },
 })
 
 export const Box = styled('div', {
@@ -32,4 +37,5 @@ export const Table = styled('table', {
       backgroundColor: '#70B888',
     },
   },
+  
 })
