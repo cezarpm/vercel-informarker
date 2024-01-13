@@ -15,3 +15,5 @@ Senha: In@2023#er                       Senha: In@2023#er
 database
 saerj
 In@2023#er
+
+para servidor ficar rodando em segundo plano  PM2 (GLOBAL)

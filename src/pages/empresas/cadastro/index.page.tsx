@@ -229,7 +229,7 @@ export default function Empresas({
   return (
     <Container>
       <form onSubmit={handleSubmit(handleOnSubmit)}>
-        <Box>
+        <Box style={{ justifyContent: 'end' }}>
           <Link
             href="/empresas"
             style={{
