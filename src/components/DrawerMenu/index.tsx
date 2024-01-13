@@ -19,11 +19,9 @@ import {
   ArchiveTray,
   Receipt,
   UsersFour,
-
   Article,
   UserFocus,
   User
-
 } from 'phosphor-react'
 import { useRouter } from 'next/navigation'
 import { Twirl as Hamburger } from 'hamburger-react'
@@ -60,17 +58,17 @@ export function TemporaryDrawer() {
 
     else if (text === 'Logs') {
       router.push('/logs')
+    }
 
-    } else if (text === 'Aniversariantes') {
-
+    else if (text === 'Aniversariantes') {
       router.push('/associados/aniversariantes')
     }
 
     else if (text === 'Protocolos') {
       router.push('/protocolos')
+    }
 
-    }else if (text === 'Chapas') {
-
+    else if (text === 'Chapas') {
       router.push('/chapas')
     }
 
@@ -120,19 +118,7 @@ export function TemporaryDrawer() {
       <UsersFour size={30} color="#fff" />
     </>,
     <>
-      <ArchiveTray size={30} color="#fff" />
-    </>,
-    <>
-      <Article size={30} color="#fff" /> 
-    </>,
-    <>
-      <User size={30} color="#fff" />
-    </>,
-    <>
-      <ArchiveBox size={30} color="#fff" />
-    </>,
-    <>
-      <UsersFour size={30} color="#fff" />
+      <UserFocus size={30} color="#fff" />
     </>,
     <>
       <Receipt size={30} color="#fff" />
