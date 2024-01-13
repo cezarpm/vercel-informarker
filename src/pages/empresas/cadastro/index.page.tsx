@@ -10,27 +10,40 @@ import axios from 'axios'
 import { TextInput } from '@/components/TextInput'
 import { SelectOptions } from '@/components/SelectOptions'
 import { SwitchInput } from '@/components/SwitchInput'
-import { CaretRight } from 'phosphor-react'
+import { ArrowBendDownLeft, CaretRight } from 'phosphor-react'
 import Link from 'next/link'
 import { toast } from 'react-toastify'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/router'
+import { TextAreaInput } from '../atualizar/styled'
 
 interface schemaTipoEmpresa {
   id: number
-  name: string
+  codigo_tabela: string
+  ocorrencia_tabela: string
+  complemento_ocorrencia_selecao: string
+  ocorrencia_ativa: boolean
 }
 interface schemaEndereco {
   id: number
-  name: string
+  codigo_tabela: string
+  ocorrencia_tabela: string
+  complemento_ocorrencia_selecao: string
+  ocorrencia_ativa: boolean
 }
 interface schemaTratamento {
   id: number
-  name: string
+  codigo_tabela: string
+  ocorrencia_tabela: string
+  complemento_ocorrencia_selecao: string
+  ocorrencia_ativa: boolean
 }
 interface schemaCargo {
   id: number
-  name: string
+  codigo_tabela: string
+  ocorrencia_tabela: string
+  complemento_ocorrencia_selecao: string
+  ocorrencia_ativa: boolean
 }
 interface schemaEmpresasProps {
   dataTipoEmpresa: schemaTipoEmpresa[]
@@ -50,20 +63,20 @@ const schemaEmpresaForm = z.object({
   patrocinadora: z.boolean(),
   faculdade_anestesiologia: z.boolean(),
   empresa_ativa: z.boolean(),
-  cnpj: z.string(),
-  razao_social: z.string(),
-  nome_fantasia: z.string(),
-  cep: z.string(),
-  logradouro: z.string(),
-  numero: z.number(),
+  cnpj: z.string().min(14, { message: 'Campo obrigatório' }),
+  razao_social: z.string().min(4, { message: 'Campo obrigatório' }),
+  nome_fantasia: z.string().min(4, { message: 'Campo obrigatório' }),
+  cep: z.string().min(8, { message: 'Campo obrigatório' }),
+  logradouro: z.string().min(4, { message: 'Campo obrigatório' }),
+  numero: z.string().min(1, { message: 'Campo obrigatório' }),
   complemento: z.string(),
-  cidade: z.string(),
-  pais: z.string(),
-  bairro: z.string(),
-  uf: z.string(),
+  cidade: z.string().min(4, { message: 'Campo obrigatório' }),
+  pais: z.string().min(4, { message: 'Campo obrigatório' }),
+  bairro: z.string().min(4, { message: 'Campo obrigatório' }),
+  uf: z.string().min(2, { message: 'Campo obrigatório' }),
   telefone_comercial: z.string(),
   tratamento_contato_primario: z.string(),
-  nome_contato_primario: z.string(),
+  nome_contato_primario: z.string().min(4, { message: 'Campo obrigatório' }),
   cargo_contato_primario: z.string(),
   email_contato_primario: z.string(),
   telefone_contato_primario: z.string(),
@@ -72,6 +85,11 @@ const schemaEmpresaForm = z.object({
   cargo_contato_secundario: z.string(),
   email_contato_secundario: z.string(),
   telefone_contato_secundario: z.string(),
+
+  home_page: z.string(),
+  inscricao_estadual: z.string(),
+  inscricao_municipal: z.string(),
+  observacoes: z.string(),
 })
 
 type SchemaEmpresaForm = z.infer<typeof schemaEmpresaForm>
@@ -82,44 +100,40 @@ export default function Empresas({
   dataCargo,
   dataTratamento,
 }: schemaEmpresasProps) {
-  const [cidade, setCidade] = useState('')
-  const [bairro, setBairro] = useState('')
-  const [uf, setUf] = useState('')
-  const [logradouro, setLogradouro] = useState('')
-  const [cepChecked, setCepChecked] = useState(false)
   const [cepInvalido, setCepInvalido] = useState()
   const [disableCamposCepInvalido, setDisableCamposCepInvalido] =
     useState(false)
+
   const router = useRouter()
   const newDataTipoEmpresa = dataTipoEmpresa?.map((item) => {
     return {
-      label: item.name,
+      label: item.ocorrencia_tabela,
       id: item.id,
     }
   })
 
   const newDataPais = dataPais?.map((item) => {
     return {
-      label: item.name,
+      label: item.ocorrencia_tabela,
       id: item.id,
     }
   })
 
   const newDataCargo = dataCargo?.map((item) => {
     return {
-      label: item.name,
+      label: item.ocorrencia_tabela,
       id: item.id,
     }
   })
 
   const newDataTratamento = dataTratamento?.map((item) => {
     return {
-      label: item.name,
+      label: item.ocorrencia_tabela,
       id: item.id,
     }
   })
 
-  async function handleGetAllParams() {
+  async function handleGetAllParams(): Promise<void> {
     try {
       const response = await api.get('/parametros')
       setCepInvalido(response.data[0].cep_invalido)
@@ -127,6 +141,7 @@ export default function Empresas({
       console.log(error)
     }
   }
+
   const {
     register,
     handleSubmit,
@@ -139,7 +154,18 @@ export default function Empresas({
 
   async function handleOnSubmit(data: SchemaEmpresaForm) {
     try {
-      console.log(data)
+      // console.log(data)
+      // const cnpjClear = data.cnpj.replace(/[^\d]/g, '')
+      data.cnpj = data.cnpj.replace(/[^\d]/g, '')
+      data.cep = data.cep.replace(/[^\d]/g, '')
+      data.telefone_comercial = data.telefone_comercial.replace(/[^\d]/g, '')
+      data.telefone_contato_primario = data.telefone_contato_primario.replace(
+        /[^\d]/g,
+        '',
+      )
+      data.telefone_contato_secundario =
+        data.telefone_contato_secundario.replace(/[^\d]/g, '')
+
       await api.post('/empresa/cadastro', { ...data })
       router.push('/empresas')
       return toast.success('Empresa cadastrada!')
@@ -149,50 +175,77 @@ export default function Empresas({
     }
   }
   const cepValue = watch('cep')
+  const cnpj = watch('cnpj')
 
-  if (typeof cepValue === 'string' && cepValue.length === 8 && !cepChecked) {
-    handleCheckCep(cepValue)
-  }
-
+  // API VIA CEP
   async function handleCheckCep(cep: string) {
     try {
       const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`)
-      const checkParametroCepInvalido = response.data
-      if (checkParametroCepInvalido.erro) {
-        if (cepInvalido === false) {
-          toast.warn('você optou: não aceitar cep inválido')
-          setDisableCamposCepInvalido(true)
-        } else if (cepInvalido === true) {
-          toast.warn('você optou: aceitar cep inválido')
-        }
-      }
-
-      setValue('bairro', response.data.bairro)
-      setValue('cidade', response.data.localidade)
-      setValue('uf', response.data.uf)
-      setValue('logradouro', response.data.logradouro)
-      setCepChecked(true)
-      setCidade(response.data.localidade)
-      setBairro(response.data.bairro)
-      setUf(response.data.uf)
-      setLogradouro(response.data.logradouro)
+      checkedViaCep(response.data)
     } catch (error) {
       console.log(error)
     }
   }
 
-  // const logradouroValue = watch('logradouro')
-  // console.log(logradouroValue)
+  async function handleCheckCnpj(cnpj: any) {
+    try {
+      const ClaerCnpj = cnpj.replace(/[^\d]/g, '')
+      const response = await api.get(`/util/checkCnpj?cnpj=${ClaerCnpj}`)
+      // console.log(response)
+      if (response.data.message) {
+        toast.warn('CNPJ Inválido')
+      } else {
+        toast.success('CNPJ Válido')
+      }
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  function checkedViaCep(dataViaCep: any) {
+    if (dataViaCep.erro === true) {
+      if (cepInvalido === true) {
+        toast.warn('você optou: aceitar cep inválido')
+      } else {
+        setDisableCamposCepInvalido(true)
+        toast.warn('você optou: não aceitar cep inválido')
+      }
+    }
+
+    if (!dataViaCep.erro) {
+      setDisableCamposCepInvalido(false)
+      setValue('bairro', dataViaCep.bairro)
+      setValue('cidade', dataViaCep.localidade)
+      setValue('uf', dataViaCep.uf)
+      setValue('logradouro', dataViaCep.logradouro)
+    }
+  }
 
   useEffect(() => {
-    setCepChecked(false)
     setDisableCamposCepInvalido(false)
     handleGetAllParams()
-  }, [cepValue])
+  }, [])
 
   return (
     <Container>
       <form onSubmit={handleSubmit(handleOnSubmit)}>
+        <Box style={{ justifyContent: 'end' }}>
+          <Link
+            href="/empresas"
+            style={{
+              textDecoration: 'none',
+              fontFamily: 'Roboto',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              marginBottom: '1rem',
+              color: '#000',
+            }}
+          >
+            <ArrowBendDownLeft size={32} />
+            Retornar
+          </Link>
+        </Box>
         <fieldset>
           <legend>
             <span>
@@ -202,29 +255,12 @@ export default function Empresas({
             <span>Cadastro</span>
           </legend>
           <Box>
-            <div style={{ width: '10%' }}>
-              <TextInput
-                title="Codigo Empresa"
-                {...register('cod_empresa')}
-                messageError={errors.cod_empresa?.message}
-              />
-            </div>
-
-            <TextInput title="Nome Fantasia" {...register('nome_fantasia')} />
-            <div style={{ width: '15%' }}>
-              <TextInput title="CNPJ" {...register('cnpj')} />
-            </div>
-            <div style={{ width: '15%' }}>
-              <TextInput
-                type="text"
-                title="Telefone Comercial"
-                {...register('telefone_comercial')}
-              />
-            </div>
-          </Box>
-
-          <Box>
-            <TextInput title="Razao Social" {...register('razao_social')} />
+            <TextInput
+              title="Codigo Empresa *"
+              {...register('cod_empresa')}
+              helperText={errors.cod_empresa?.message}
+              error={!!errors.cod_empresa?.message}
+            />
 
             <SelectOptions
               description="Tipo Empresa"
@@ -232,6 +268,7 @@ export default function Empresas({
               w={280}
               {...register('tipo_empresa')}
             />
+
             <SwitchInput
               title="Patrocinadora?"
               {...register('patrocinadora')}
@@ -241,6 +278,7 @@ export default function Empresas({
               title="Faculdade Anestesiologia?"
               {...register('faculdade_anestesiologia')}
             />
+
             <SwitchInput
               title="Empresa Ativa?"
               {...register('empresa_ativa')}
@@ -248,79 +286,165 @@ export default function Empresas({
           </Box>
 
           <Box>
-            <div style={{ width: '7%' }}>
-              <TextInput title="Cep" {...register('cep')} />
+            <div
+              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+            >
+              <TextInput
+                title="CNPJ *"
+                {...register('cnpj')}
+                helperText={errors.cnpj?.message}
+                error={!!errors.cnpj?.message}
+                mask="99.999.999/9999-99"
+              />
+              <Button
+                type="button"
+                onClick={() => {
+                  handleCheckCnpj(cnpj)
+                }}
+                title="Validar"
+                style={{ margin: '0px', width: '100%', fontSize: '12px' }}
+              />
             </div>
 
             <TextInput
-              title="Logradouro"
+              title="Razao Social *"
+              {...register('razao_social')}
+              helperText={errors.razao_social?.message}
+              error={!!errors.razao_social?.message}
+            />
+            <TextInput
+              title="Nome Fantasia *"
+              {...register('nome_fantasia')}
+              helperText={errors.nome_fantasia?.message}
+              error={!!errors.nome_fantasia?.message}
+            />
+            <div>
+              <TextInput
+                w="100"
+                title="Inscrição Estadual"
+                {...register('inscricao_estadual')}
+              />
+            </div>
+
+            <div>
+              <TextInput
+                w="100"
+                title="Inscrição Municipal"
+                {...register('inscricao_municipal')}
+              />
+            </div>
+          </Box>
+          <Box>
+            <div
+              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
+            >
+              <TextInput
+                title="Cep *"
+                {...register('cep')}
+                helperText={errors.cep?.message}
+                error={!!errors.cep?.message}
+                mask="99999-999"
+              />
+              <Button
+                type="button"
+                onClick={() => {
+                  handleCheckCep(cepValue)
+                }}
+                title="Buscar"
+                style={{ margin: '0px', width: '100%', fontSize: '12px' }}
+              />
+            </div>
+
+            <TextInput
+              w={'100%'}
+              title="Logradouro *"
               {...register('logradouro')}
               disabled={disableCamposCepInvalido}
-              value={logradouro}
+              // value={logradouro || watch('logradouro')}
+              helperText={errors.logradouro?.message}
+              error={!!errors.logradouro?.message}
             />
+            <div style={{ width: '8%' }}>
+              <TextInput
+                title="Número *"
+                {...register('numero')}
+                w="40"
+                helperText={errors.numero?.message}
+                error={!!errors.numero?.message}
+              />
+            </div>
 
             <TextInput
               title="Complemento"
               {...register('complemento')}
               disabled={disableCamposCepInvalido}
             />
-
-            <div style={{ width: '8%' }}>
-              <TextInput
-                title="Número"
-                {...register('numero', { valueAsNumber: true })}
-                // disabled={disableCamposCepInvalido}
-              />
-            </div>
           </Box>
 
           <Box>
-            <div>
-              <TextInput
-                w={450}
-                title="Bairro"
-                {...register('bairro')}
-                value={bairro}
-                disabled={disableCamposCepInvalido}
-              />
-            </div>
+            <TextInput
+              w={450}
+              title="Bairro *"
+              {...register('bairro')}
+              // value={bairro || watch('bairro')}
+              disabled={disableCamposCepInvalido}
+              helperText={errors.bairro?.message}
+              error={!!errors.bairro?.message}
+            />
 
             <TextInput
-              title="Cidade"
+              title="Cidade *"
               {...register('cidade')}
-              value={cidade}
+              // value={cidade || watch('cidade')}
               disabled={disableCamposCepInvalido}
+              helperText={errors.cidade?.message}
+              error={!!errors.cidade?.message}
             />
 
             <div>
               <TextInput
                 w={35}
-                title="UF"
+                title="UF *"
                 {...register('uf')}
-                value={uf}
+                // value={uf || watch('uf')}
                 disabled={disableCamposCepInvalido}
+                helperText={errors.uf?.message}
+                error={!!errors.uf?.message}
               />
             </div>
 
             <SelectOptions
-              description="País"
+              description="País *"
               w={140}
               data={newDataPais}
               {...register('pais')}
               disabled={disableCamposCepInvalido}
+              // helperText={errors.pais?.message}
+              error={!!errors.pais?.message}
+            />
+
+            <TextInput
+              type="text"
+              w={'100%'}
+              title="Telefone Comercial"
+              mask="(99) 9999-9999"
+              {...register('telefone_comercial')}
             />
           </Box>
 
           <Box>
             <TextInput
               type="text"
-              title="Nome do Contato Primario"
+              title="Nome do Contato Primario *"
               {...register('nome_contato_primario')}
+              helperText={errors.nome_contato_primario?.message}
+              error={!!errors.nome_contato_primario?.message}
             />
+
             <SelectOptions
               description="Tratamento"
               data={newDataTratamento}
-              w={180}
+              w={300}
               {...register('tratamento_contato_primario')}
             />
             <SelectOptions
@@ -329,21 +453,24 @@ export default function Empresas({
               w={180}
               {...register('cargo_contato_primario')}
             />
-            <div>
-              <TextInput
-                type="email"
-                title="Email"
-                {...register('email_contato_primario')}
-              />
-            </div>
+          </Box>
+
+          <Box>
             <div>
               <TextInput
                 w={180}
                 type="text"
                 title="Telefone"
+                mask="(99) 9.9999-9999"
                 {...register('telefone_contato_primario')}
               />
             </div>
+            <TextInput
+              w={300}
+              type="email"
+              title="Email"
+              {...register('email_contato_primario')}
+            />
           </Box>
 
           <Box>
@@ -355,7 +482,7 @@ export default function Empresas({
 
             <SelectOptions
               data={newDataTratamento}
-              w={180}
+              w={300}
               description="Tratamento"
               {...register('tratamento_contato_secundario')}
             />
@@ -365,22 +492,44 @@ export default function Empresas({
               w={180}
               {...register('cargo_contato_secundario')}
             />
-            <div>
-              <TextInput
-                type="email"
-                title="Email"
-                {...register('email_contato_secundario')}
-              />
-            </div>
+          </Box>
+
+          <Box>
             <div>
               <TextInput
                 type="text"
                 w={180}
                 title="Telefone"
+                mask="(99) 9.9999-9999"
                 {...register('telefone_contato_secundario')}
               />
             </div>
+            <TextInput
+              w={300}
+              type="email"
+              title="Email"
+              {...register('email_contato_secundario')}
+            />
           </Box>
+
+          <TextInput title="Home Page" {...register('home_page')} />
+
+          <Box>
+            <label
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                fontFamily: 'Roboto',
+                fontSize: '12px',
+                color: 'rgba(0, 0, 0, 0.6)',
+                width: '100%',
+              }}
+            >
+              Observações
+              <TextAreaInput {...register('observacoes')} />
+            </label>
+          </Box>
+
           <Button
             title={isSubmitting ? 'Enviando...' : 'Enviar'}
             type="submit"
@@ -394,11 +543,27 @@ export default function Empresas({
 
 export const getStaticProps: GetStaticProps = async () => {
   try {
-    const dataTipoEmpresa: schemaTipoEmpresa[] =
-      await prisma.tipoEmpresa.findMany()
-    const dataPais: schemaEndereco[] = await prisma.pais.findMany()
-    const dataCargo: schemaCargo[] = await prisma.cargos.findMany()
-    const dataTratamento: schemaCargo[] = await prisma.tratamentos.findMany()
+    const dataTipoEmpresa = await prisma.tabelas.findMany({
+      where: {
+        codigo_tabela: 'Tipo_Empresa',
+      },
+    })
+    const dataPais = await prisma.tabelas.findMany({
+      where: {
+        codigo_tabela: 'pais',
+      },
+    })
+
+    const dataCargo = await prisma.tabelas.findMany({
+      where: {
+        codigo_tabela: 'Cargos_Empresa',
+      },
+    })
+    const dataTratamento = await prisma.tabelas.findMany({
+      where: {
+        codigo_tabela: 'Tratamento',
+      },
+    })
     return {
       props: {
         dataTipoEmpresa,

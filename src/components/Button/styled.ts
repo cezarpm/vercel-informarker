@@ -3,6 +3,7 @@ import { styled } from '@ignite-ui/react'
 export const Container = styled('div', {
   display: 'flex',
   justifyContent: 'center',
+  alignItems: 'center',
   button: {
     width: '100%',
     backgroundColor: '#0DA9A4',

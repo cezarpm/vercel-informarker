@@ -1,5 +1,5 @@
 import { Button } from '@/components/Button'
-import { Container, Box } from './styled'
+import { Container, Box, ButtonEtiqueta } from './styled'
 import { useRouter } from 'next/router'
 import DataGridDemo from '@/components/TableList'
 import { prisma } from '@/lib/prisma'
@@ -8,111 +8,270 @@ import { useId } from '@/context'
 import { GridColDef } from '@mui/x-data-grid'
 import { toast } from 'react-toastify'
 import Modal from '@/components/Modal'
-export default function EmpresaList({ data }: any) {
+import SelectNoComplete from '@/components/SelectNoComplete'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { useState } from 'react'
+import ModalTickets from '@/components/ModalTickets'
+import { formatCNPJ } from '@/utils/formatCnpj'
+
+
+const shemaFilter = z.object({
+  tipo_empresa_filter: z.string(),
+  patrocinarora_filter: z.string(),
+  faculdade_anestesiologia_filter: z.string(),
+  empresa_ativa_filter: z.string(),
+})
+
+interface EtiquetaProps {
+  id: number;
+  cod_empresa?: string;
+  tipo_empresa?: string;
+  patrocinadora?: boolean;
+  faculdade_anestesiologia?: boolean;
+  empresa_ativa?: boolean;
+  cnpj?: string;
+  razao_social?: string;
+  nome_fantasia?: string;
+  cep?: string;
+  logradouro?: string;
+  numero?: number;
+  complemento?: string;
+  cidade?: string;
+  uf?: string;
+  pais?: string;
+  bairro?: string;
+  telefone_comercial?: string;
+  tratamento_contato_primario?: string;
+  nome_contato_primario?: string;
+  cargo_contato_primario?: string;
+  email_contato_primario?: string;
+  telefone_contato_primario?: string;
+  tratamento_contato_secundario?: string;
+  nome_contato_secundario?: string;
+  cargo_contato_secundario?: string;
+  email_contato_secundario?: string;
+  telefone_contato_secundario?: string;
+  home_page?: string;
+  inscricao_estadual?: string;
+  inscricao_municipal?: string;
+  observacoes?: string;
+}
+
+type SchemaFilter = z.infer<typeof shemaFilter>
+
+export default function EmpresaList({ data, dataTipoEmpresa }: any) {
   const router = useRouter()
   const { selectedRowIds } = useId()
-  // console.log(selectedRowIds)
+  const [list, setList] = useState(data)
+
+  const { register, watch } = useForm<SchemaFilter>()
+    
+  function BuscarFiltro() {
+    const TipoEmpresaFilter = watch('tipo_empresa_filter')
+    const PatrocinadoraFilter = watch('patrocinarora_filter')
+    const FaculdadeAnestesiologiaFilter = watch(
+      'faculdade_anestesiologia_filter',
+    )
+    const EmpresaAtivaFilter = watch('empresa_ativa_filter')
+
+    // Inicialize a lista com os dados originais
+    let filteredList = data
+
+    // Realize a filtragem com base nos valores selecionados
+    if (TipoEmpresaFilter !== 'Todos') {
+      filteredList = filteredList.filter((item: any) => {
+        const situacaoMatch =
+          TipoEmpresaFilter === 'Todos' ||
+          item.tipo_empresa === TipoEmpresaFilter
+        return situacaoMatch
+      })
+    }
+
+    if (PatrocinadoraFilter && PatrocinadoraFilter !== 'Todos') {
+      filteredList = filteredList.filter((item: any) => {
+        return item.patrocinadora === PatrocinadoraFilter
+      })
+    }
+
+    if (
+      FaculdadeAnestesiologiaFilter &&
+      FaculdadeAnestesiologiaFilter !== 'Todos'
+    ) {
+      filteredList = filteredList.filter((item: any) => {
+        return item.faculdade_anestesiologia === FaculdadeAnestesiologiaFilter
+      })
+    }
+
+    if (EmpresaAtivaFilter && EmpresaAtivaFilter !== 'Todos') {
+      filteredList = filteredList.filter((item: any) => {
+        return item.empresa_ativa === EmpresaAtivaFilter
+      })
+    }
+
+    // Atualize o estado com os dados filtrados
+    setList(filteredList)
+
+    // Imprima a lista filtrada (opcional, apenas para fins de depuração)
+    // console.log(filteredList)
+  }
+
   const columns: GridColDef[] = [
-    { field: 'id', headerName: 'ID' },
+    {
+      field: 'id',
+      headerName: 'id',
+      disableColumnMenu: true,
+      width: 80,
+    },
     {
       field: 'tipo_empresa',
       headerName: 'Tipo Empresa',
-      flex: 1,
+      width: 120,
+    },
+    {
+      field: 'patrocinadora',
+      headerName: 'Patrocinadora',
+      width: 120,
+    },
+    {
+      field: 'faculdade_anestesiologia',
+      headerName: 'Faculdade Anestesiologia',
+      width: 220,
+      disableColumnMenu: true,
+    },
+    {
+      field: 'empresa_ativa',
+      headerName: 'Empresa Ativa',
+      width: 120,
+      disableColumnMenu: true,
     },
     {
       field: 'razao_social',
       headerName: 'Razão Social',
       flex: 1,
-      editable: true,
+      disableColumnMenu: true,
     },
     {
       field: 'nome_fantasia',
       headerName: 'Nome Fantasia',
       flex: 1,
-      editable: true,
+      disableColumnMenu: true,
     },
     {
       field: 'cnpj',
       headerName: 'Cnpj',
-      flex: 1,
-      editable: true,
-      // valueGetter: (params: GridValueGetterParams) =>
-      //   `${params.row.firstName || ''} ${params.row.lastName || ''}`,
+      width: 140,
+      disableColumnMenu: true,
     },
     {
       field: 'cidade',
       headerName: 'Cidade',
-      description: 'This column has a value getter and is not sortable.',
-      sortable: false,
-      flex: 1,
-      // valueGetter: (params: GridValueGetterParams) =>
-      //   `${params.row.firstName || ''} ${params.row.lastName || ''}`,
-    },
-    {
-      field: 'bairro',
-      headerName: 'Bairro',
-      description: 'This column has a value getter and is not sortable.',
-      sortable: false,
-      flex: 1,
-      // valueGetter: (params: GridValueGetterParams) =>
-      //   `${params.row.firstName || ''} ${params.row.lastName || ''}`,
+      width: 120,
+      disableColumnMenu: true,
     },
     {
       field: 'uf',
       headerName: 'Uf',
-      description: 'This column has a value getter and is not sortable.',
-      sortable: false,
-      flex: 1,
-      // valueGetter: (params: GridValueGetterParams) =>
-      //   `${params.row.firstName || ''} ${params.row.lastName || ''}`,
+      width: 50,
+      disableColumnMenu: true,
     },
 
     {
       field: 'nome_contato_primario',
       headerName: 'Nome Contato Primário',
-      description: 'This column has a value getter and is not sortable.',
-      sortable: false,
-      flex: 1,
-      // valueGetter: (params: GridValueGetterParams) =>
-      //   `${params.row.firstName || ''} ${params.row.lastName || ''}`,
-    },
-    {
-      field: 'telefone_contato_primario',
-      headerName: 'Telefone',
-      description: 'This column has a value getter and is not sortable.',
-      sortable: false,
-      flex: 1,
-      // valueGetter: (params: GridValueGetterParams) =>
-      //   `${params.row.firstName || ''} ${params.row.lastName || ''}`,
+      width: 180,
+      disableColumnMenu: true,
     },
     {
       field: 'email_contato_primario',
       headerName: 'Email Contato Primário',
-      description: 'This column has a value getter and is not sortable.',
-      sortable: false,
-      flex: 1,
-      // valueGetter: (params: GridValueGetterParams) =>
-      //   `${params.row.firstName || ''} ${params.row.lastName || ''}`,
+      width: 180,
+      disableColumnMenu: true,
     },
   ]
 
-  // PRECISO ATUALIZAR A LISTA PRO USUARIO VER O ITEM QUE FOI DELETADO SUMIR
-  // SE EXISTIR O ID=4 E O ID=4 FOR DELETADO, AO DELETAR ATUALIZAR A LISTA PARA NÃO MOSTRAR ELE!
+  const dataSimNao = [
+    {
+      id: 1,
+      ocorrencia_tabela: 'sim',
+    },
+    {
+      id: 2,
+      ocorrencia_tabela: 'não',
+    },
+  ]
 
-  // console.log(`resgatado com sucesso! ${selectedRowIds}`)
   return (
     <Container>
       <p>Empresas</p>
-      <DataGridDemo columns={columns} rows={data} w="100%" />
+      <div>
+        <Box
+          style={{
+            marginTop: '1rem',
+            justifyContent: 'flex-start',
+            alignItems: 'end',
+          }}
+        >
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <SelectNoComplete
+              p="0px 0px 0px 0.5rem"
+              value="Todos"
+              title="Tipo Empresa"
+              data={dataTipoEmpresa}
+              {...register('tipo_empresa_filter')}
+            />
+            <SelectNoComplete
+              p="0px 0px 0px 0.5rem"
+              value="Todos"
+              title="Patrocinadora"
+              {...register('patrocinarora_filter')}
+              data={dataSimNao}
+            />
+            <SelectNoComplete
+              p="0px 0px 0px 0.5rem"
+              value="Todos"
+              title="Faculdade Anestesiologia"
+              {...register('faculdade_anestesiologia_filter')}
+              data={dataSimNao}
+            />
+            <SelectNoComplete
+              p="0px 0px 0px 0.5rem"
+              value="Todos"
+              title="Empresa Ativa"
+              {...register('empresa_ativa_filter')}
+              data={dataSimNao}
+            />
+          </div>
+          <Button
+            style={{
+              margin: '0px',
+              fontSize: '12px',
+              width: '5rem',
+              border: 'solid 1px',
+              padding: '0.5rem',
+            }}
+            title="Buscar"
+            onClick={BuscarFiltro} 
+            />
+
+      </Box>
+        {selectedRowIds.length > 0 &&
+          <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+          <ModalTickets
+            title="Gerar Etiqueta"
+            bgColor="#0da9a4"
+            data={selectedRowIds}
+            route="/api/empresa/get/"
+          />
+          </Box>
+        }
+
+      </div>
+      <DataGridDemo columns={columns} rows={filteredData} w="100%" />
+
       <Box>
         <Button
-          title="Cadastrar"
-          style={{ backgroundColor: '#f67200' }}
-          onClick={() => {
-            router.push('/empresas/cadastro')
-          }}
-        />
-        <Button
+          style={{ backgroundColor: '#4471C6' }}
           title="Visualizar"
           onClick={() => {
             if (selectedRowIds.length === 0) {
@@ -124,9 +283,10 @@ export default function EmpresaList({ data }: any) {
             }
           }}
         />
+
         <Button
           title="Atualizar"
-          style={{ backgroundColor: '#6f9622' }}
+          style={{ backgroundColor: '#528035' }}
           onClick={() => {
             if (selectedRowIds.length === 0) {
               toast.warn('você não selecionou a empresa para atualizar')
@@ -138,13 +298,29 @@ export default function EmpresaList({ data }: any) {
           }}
         />
 
+        <Button
+          title="Incluir"
+          style={{ backgroundColor: '#ED7D31' }}
+          onClick={() => {
+            router.push('/empresas/cadastro')
+          }}
+        />
+
         <Modal
-          title="Deletar"
-          bgColor="#ff0000"
+          title="Excluir"
+          bgColor="#BE0000"
           routeDelete="/empresa/delete/"
           data={selectedRowIds}
           redirectRouter="/empresas"
         />
+
+        {/* <Button
+          title="Retornar"
+          style={{ backgroundColor: '#b34db2' }}
+          onClick={() => {
+            router.push('/')
+          }}
+        /> */}
       </Box>
     </Container>
   )
@@ -155,21 +331,30 @@ export const getServerSideProps: GetServerSideProps = async () => {
     const data = response.map((item) => {
       return {
         id: item.id,
+        patrocinadora: item.patrocinadora ? 'sim' : 'não',
+        faculdade_anestesiologia: item.faculdade_anestesiologia ? 'sim' : 'não',
+        empresa_ativa: item.empresa_ativa ? 'sim' : 'não',
         tipo_empresa: item.tipo_empresa,
         razao_social: item.razao_social,
         nome_fantasia: item.nome_fantasia,
-        cnpj: item.cnpj,
+        cnpj: item.cnpj ? formatCNPJ(item.cnpj) : '',
         cidade: item.cidade,
-        bairro: item.bairro,
         uf: item.uf,
         nome_contato_primario: item.nome_contato_primario,
-        telefone_contato_primario: item.telefone_contato_primario,
         email_contato_primario: item.email_contato_primario,
       }
     })
+
+    const dataTipoEmpresa = await prisma.tabelas.findMany({
+      where: {
+        codigo_tabela: 'Tipo_Empresa',
+      },
+    })
+
     return {
       props: {
         data,
+        dataTipoEmpresa,
       },
     }
   } catch (error) {
@@ -177,6 +362,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
     return {
       props: {
         data: [],
+        dataTipoEmpresa: [],
       },
     }
   }

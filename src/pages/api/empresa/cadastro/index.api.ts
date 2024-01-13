@@ -1,5 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import { prisma } from '@/lib/prisma'
+import { Logs } from '@/utils/Logs'
 import type { NextApiRequest, NextApiResponse } from 'next'
 import { z } from 'zod'
 
@@ -12,7 +13,7 @@ const schemaEmpresaForm = z.object({
   cnpj: z.string(),
   razao_social: z.string(),
   nome_fantasia: z.string(),
-  cep: z.number(),
+  cep: z.string(),
   logradouro: z.string(),
   numero: z.number(),
   complemento: z.string(),
@@ -45,9 +46,12 @@ export default async function handler(
     await prisma.empresa.create({
       data: {
         ...data,
-        cep: Number(data.cep),
         numero: Number(data.numero),
       },
+    })
+    Logs({
+      modulo: 'EMPRESA Cadastro',
+      descriptionLog: `codigo empresa:${data.cod_empresa} usuario: 'teste' `,
     })
     return res.status(201).end()
   } catch (error) {

@@ -1,5 +1,3 @@
-// contexts/SelecaoContext.tsx
-
 import React, { createContext, useContext, ReactNode } from 'react'
 
 type schemaContext = {
@@ -7,6 +5,7 @@ type schemaContext = {
   setSelection: any
   updateListAll: boolean
   setUpdateListAll: any
+  // Logs: any
 }
 
 // Criando o contexto
@@ -27,7 +26,12 @@ export const SelecaoProvider: React.FC<schemaProvider> = ({ children }) => {
 
   return (
     <SelecaoContext.Provider
-      value={{ selectedRowIds, setSelection, updateListAll, setUpdateListAll }}
+      value={{
+        selectedRowIds,
+        setSelection,
+        updateListAll,
+        setUpdateListAll,
+      }}
     >
       {children}
     </SelecaoContext.Provider>
