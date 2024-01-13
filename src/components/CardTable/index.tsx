@@ -12,7 +12,7 @@ interface schemaCard {
 
 export default function CardTable({ title, description, onClick }: schemaCard) {
   return (
-    <Card sx={{ maxWidth: 345 }} onClick={onClick}>
+    <Card sx={{ maxWidth: 345, minWidth: 335 }} onClick={onClick}>
       <CardActionArea>
         <CardContent
           sx={{

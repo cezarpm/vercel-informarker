@@ -1,4 +1,4 @@
-import { styled } from '@ignite-ui/react'
+import { Button, styled } from '@ignite-ui/react'
 
 export const Container = styled('main', {
   padding: '2rem 4rem',
@@ -19,4 +19,9 @@ export const Box = styled('div', {
   button: {
     padding: '1rem 2rem',
   },
+});
+
+export const ButtonEtiqueta = styled(Button, {
+  heigth: 'auto',
+  padding: '.5rem'
 })
