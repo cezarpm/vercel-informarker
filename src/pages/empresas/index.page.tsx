@@ -116,8 +116,6 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
     // console.log(filteredList)
   }
 
-
-
   const columns: GridColDef[] = [
     {
       field: 'id',
@@ -205,10 +203,7 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
 
   return (
     <Container>
-
-
       <p>Empresas</p>
-
       <div>
         <Box
           style={{
@@ -256,48 +251,23 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
               padding: '0.5rem',
             }}
             title="Buscar"
-            onClick={BuscarFiltro} />
-//      <form>
-//        <Box style={{ marginTop: '1rem' }}>
-//          <SelectNoComplete
-//            value="Todos"
-//            title="Tipo Empresa"
-//            data={dataTipoEmpresa}
-//            {...register('tipo_empresa_filter')}
-//          />
-//          <SelectNoComplete
-//            value="Todos"
-//            title="Patrocinadora"
-//            {...register('patrocinarora_filter')}
-//            data={dataSimNao}
-  //        />
-    //      <SelectNoComplete
-  //          value="Todos"
-    //        title="Faculdade Anestesiologia"
-      //      {...register('faculdade_anestesiologia_filter')}
-  //          data={dataSimNao}
-    //      />
-      //    <SelectNoComplete
-        //    value="Todos"
-   //         title="Empresa Ativa"
-     //       {...register('empresa_ativa_filter')}
-       //     data={dataSimNao}
-  //        />
-    //    </Box>
-   //   </form>
+            onClick={BuscarFiltro} 
+            />
 
       </Box>
-      {selectedRowIds.length > 0 &&
-        <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+        {selectedRowIds.length > 0 &&
+          <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
           <ModalTickets
             title="Gerar Etiqueta"
             bgColor="#0da9a4"
             data={selectedRowIds}
             route="/api/empresa/get/"
           />
-        </Box>}
-      <DataGridDemo columns={columns} rows={filteredData} w="100%" />
+          </Box>
+        }
 
+      </div>
+      <DataGridDemo columns={columns} rows={filteredData} w="100%" />
 
       <Box>
         <Button
