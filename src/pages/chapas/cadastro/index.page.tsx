@@ -1,5 +1,5 @@
 import { Container, Box } from './styled'
-import React from 'react'
+import React, { use, useEffect } from 'react'
 import { z } from 'zod'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { Button } from '@/components/Button'
@@ -56,6 +56,13 @@ export default function VotacaoCreate() {
     router.push('/chapas')
     return toast.success('Chapa cadastrada!')
   }
+
+  useEffect(() => {
+    if (errors.membros_chapa) {
+      toast.error("A votação precisa ter no mínimo 1 membro!")
+    }
+
+  }, [errors])
 
   return (
     <Container>
