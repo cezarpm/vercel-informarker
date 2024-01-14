@@ -44,7 +44,7 @@ export default function EleicaoList({ data }: any) {
 
     {
       field: 'data_votacao_fim',
-      headerName: 'Data do fim da votação',
+      headerName: 'Data do término',
       width: 150,
       renderCell: (params) => {
         return (
@@ -57,9 +57,16 @@ export default function EleicaoList({ data }: any) {
 
     {
       field: 'status',
-      headerName: 'Estado da votação',
+      headerName: 'Está ativa?',
       disableColumnMenu: true,
-      width: 80,
+      width: 100,
+      renderCell: (params) => {
+        return (
+          <Typography>
+            {params.value === 'INATIVA' ? 'Não' : 'Sim'}
+          </Typography>
+        )
+      }
     },
 
   ]

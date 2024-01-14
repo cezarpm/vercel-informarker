@@ -109,6 +109,16 @@ export default function VotacaoAtualizar({ data, chapas }: VotacaoAtualizarProps
       return chapaSelected
     })
 
+
+    if (newDate > newDateEnd) {
+      return toast.error('A data de início não pode ser maior que a data de término!')
+    }
+
+    if (newDate === newDateEnd) {
+      return toast.error('A data de início não pode ser igual a data de término!')
+    }
+
+
     const body = {
       id: Number(id),
       matricula_saerj: data.matricula_saerj,
@@ -267,8 +277,8 @@ export default function VotacaoAtualizar({ data, chapas }: VotacaoAtualizarProps
             </div>
 
             <SelectOptions
-              description="Selecione a chapa"
-              data={['ATIVO', 'INATIVO']}
+              description="Está ativa?"
+              data={['ATIVA', 'INATIVA']}
               w={280}
               defaultValue={data.status}
               {...register('status')}
