@@ -68,8 +68,10 @@ export const EtiquetaPDF = async (linhas: number[]) => {
           const response_saerj = await fetch(`/api/adicionais_saerj/get/${data.matricula_SAERJ}`);
           const data_saerj = await response_saerj.json();
 
-          if(data_saerj != null){
-              data['tratamento'] = data_saerj.tratamento;
+          if(response_saerj.status != 404){
+            data['tratamento'] = data_saerj.tratamento;
+          }else{
+            data['tratamento'] = "";
           }
 
           const {
@@ -83,7 +85,42 @@ export const EtiquetaPDF = async (linhas: number[]) => {
             tratamento,
             uf,
           } = data;
+
+          console.log("DATA", data);
+
+          if(nome_completo == null || nome_completo == ""){
+            toast.error('Erro ao gerar etiquetas')
+            return false;
+          }
+
+          var endereco = "";
+          if(logradouro != null && logradouro != ""){
+            endereco += ""+logradouro;
+
+            if(numero != null && numero != ""){
+              endereco += ", "+numero;
+            }
+
+            if(complemento != null && complemento != ""){
+              endereco += " "+complemento;
+            }
+          }
+
+          var linhaCidade = "";
       
+          if(cep != null && cep != ""){
+            linhaCidade += ""+cep+" - "
+          }
+
+          if((cidade != null && cidade != "") && (uf != null && uf != "")){
+            linhaCidade += ""+cidade+"/"+uf;
+          }
+
+          if(endereco == "" && linhaCidade == ""){
+            toast.error('Um ou mais associados selecionados não possui todos os dados para gerar etiqueta.');
+            return false
+          }
+
           const startX = index % 2 === 0 ? 10 : 110;
           const startY = Math.floor(index / 2) * 40;  // Aumentei o espaçamento vertical para 40 unidades
       
@@ -95,23 +132,29 @@ export const EtiquetaPDF = async (linhas: number[]) => {
           const splitNome = doc.splitTextToSize(`${tratamento} ${nome_completo}`, 80);
           doc.text(splitNome, startX + 4, 12 + startY);
       
-          doc.setFontSize(10);
-          const splitEndereco = doc.splitTextToSize(`${logradouro} , ${numero} ${complemento}`, 80);
-          doc.text(splitEndereco, startX + 4, 17 + startY);
-      
-          const splitBairro = doc.splitTextToSize(bairro, 80);
-          doc.text(splitBairro, startX + 4, 22 + startY);
-      
-          const splitCidade = doc.splitTextToSize(`${cep} - ${cidade} / ${uf}`, 80);
-          doc.text(splitCidade, startX + 4, 27 + startY);
+          if(endereco != ""){
+            doc.setFontSize(10);
+            const splitEndereco = doc.splitTextToSize(`${endereco}`, 80);
+            doc.text(splitEndereco, startX + 4, 17 + startY);
+          }
+
+          if((bairro != "" && bairro != null) && linhaCidade != ""){
+            const splitBairro = doc.splitTextToSize(bairro, 80);
+            doc.text(splitBairro, startX + 4, 22 + startY);
+
+            const splitCidade = doc.splitTextToSize(`${linhaCidade}`, 80);
+            doc.text(splitCidade, startX + 4, 27 + startY);
+          }
 
       }catch{
         toast.error('Erro ao gerar etiquetas');
+        return false;
       }
       
     } catch (error) {
       toast.error('Erro ao gerar etiquetas');
       console.error('Erro ao buscar associados:', error);
+      return false;
     }
 
     
