@@ -93,8 +93,6 @@ export default function VotacaoAtualizar({ data, chapas }: VotacaoAtualizarProps
     resolver: zodResolver(schemaChapaForm),
   })
 
-
-
   async function handleOnSubmit(data: SchemaChapaForm) {
     const concatDate = `${data.start_month}-${data.start_day}-${data.start_year}`
 
@@ -106,6 +104,14 @@ export default function VotacaoAtualizar({ data, chapas }: VotacaoAtualizarProps
       const chapaSelected = chapas.find((item: any) => item.nome_chapa === chapa.nome_chapa)
       return chapaSelected
     })
+
+    if (newDate > newDateEnd) {
+      return toast.error('A data de início não pode ser maior que a data de término!')
+    }
+
+    if (newDate === newDateEnd) {
+      return toast.error('A data de início não pode ser igual a data de término!')
+    }
 
     const body = {
       id: Number(id),
@@ -140,6 +146,15 @@ export default function VotacaoAtualizar({ data, chapas }: VotacaoAtualizarProps
       setValue('end_year', anoTotalEnd)
     }
   }, [data, setValue])
+
+
+  useEffect(() => {
+    if (errors.chapas) {
+      toast.error("A votação precisa ter no mínimo 2 chapas!")
+    }
+
+  }, [errors])
+
 
 
   return (
@@ -257,8 +272,9 @@ export default function VotacaoAtualizar({ data, chapas }: VotacaoAtualizarProps
             </div>
 
             <SelectOptions
-              description="Selecione a chapa"
-              data={['ATIVO', 'INATIVO']}
+
+              description="Está ativa?"
+              data={['ATIVA', 'INATIVA']}
               w={280}
               defaultValue={data.status}
               {...register('status')}

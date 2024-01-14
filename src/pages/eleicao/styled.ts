@@ -1,9 +1,9 @@
 import { styled } from '@ignite-ui/react'
 
 export const Container = styled('main', {
-  maxWidth: '1200px',
+  maxWidth: '800px',
   margin: '0 auto',
-  padding: '2rem 4rem',
+  padding: '1rem',
   h1: {
     fontFamily: 'Roboto',
   },
@@ -13,13 +13,13 @@ export const Container = styled('main', {
 })
 
 export const ConfirmationModal = styled('div', {
-  padding: '2rem',
+  padding: '1rem',
   textAlign: 'center',
   borderRadius: '20px',
 })
 
 export const WelcomeModal = styled('div', {
-  padding: '2rem',
+  padding: '1rem',
   textAlign: 'center',
   borderRadius: '20px',
 })
@@ -98,12 +98,12 @@ export const OutlinedButton = styled('button', {
   fontSize: '15px',
   fontStyle: 'normal',
   fontWeight: '600',
-  lineHeight: '15px',
   borderRadius: '8px',
   textAlign: 'center',
-  padding: '1rem 1rem',
+  padding: '0.8rem 0.8rem',
   color: 'black',
   marginTop: '2rem',
   border: '1px solid black',
   cursor: 'pointer',
 })
+

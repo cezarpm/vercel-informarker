@@ -254,16 +254,18 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
             onClick={BuscarFiltro} 
             />
 
-            {selectedRowIds.length > 0 &&
-              <ModalTickets
-                title="Gerar Etiqueta"
-                bgColor="#0da9a4"
-                data={selectedRowIds}
-              />
-            }
-
       </Box>
-        
+        {selectedRowIds.length > 0 &&
+          <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+          <ModalTickets
+            title="Gerar Etiqueta"
+            bgColor="#0da9a4"
+            data={selectedRowIds}
+            route="/api/empresa/get/"
+          />
+          </Box>
+        }
+
 
       </div>
       <DataGridDemo columns={columns} rows={list} w="100%" />

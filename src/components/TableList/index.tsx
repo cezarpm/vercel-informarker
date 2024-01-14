@@ -23,6 +23,7 @@ export default function DataGridDemo({ rows, columns, w }: any) {
     if(data){
         setQuantidadeLinhas(data[0].quantidade_linhas_listas);
     }
+
   }
 
   return (

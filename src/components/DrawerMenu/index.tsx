@@ -19,7 +19,6 @@ import {
   ArchiveTray,
   Receipt,
   UsersFour,
-
   Article,
   UserFocus,
   User,
@@ -61,9 +60,7 @@ export function TemporaryDrawer() {
 
     else if (text === 'Logs') {
       router.push('/logs')
-
     } else if (text === 'Aniversariantes') {
-
       router.push('/associados/aniversariantes')
     }
 
@@ -71,6 +68,7 @@ export function TemporaryDrawer() {
       router.push('/protocolos')
 
     }else if (text === 'Chapas') {
+
 
       router.push('/chapas')
     }
@@ -107,6 +105,7 @@ export function TemporaryDrawer() {
   const arrayIcons = [
     <>
       <Buildings size={30} color="#fff" />
+
     </>,
     <>
       <UsersFour size={30} color="#fff" />
@@ -121,19 +120,10 @@ export function TemporaryDrawer() {
       <UsersFour size={30} color="#fff" />
     </>,
     <>
-      <ArchiveTray size={30} color="#fff" />
+      <UserFocus size={30} color="#fff" />
     </>,
     <>
-      <Article size={30} color="#fff" /> 
-    </>,
-    <>
-      <User size={30} color="#fff" />
-    </>,
-    <>
-      <ArchiveBox size={30} color="#fff" />
-    </>,
-    <>
-      <UsersFour size={30} color="#fff" />
+      <Receipt size={30} color="#fff" />
     </>,
     <>
       <Receipt size={30} color="#fff" />
