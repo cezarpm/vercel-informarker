@@ -1,5 +1,5 @@
 import { Container, Box, Text } from './styled'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { z } from 'zod'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { Button } from '@/components/Button'
@@ -47,7 +47,7 @@ const schemaChapaForm = z.object({
   matricula_saerj: z
     .string()
     .min(1, { message: 'O campo nome da chapa é obrigatório' }),
-  chapas: z.array(integranteSchema).nonempty(),
+  chapas: z.array(integranteSchema).min(2, { message: 'A votação precisa ter no mínimo 2 chapas!' }),
   start_day: z.string().min(1, { message: 'O campo dia é obrigatório' }),
   start_month: z.string().min(1, { message: 'O campo mês é obrigatório' }),
   start_year: z.string().min(1, { message: 'O campo mês é obrigatório' }),
@@ -102,6 +102,16 @@ export default function VotacaoCreate({ chapas }: any) {
     name: 'chapas',
     control,
   })
+
+  useEffect(() => {
+    console.log(errors);
+
+
+    if (errors.chapas) {
+      toast.error("A votação precisa ter no mínimo 2 chapas!")
+    }
+
+  }, [errors])
 
 
   return (

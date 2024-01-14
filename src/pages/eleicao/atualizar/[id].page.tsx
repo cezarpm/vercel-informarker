@@ -95,6 +95,8 @@ export default function VotacaoAtualizar({ data, chapas }: VotacaoAtualizarProps
 
 
 
+
+
   async function handleOnSubmit(data: SchemaChapaForm) {
     const concatDate = `${data.start_month}-${data.start_day}-${data.start_year}`
 
@@ -140,6 +142,14 @@ export default function VotacaoAtualizar({ data, chapas }: VotacaoAtualizarProps
       setValue('end_year', anoTotalEnd)
     }
   }, [data, setValue])
+
+
+  useEffect(() => {
+    if (errors.chapas) {
+      toast.error("A votação precisa ter no mínimo 2 chapas!")
+    }
+
+  }, [errors])
 
 
   return (
