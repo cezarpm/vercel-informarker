@@ -95,6 +95,11 @@ export default function VotacaoCreate({ chapas }: any) {
       return chapaSelected
     })
 
+    if(new Set(selectedChapas).size !== selectedChapas.length){
+      return toast.error('Chapas duplicadas!')
+    }
+
+
     const body = {
       matricula_saerj: data.matricula_saerj,
       data_votacao_inicio: newDate,

@@ -19,6 +19,7 @@ import { useEffect, useState } from 'react'
 import { api } from '@/lib/axios'
 import { GetServerSideProps } from 'next'
 import { prisma } from '@/lib/prisma'
+import { ExibirReciboVoto } from '@/utils/voteReceipt'
 
 type Votation = {
   data: any
@@ -33,6 +34,8 @@ export default function Votacao({ data, alreadyVoted }: Votation) {
 
   const [selected, setSelected] = useState('' as any)
   const [votation, setVotation] = useState(data)
+
+  const votationIsStarted = new Date(votation?.data_votacao_inicio) < new Date()
 
   const handleClick = (item: string) => {
     setShowVotation(true)
@@ -51,6 +54,16 @@ export default function Votacao({ data, alreadyVoted }: Votation) {
     setUserAlreadyVoted(true)
 
     await api.post('/votos/cadastro', { nome_chapa: selected, votacao_id: votation.id, usuario_id: 1 })
+  }
+
+  const saveVotaionInPdf = () => {
+    ExibirReciboVoto({
+      nome: 'Roberto da Silva',
+      cpf: '857.260.010-87',
+      matricula_saerj: votation?.matricula_saerj,
+      chapaVote: selected || userAlreadyVoted.nome_chapa,
+      autenticacao: '0x0000000',
+    })
   }
 
   const expandCandidates = (index: number) => {
@@ -92,6 +105,12 @@ export default function Votacao({ data, alreadyVoted }: Votation) {
       setShowVoteReceipt(true)
     }
   }, [userAlreadyVoted])
+
+  useEffect(() => {
+    if(!votationIsStarted){
+      setVotation(null)
+    }
+  }),[]
 
   if (showVoteReceipt) {
     return (
@@ -142,7 +161,7 @@ export default function Votacao({ data, alreadyVoted }: Votation) {
             </OutlinedButton>
           </div>
 
-          <div style={{ width: '80%' }}>
+          <div onClick={saveVotaionInPdf} style={{ width: '80%' }}>
             <Button title="Imprimir / Salvar" />
           </div>
         </div>
@@ -180,6 +199,7 @@ export default function Votacao({ data, alreadyVoted }: Votation) {
                   Você já votou nessa eleição
                 </Typography>
               ) : (
+
                 <button
                   style={{
                     backgroundColor: 'rgb(82, 128, 53)',

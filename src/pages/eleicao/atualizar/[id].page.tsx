@@ -99,6 +99,9 @@ export default function VotacaoAtualizar({ data, chapas }: VotacaoAtualizarProps
     const newDate = new Date(concatDate).toISOString()
     const concatDateEnd = `${data.end_month}-${data.end_day}-${data.end_year}`
     const newDateEnd = new Date(concatDateEnd).toISOString()
+    const today = new Date().toISOString().slice(0, 10);
+    const inputDate = newDate.slice(0, 10);
+    
 
     const selectedChapas = data.chapas.map((chapa) => {
       const chapaSelected = chapas.find((item: any) => item.nome_chapa === chapa.nome_chapa)
@@ -112,6 +115,12 @@ export default function VotacaoAtualizar({ data, chapas }: VotacaoAtualizarProps
     if (newDate === newDateEnd) {
       return toast.error('A data de início não pode ser igual a data de término!')
     }
+
+    
+    if (inputDate < today) {
+      return toast.error('A data de início não pode ser menor que a data atual!');
+    }
+
 
     const body = {
       id: Number(id),
