@@ -78,6 +78,23 @@ export default function Vizualizar({ data }: schemaEmpresasProps) {
   return (
     <Container>
       <form>
+        <Box style={{ justifyContent: 'end' }}>
+          <Link
+            href="/protocolos"
+            style={{
+              textDecoration: 'none',
+              fontFamily: 'Roboto',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              marginBottom: '1rem',
+              color: '#000',
+            }}
+          >
+            <ArrowBendDownLeft size={32} />
+            Retornar
+          </Link>
+        </Box>
         <fieldset>
           <legend>
             <span>
@@ -131,12 +148,14 @@ export default function Vizualizar({ data }: schemaEmpresasProps) {
               <SwitchInput
                 title="Documento de entrada requer resposta?"
                 defaultChecked={data.doc_entrada_requer_resposta}
+                disabled={true}
               />
             </div>
             <div style={{ width: '15%' }}>
               <SwitchInput
                 title="Entregue em mãos?"
                 defaultChecked={data.entregue_em_maos}
+                disabled={true}
               />
             </div>            
           </Box>
@@ -202,7 +221,7 @@ export default function Vizualizar({ data }: schemaEmpresasProps) {
 
           <Box>
             <div style={{ width: '60%' }}>
-              <TextInput title="Anexos" value={data.anexos} />
+              <TextInput title="Anexos" value={data.anexos} disabled={true}/>
             </div>
           </Box>
 

@@ -8,10 +8,12 @@ import { useId } from '@/context'
 import { GridColDef } from '@mui/x-data-grid'
 import { toast } from 'react-toastify'
 import Modal from '@/components/Modal'
+import { useEffect, useState } from 'react'
 
 export default function ProtocoloList({ data }: any) {
   const router = useRouter()
   const { selectedRowIds } = useId()
+  
 
   // console.log(selectedRowIds)
   const columns: GridColDef[] = [
@@ -33,7 +35,6 @@ export default function ProtocoloList({ data }: any) {
 
   // PRECISO ATUALIZAR A LISTA PRO USUARIO VER O ITEM QUE FOI DELETADO SUMIR
   // SE EXISTIR O ID=4 E O ID=4 FOR DELETADO, AO DELETAR ATUALIZAR A LISTA PARA NÃO MOSTRAR ELE!
-
   return (
     <Container>
       <p>Protocolos</p>

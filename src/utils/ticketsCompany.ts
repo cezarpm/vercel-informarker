@@ -1,6 +1,8 @@
 'use client';
 
 import { jsPDF } from 'jspdf';
+import React, { useEffect, useState } from 'react';
+import { toast } from 'react-toastify';
 
 interface EtiquetaProps {
   id: number;
@@ -38,51 +40,66 @@ interface EtiquetaProps {
 }
 
 
-export const EtiquetaPDFCompany = (etiqueta: EtiquetaProps[], exibirContatoPrimario: boolean) => {
+export const EtiquetaPDFCompany = async (linhas: number[], exibirContatoPrimario: boolean) => {
   var doc = new jsPDF({
     unit: 'mm',
     format: 'a4',
   });
 
-  console.log("etiqueta", etiqueta)
+  for (let index = 0; index < linhas.length; index++) {
+    try {
+      const response = await fetch(`/api/empresa/get/${linhas[index]}`);
+      const data: EtiquetaProps = await response.json();
 
-  etiqueta.map((etiqueta, index) => {
-    const {
-      cod_empresa,
-      bairro,
-      cep,
-      cidade,
-      complemento,
-      logradouro,
-      numero,
-      uf,
-      nome_contato_primario,
-      nome_contato_secundario
-    } = etiqueta;
+      const {
+        cod_empresa,
+        bairro,
+        cep,
+        cidade,
+        complemento,
+        logradouro,
+        numero,
+        uf,
+        nome_contato_primario,
+        tratamento_contato_primario,
+        nome_contato_secundario,
+        tratamento_contato_secundario
+      } = data;
+  
+      const contato = exibirContatoPrimario ? nome_contato_primario : nome_contato_secundario;
+      const tratamento = exibirContatoPrimario ? tratamento_contato_primario : tratamento_contato_secundario;
+  
+      const startX = index % 2 === 0 ? 10 : 110;
+      const startY = Math.floor(index / 2) * 40;  // Aumentei o espaçamento vertical para 40 unidades
+  
+      const borderWidth = 90;
+      const borderHeight = 30;
+      doc.rect(startX, 5 + startY, borderWidth, borderHeight);
+  
+      doc.setFontSize(12);
+      const splitNome = doc.splitTextToSize(`${cod_empresa}`, 80);
+      doc.text(splitNome, startX + 4, 12 + startY);
+  
+      doc.setFontSize(10);
+      const splitEndereco = doc.splitTextToSize(`${logradouro} , ${numero} ${complemento}`, 80);
+      doc.text(splitEndereco, startX + 4, 17 + startY);
+  
+      const splitBairro = doc.splitTextToSize(`${bairro}`, 80);
+      doc.text(splitBairro, startX + 4, 22 + startY);
+  
+      const splitCidade = doc.splitTextToSize(`${cep} - ${cidade} / ${uf}`, 80);
+      doc.text(splitCidade, startX + 4, 27 + startY);
+  
+      const splitContato = doc.splitTextToSize(`${tratamento} ${contato}`, 80);
+      doc.text(splitContato, startX + 4, 32 + startY);
 
-    const contato = exibirContatoPrimario ? nome_contato_primario : nome_contato_secundario;
+    } catch (error) {
+      toast.error('Erro ao gerar etiquetas')
+      console.error('Erro ao buscar empresas:', error);
+    }
 
-    const startX = index % 2 === 0 ? 10 : 110;
-    const startY = Math.floor(index / 2) * 40;  // Aumentei o espaçamento vertical para 40 unidades
-
-    const borderWidth = 90;
-    const borderHeight = 30;
-    doc.rect(startX, 5 + startY, borderWidth, borderHeight);
-
-    doc.setFontSize(12);
-    const splitNome = doc.splitTextToSize(`${cod_empresa}`, 80);
-    doc.text(splitNome, startX + 4, 12 + startY);
-
-    doc.setFontSize(10);
-    const splitEndereco = doc.splitTextToSize(`${logradouro} , ${numero} ${complemento}`, 80);
-    doc.text(splitEndereco, startX + 4, 17 + startY);
-
-    const splitBairro = doc.splitTextToSize(`${cep} - ${cidade} / ${uf}`, 80);
-    doc.text(splitBairro, startX + 4, 22 + startY);
-
-    const splitCidade = doc.splitTextToSize(`${contato}`, 80);
-    doc.text(splitCidade, startX + 4, 27 + startY);
-  });
+    
+  };
 
   doc.save('etiquetas.pdf');
 };

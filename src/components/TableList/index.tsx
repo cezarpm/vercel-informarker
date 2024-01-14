@@ -1,14 +1,28 @@
-import * as React from 'react'
 import Box from '@mui/material/Box'
 import { DataGrid } from '@mui/x-data-grid'
 import { useId } from '@/context'
+import { useEffect, useState } from 'react'
 
 export default function DataGridDemo({ rows, columns, w }: any) {
   const { setSelection, selectedRowIds } = useId()
+  const [quantidadeLinhas, setQuantidadeLinhas] = useState(10);
+
+  useEffect(() => {
+    getQuantityRows();
+  },[])
 
   const handleSelectionModelChange = (newSelectionModel: any) => {
     setSelection(newSelectionModel)
-    // console.log(newSelectionModel)
+  }
+
+  
+  const getQuantityRows = async () => {
+    const response = await fetch(`/api/parametros`);
+    const data = await response.json();
+
+    if(data){
+        setQuantidadeLinhas(data[0].quantidade_linhas_listas);
+    }
   }
 
   return (
@@ -20,11 +34,12 @@ export default function DataGridDemo({ rows, columns, w }: any) {
         initialState={{
           pagination: {
             paginationModel: {
-              pageSize: 10,
+              pageSize: quantidadeLinhas,
             },
           },
         }}
-        pageSizeOptions={[5]}
+        pageSizeOptions={[10]}
+
         checkboxSelection
         disableRowSelectionOnClick
         rowSelectionModel={selectedRowIds}

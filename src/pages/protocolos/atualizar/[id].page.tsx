@@ -9,7 +9,7 @@ import { api } from '@/lib/axios';
 import { TextInput } from '@/components/TextInput';
 import { SelectOptions } from '@/components/SelectOptions';
 import { SwitchInput } from '@/components/SwitchInput';
-import { CaretRight } from 'phosphor-react';
+import { ArrowBendDownLeft, CaretRight } from 'phosphor-react';
 import Link from 'next/link';
 import { toast } from 'react-toastify';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -178,13 +178,19 @@ export default function ProtocolosAtualizar({data}: schemaProtocoloProps) {
   } = useForm<SchemaProtocoloForm>();
 
   async function OnSubmit(data: SchemaProtocoloForm) {
-    try {
-
-      await api.put('/protocolos/update', { ...data })
-      toast.success('Protocolo Atualizado')
-      router.push('/protocolos')
-    } catch (error) {
-      console.log(error)
+    var data_envio = new Date(data.data_envio_ano+'-'+data.data_envio_mes+'-'+data.data_envio_dia);
+    var data_recebimento = new Date(data.data_recebimento_ano+'-'+data.data_recebimento_mes+'-'+data.data_recebimento_dia);
+    
+    if(data_recebimento < data_envio){
+      toast.error('A data de recebimento deve ser maior que a data de envio.');
+    }else{
+      try {
+        await api.put('/protocolos/update', { ...data })
+        toast.success('Protocolo Atualizado')
+        router.push('/protocolos')
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 
@@ -214,6 +220,23 @@ export default function ProtocolosAtualizar({data}: schemaProtocoloProps) {
   return (
     <Container>
       <form onSubmit={handleSubmit(OnSubmit)}>
+        <Box style={{ justifyContent: 'end' }}>
+          <Link
+            href="/protocolos"
+            style={{
+              textDecoration: 'none',
+              fontFamily: 'Roboto',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              marginBottom: '1rem',
+              color: '#000',
+            }}
+          >
+            <ArrowBendDownLeft size={32} />
+            Retornar
+          </Link>
+        </Box>
         <fieldset>
           <legend>
             <span>

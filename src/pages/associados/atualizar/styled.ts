@@ -48,3 +48,77 @@ export const Box = styled('div', {
   flexWrap: 'wrap',
   alignItems: 'end',
 })
+
+export const Fieldset = styled('fieldset', {
+  border: 'solid 1px',
+  marginTop: '1rem',
+  borderRadius: '8px',
+  boxShadow: 'rgba(99, 99, 99, 0.2) 0px 2px 8px 0px',
+  paddingBottom: '2rem',
+  fontFamily: 'Roboto',
+  h3: {
+    padding: '0.5rem 1.5rem',
+  },
+  legend: {
+    padding: '0.5rem 1.5rem',
+    color: '#fff',
+    backgroundColor: 'rgb(13, 169, 164)',
+    marginBottom: '2rem',
+    width: '100%',
+    borderRadius: '4px 4px 0px 0px',
+    h2: {
+      width: '100%',
+    },
+  },
+  '>div': {
+    padding: '0.5rem 1.5rem',
+  },
+})
+
+export const ContainerInputFile = styled('div', {
+  position: 'relative',
+  overflow: 'hidden',
+  display: 'flex',
+  flex: 1,
+  justifyContent: 'space-between',
+  flexDirection: 'row-reverse',
+  alignItems: 'center',
+  button: {
+    marginTop: '0px',
+    flex: 1,
+    borderRadius: '0px 4px 4px 0px',
+    fontSize: '12px',
+    padding: '0.5rem 1rem',
+  },
+  '>p': {
+    fontSize: '12px',
+    color: 'rgba(0, 0, 0, 0.6)',
+  },
+})
+
+export const ContentInputFile = styled('div', {
+  border: 'solid 1px rgb(169, 169, 178)',
+  position: 'absolute',
+  width: '50%',
+  height: '100%',
+  borderRadius: '4px',
+  alignItems: 'center',
+  display: 'flex',
+  input: {
+    position: 'absolute',
+    zIndex: 2,
+    width: '100%',
+    height: '100%',
+    margin: '0px',
+    overflow: 'hidden',
+    right: '0px',
+    cursor: 'pointer',
+    opacity: '0',
+  },
+  p: {
+    width: '100%',
+    paddingLeft: '0.5rem',
+    fontSize: '12px',
+    color: 'rgba(0, 0, 0, 0.6)',
+  },
+})
