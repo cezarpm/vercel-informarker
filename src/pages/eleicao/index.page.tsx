@@ -97,8 +97,9 @@ export default function Votacao({ data, alreadyVoted }: Votation) {
     return (
       <div
         style={{
-          width: 800,
-          margin: '80px auto',
+          maxWidth: 700,
+          margin: '20px auto',
+          padding: '1.2rem',
         }}
       >
         <h1
@@ -109,27 +110,29 @@ export default function Votacao({ data, alreadyVoted }: Votation) {
         >
           Comprovante de votação
         </h1>
-        <Typography id="modal-modal-title" variant="h6" component="h2">
-          Nome: Roberto da Silva
-        </Typography>
-        <Typography id="modal-modal-title" variant="h6" component="h2">
-          CPF: 857.260.010-87
-        </Typography>
-        <Typography id="modal-modal-title" variant="h6" component="h2">
-          Eleição: {votation?.matricula_saerj}
-        </Typography>
-        <Typography id="modal-modal-title" variant="h6" component="h2">
-          Chapa Votada: {selected || userAlreadyVoted.nome_chapa}
-        </Typography>
+        <div>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Nome: Roberto da Silva
+          </Typography>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            CPF: 857.260.010-87
+          </Typography>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Eleição: {votation?.matricula_saerj}
+          </Typography>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Chapa Votada: {selected || userAlreadyVoted.nome_chapa}
+          </Typography>
 
-        <Typography id="modal-modal-title" variant="h6" component="h2">
-          Autentication: 0x0000000
-        </Typography>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Autentication: 0x0000000
+          </Typography>
+        </div>
 
         <div
           style={{
             display: 'flex',
-            gap: 20,
+            gap: 10,
           }}
         >
           <div style={{ width: '50%' }}>
@@ -138,7 +141,7 @@ export default function Votacao({ data, alreadyVoted }: Votation) {
             </OutlinedButton>
           </div>
 
-          <div style={{ width: '50%' }}>
+          <div style={{ width: '80%' }}>
             <Button title="Imprimir / Salvar" />
           </div>
         </div>
