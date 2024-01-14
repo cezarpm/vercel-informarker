@@ -263,6 +263,8 @@ export default function Protocolos() {
                 fontWeight: '400',
                 lineHeight: '1.4375em',
                 letterSpacing: '0.00938em',
+                maxWidth: '120px',
+                width: '100%'
               }}
             >
               Data de Recebimento
@@ -336,6 +338,8 @@ export default function Protocolos() {
                 fontWeight: '400',
                 lineHeight: '1.4375em',
                 letterSpacing: '0.00938em',
+                maxWidth: '120px',
+                width: '100%'
               }}
             >
               Data de Envio
