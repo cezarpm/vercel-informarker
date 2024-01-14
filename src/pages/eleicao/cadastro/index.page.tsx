@@ -79,6 +79,14 @@ export default function VotacaoCreate({ chapas }: any) {
     const newDateEnd = new Date(concatDateEnd).toISOString()
 
 
+    if (newDate > newDateEnd) {
+      return toast.error('A data de início não pode ser maior que a data de término!')
+    }
+
+    if (newDate === newDateEnd) {
+      return toast.error('A data de início não pode ser igual a data de término!')
+    }
+
     const selectedChapas = data.chapas.map((chapa) => {
       const chapaSelected = chapas.find((item: any) => item.nome_chapa === chapa.nome_chapa)
       return chapaSelected
