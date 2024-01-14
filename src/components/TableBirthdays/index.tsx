@@ -3,11 +3,12 @@ import Box from '@mui/material/Box'
 import { DataGrid } from '@mui/x-data-grid'
 import { useId } from '@/context'
 import { FormControlLabel, FormLabel, InputLabel, MenuItem, Modal, Radio, RadioGroup, Select, SelectChangeEvent } from '@mui/material'
-import { ButtonEtiqueta, ContainerFilters, HeaderBirthdays, TextNoFilter } from './styled'
+import { ContainerFilters, HeaderBirthdays, TextNoFilter } from './styled'
 import { Button } from '@ignite-ui/react'
 import { toast } from 'react-toastify'
 import { prisma } from '@/lib/prisma'
 import { EtiquetaPDF } from '@/utils/ticketsAssociates'
+import { Button as ButtonEtiqueta } from '../Button'
 
 interface EtiquetaProps {
     id?: number;
@@ -61,6 +62,7 @@ const TableBirthdays = ({ rows, columns, w }: any) => {
     const { setSelection, selectedRowIds } = useId()
     
     const [filter, setFilter] = useState('0');
+    const [quantidadeLinhas, setQuantidadeLinhas] = useState(10);
     const [associatesSelected, setAssociatesSelected] = useState<EtiquetaProps[]>([]);
 
     const [open, setOpen] = React.useState(false);
@@ -72,6 +74,10 @@ const TableBirthdays = ({ rows, columns, w }: any) => {
     const [dia, setDia] = React.useState<Number>(0);
 
     const [filteredData, setFilteredData] = React.useState([]);
+
+    useEffect(() => {
+        getQuantityRows();
+    },[])
 
     useEffect(() => {
         const date = new Date();
@@ -124,24 +130,15 @@ const TableBirthdays = ({ rows, columns, w }: any) => {
 
           }))
     },[mes, semana, dia])
-
-    useEffect(() => {
-        setAssociatesSelected([]);
-        selectedRowIds.map(async (item: any) => {
-          try {
-            const response = await fetch(`/api/associados/get/${item}`);
-            const data = await response.json();
-            setAssociatesSelected((prev) => [...prev, data]);
-
-          } catch (error) {
-            console.error('Erro ao buscar associados:', error);
-          }
-        });
-
-        console.log(associatesSelected)
-    }, [selectedRowIds])
-
     
+    const getQuantityRows = async () => {
+        const response = await fetch(`/api/parametros`);
+        const data = await response.json();
+
+        if(data){
+            setQuantidadeLinhas(data[0].quantidade_linhas_listas);
+        }
+    }
 
     const handleSelectionModelChange = (newSelectionModel: any) => {
         setSelection(newSelectionModel)
@@ -173,7 +170,8 @@ const TableBirthdays = ({ rows, columns, w }: any) => {
       };*/
       
       const gerarEtiqueta = () => {
-        EtiquetaPDF(associatesSelected)
+        EtiquetaPDF(selectedRowIds);
+        handleClose()
       }
 
 
@@ -231,11 +229,10 @@ const TableBirthdays = ({ rows, columns, w }: any) => {
                 </ContainerFilters>
                 {selectedRowIds.length > 0 && 
                     <ButtonEtiqueta
-                        style={{ backgroundColor: '#0da9a4' }}
+                        style={{ backgroundColor: `${'#0da9a4'}`,  margin: '0px', fontSize: '12px', border: 'solid 1px', padding: '0.5rem', }}
                         onClick={handleOpen}
-                    >
-                        Gerar Etiqueta
-                    </ButtonEtiqueta>
+                        title={"Gerar etiqueta"}
+                    />
                 }
             </HeaderBirthdays>
 
@@ -247,7 +244,7 @@ const TableBirthdays = ({ rows, columns, w }: any) => {
                     initialState={{
                         pagination: {
                             paginationModel: {
-                                pageSize: 10,
+                                pageSize: quantidadeLinhas,
                             },
                         },
                     }}

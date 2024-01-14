@@ -1,6 +1,7 @@
 'use client';
 
 import { jsPDF } from 'jspdf';
+import { toast } from 'react-toastify';
 
 interface EtiquetaProps {
     id?: number;
@@ -47,51 +48,74 @@ interface EtiquetaProps {
     pendencias_SAERJ?: string;
     nome_presidente_regional?: string;
     sigla_regional?: string;
+    tratamento?: string;
 }
 
 
-export const EtiquetaPDF = (etiqueta: EtiquetaProps[]) => {
+export const EtiquetaPDF = async (linhas: number[]) => {
   var doc = new jsPDF({
     unit: 'mm',
     format: 'a4',
   });
 
-  console.log("etiqueta", etiqueta)
+  for (let index = 0; index < linhas.length; index++) {
 
-  etiqueta.map((etiqueta, index) => {
-    const {
-      nome_completo,
-      bairro,
-      cep,
-      cidade,
-      complemento,
-      logradouro,
-      numero,
-      nome_profissional,
-      uf,
-    } = etiqueta;
+    try {
+      const response = await fetch(`/api/associados/get/${linhas[index]}`);
+      const data = await response.json();
 
-    const startX = index % 2 === 0 ? 10 : 110;
-    const startY = Math.floor(index / 2) * 40;  // Aumentei o espaçamento vertical para 40 unidades
+      try{
+          const response_saerj = await fetch(`/api/adicionais_saerj/get/${data.matricula_SAERJ}`);
+          const data_saerj = await response_saerj.json();
 
-    const borderWidth = 90;
-    const borderHeight = 30;
-    doc.rect(startX, 5 + startY, borderWidth, borderHeight);
+          if(data_saerj != null){
+              data['tratamento'] = data_saerj.tratamento;
+          }
 
-    doc.setFontSize(12);
-    const splitNome = doc.splitTextToSize(`${nome_profissional} ${nome_completo}`, 80);
-    doc.text(splitNome, startX + 4, 12 + startY);
+          const {
+            nome_completo,
+            bairro,
+            cep,
+            cidade,
+            complemento,
+            logradouro,
+            numero,
+            tratamento,
+            uf,
+          } = data;
+      
+          const startX = index % 2 === 0 ? 10 : 110;
+          const startY = Math.floor(index / 2) * 40;  // Aumentei o espaçamento vertical para 40 unidades
+      
+          const borderWidth = 90;
+          const borderHeight = 30;
+          doc.rect(startX, 5 + startY, borderWidth, borderHeight);
+      
+          doc.setFontSize(12);
+          const splitNome = doc.splitTextToSize(`${tratamento} ${nome_completo}`, 80);
+          doc.text(splitNome, startX + 4, 12 + startY);
+      
+          doc.setFontSize(10);
+          const splitEndereco = doc.splitTextToSize(`${logradouro} , ${numero} ${complemento}`, 80);
+          doc.text(splitEndereco, startX + 4, 17 + startY);
+      
+          const splitBairro = doc.splitTextToSize(bairro, 80);
+          doc.text(splitBairro, startX + 4, 22 + startY);
+      
+          const splitCidade = doc.splitTextToSize(`${cep} - ${cidade} / ${uf}`, 80);
+          doc.text(splitCidade, startX + 4, 27 + startY);
 
-    doc.setFontSize(10);
-    const splitEndereco = doc.splitTextToSize(`${logradouro} , ${numero} ${complemento}`, 80);
-    doc.text(splitEndereco, startX + 4, 17 + startY);
+      }catch{
+        toast.error('Erro ao gerar etiquetas');
+      }
+      
+    } catch (error) {
+      toast.error('Erro ao gerar etiquetas');
+      console.error('Erro ao buscar associados:', error);
+    }
 
-    const splitBairro = doc.splitTextToSize(bairro, 80);
-    doc.text(splitBairro, startX + 4, 22 + startY);
-
-    const splitCidade = doc.splitTextToSize(`${cep} - ${cidade} / ${uf}`, 80);
-    doc.text(splitCidade, startX + 4, 27 + startY);
-  });
+    
+  };
 
   doc.save('etiquetas.pdf');
 };

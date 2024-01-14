@@ -124,6 +124,7 @@ export default function Votacao({ data, alreadyVoted }: Votation) {
             Chapa Votada: {selected || userAlreadyVoted.nome_chapa}
           </Typography>
 
+
           <Typography id="modal-modal-title" variant="h6" component="h2">
             Autentication: 0x0000000
           </Typography>
@@ -362,6 +363,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
         votacao_id: data?.id,
       },
     })
+
 
     return {
       props: {

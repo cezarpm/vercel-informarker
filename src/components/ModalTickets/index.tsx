@@ -59,44 +59,25 @@ interface schemaModal {
   title: string
   bgColor?: string
   data: any
-  route: string
 }
 export default function ModalTickets({
   title,
   bgColor,
-  data,
-  route
+  data
 }: schemaModal) {
 
   const [open, setOpen] = useState(false)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
 
-  const [dataSelected, setDataSelected] = useState<EtiquetaProps[]>([])
-
-  useEffect(() => {
-    setDataSelected([]);
-    data.map(async (item: any) => {
-      try {
-        const response = await fetch(`${route}${item}`);
-        const data = await response.json();
-        setDataSelected((prev) => [...prev, data]);
-
-      } catch (error) {
-        toast.success('Erro ao gerar etiquetas')
-        console.error('Erro ao buscar empresas:', error);
-      }
-    });
-  }, [data]);
-
   const gerarEtiqueta = (primario: boolean) => {
-    EtiquetaPDFCompany(dataSelected, primario)
+    EtiquetaPDFCompany(data, primario)
   }
 
   return (
     <div>
       <Button
-        style={{ backgroundColor: `${bgColor}` }}
+        style={{ backgroundColor: `${bgColor}`,  margin: '0px', fontSize: '12px', border: 'solid 1px', padding: '0.5rem', }}
         title={title}
         onClick={() => {
           if (data.length === 0) {
@@ -119,13 +100,15 @@ export default function ModalTickets({
           <Button
             title="Primário"
             onClick={() => {
-              gerarEtiqueta(true)
+              gerarEtiqueta(true);
+              handleClose()
             }}
           />
           <Button
             title="Secundário"
             onClick={() => {
-              gerarEtiqueta(false)
+              gerarEtiqueta(false);
+              handleClose()
             }}
           />
         </Box>

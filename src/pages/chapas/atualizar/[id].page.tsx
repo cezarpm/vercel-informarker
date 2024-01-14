@@ -61,6 +61,7 @@ export default function VotacaoAtualizar({ data }: Props) {
     await api.put('/votacao/update', dataToSend)
 
     router.push('/chapas')
+
     return toast.success('Chapa atualizada!')
   }
 
@@ -75,6 +76,7 @@ export default function VotacaoAtualizar({ data }: Props) {
     }
 
   }, [errors])
+
 
   return (
     <Container>

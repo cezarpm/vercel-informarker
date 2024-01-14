@@ -10,7 +10,7 @@ import axios from 'axios';
 import { TextInput } from '@/components/TextInput';
 import { SelectOptions } from '@/components/SelectOptions';
 import { SwitchInput } from '@/components/SwitchInput';
-import { CaretRight } from 'phosphor-react';
+import { ArrowBendDownLeft, CaretRight } from 'phosphor-react';
 import Link from 'next/link';
 import { toast } from 'react-toastify';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -178,22 +178,45 @@ export default function Protocolos() {
   } = useForm<SchemaProtocoloForm>();
 
   async function handleOnSubmit(data: SchemaProtocoloForm) {
-    console.log(data)
+    var data_envio = new Date(data.data_envio_ano+'-'+data.data_envio_mes+'-'+data.data_envio_dia);
+    var data_recebimento = new Date(data.data_recebimento_ano+'-'+data.data_recebimento_mes+'-'+data.data_recebimento_dia);
+    
+    if(data_recebimento < data_envio){
+      toast.error('A data de recebimento deve ser maior que a data de envio.');
+    }else{
+      try {
+        await api.post('/protocolos/incluir', { ...data });
+        router.push('/protocolos');
+        return toast.success('Protocolo cadastrado!');
+      } catch (error) {
+        console.log(error);
+        return toast.error('Ops, algo deu errado ao cadastrar o protocolo...');
+      }
 
-    try {
-      console.log(data);
-      await api.post('/protocolos/incluir', { ...data });
-      router.push('/protocolos');
-      return toast.success('Protocolo cadastrado!');
-    } catch (error) {
-      console.log(error);
-      return toast.error('Ops, algo deu errado ao cadastrar o protocolo...');
     }
+
   }
 
   return (
     <Container>
       <form onSubmit={handleSubmit(handleOnSubmit)}>
+        <Box style={{ justifyContent: 'end' }}>
+          <Link
+            href="/protocolos"
+            style={{
+              textDecoration: 'none',
+              fontFamily: 'Roboto',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              marginBottom: '1rem',
+              color: '#000',
+            }}
+          >
+            <ArrowBendDownLeft size={32} />
+            Retornar
+          </Link>
+        </Box>
         <fieldset>
           <legend>
             <span>
@@ -273,7 +296,7 @@ export default function Protocolos() {
               <SelectOptions
                 data={yearOptionsData}
                 description="Ano"
-                w={100}
+                w={150}
                 {...register('data_recebimento_ano', {
                   valueAsNumber: true, // Essa opção indica que o valor deve ser tratado como número
                   setValueAs: value => parseInt(value), // Função para converter o valor para número
@@ -346,7 +369,7 @@ export default function Protocolos() {
               <SelectOptions
                 data={yearOptionsData}
                 description="Ano"
-                w={100}
+                w={150}
                 {...register('data_envio_ano', {
                   valueAsNumber: true, // Essa opção indica que o valor deve ser tratado como número
                   setValueAs: value => parseInt(value), // Função para converter o valor para número

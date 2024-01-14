@@ -1,4 +1,5 @@
 import { Container, Box, Text } from './styled'
+
 import React, { useEffect } from 'react'
 import { z } from 'zod'
 import { useFieldArray, useForm } from 'react-hook-form'
@@ -47,6 +48,7 @@ const schemaChapaForm = z.object({
   matricula_saerj: z
     .string()
     .min(1, { message: 'O campo nome da chapa é obrigatório' }),
+
   chapas: z.array(integranteSchema).min(2, { message: 'A votação precisa ter no mínimo 2 chapas!' }),
   start_day: z.string().min(1, { message: 'O campo dia é obrigatório' }),
   start_month: z.string().min(1, { message: 'O campo mês é obrigatório' }),
@@ -77,6 +79,7 @@ export default function VotacaoCreate({ chapas }: any) {
 
     const concatDateEnd = `${data.end_month}-${data.end_day}-${data.end_year}`
     const newDateEnd = new Date(concatDateEnd).toISOString()
+
 
 
     if (newDate > newDateEnd) {

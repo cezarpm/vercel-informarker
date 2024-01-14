@@ -64,6 +64,14 @@ export default function VotacaoCreate() {
 
   }, [errors])
 
+
+  async function handleOnSubmit(data: SchemaChapaForm) {
+    await api.post('/votacao/cadastro', data)
+
+    router.push('/chapas')
+    return toast.success('Chapa cadastrada!')
+  }
+
   return (
     <Container>
       <form onSubmit={handleSubmit(handleOnSubmit)}>
