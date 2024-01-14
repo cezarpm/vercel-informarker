@@ -96,27 +96,32 @@ const TableBirthdays = ({ rows, columns, w }: any) => {
 
     useEffect(() => {
         setFilteredData(rows.filter((item: any) => {
-            let data_nasc = (item.data_nascimento).split('/');
+            if(item.data_nascimento != null){
+                let data_nasc = (item.data_nascimento).split('/');
 
-            if (filter === "month") {
-              const filterMonth = data_nasc[1] === mes;
+                if (filter === "month") {
+                  const filterMonth = data_nasc[1] === mes;
 
-              return filterMonth;
-            } 
-            
-            if (filter === 'week') {
-              const filterWeek = semana.indexOf(parseInt(data_nasc[0], 10)) > -1 && data_nasc[1] === mes;
+                  return filterMonth;
+                } 
 
-              return filterWeek;
+                if (filter === 'week') {
+                  const filterWeek = semana.indexOf(parseInt(data_nasc[0], 10)) > -1 && data_nasc[1] === mes;
+
+                  return filterWeek;
+                }
+
+                if (filter === 'day') {
+                  const filterDay = parseInt(data_nasc[0], 10) === dia && data_nasc[1] === mes;
+
+                  return filterDay;
+                }
+
+                return true; // Caso não seja nenhum dos filtros, incluir na lista
+            }else{
+                return false
             }
-            
-            if (filter === 'day') {
-              const filterDay = parseInt(data_nasc[0], 10) === dia && data_nasc[1] === mes;
-              
-              return filterDay;
-            }
-      
-            return true; // Caso não seja nenhum dos filtros, incluir na lista
+
           }))
     },[mes, semana, dia])
 

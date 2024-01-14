@@ -65,11 +65,8 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
   const { selectedRowIds } = useId()
   const [list, setList] = useState(data)
 
-  // const TipoEmpresaFilter = watch('tipo_empresa_filter')
-  // const PatrocinadoraFilter = watch('patrocinarora_filter')
-  // const FaculdadeAnestesiologiaFilter = watch('faculdade_anestesiologia_filter')
-  // const EmpresaAtivaFilter = watch('empresa_ativa_filter')
-
+  const { register, watch } = useForm<SchemaFilter>()
+    
   function BuscarFiltro() {
     const TipoEmpresaFilter = watch('tipo_empresa_filter')
     const PatrocinadoraFilter = watch('patrocinarora_filter')
@@ -116,40 +113,8 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
     setList(filteredList)
 
     // Imprima a lista filtrada (opcional, apenas para fins de depuração)
-    console.log(filteredList)
+    // console.log(filteredList)
   }
-
-  // const filteredData = data.filter((item: any) => {
-  //   const tipoEmpresaMatch =
-  //     TipoEmpresaFilter === undefined ||
-  //     TipoEmpresaFilter === 'Todos' ||
-  //     item.tipo_empresa === TipoEmpresaFilter
-
-  //   const patrocinadoraMatch =
-  //     PatrocinadoraFilter === undefined ||
-  //     PatrocinadoraFilter === 'Todos' ||
-  //     item.patrocinadora === PatrocinadoraFilter
-
-  //   const faculdadeMatch =
-  //     FaculdadeAnestesiologiaFilter === undefined ||
-  //     FaculdadeAnestesiologiaFilter === 'Todos' ||
-  //     item.faculdade_anestesiologia === FaculdadeAnestesiologiaFilter
-
-  //   const empresaAtivaMatch =
-  //     EmpresaAtivaFilter === undefined ||
-  //     EmpresaAtivaFilter === 'Todos' ||
-  //     item.empresa_ativa === EmpresaAtivaFilter
-
-  //   return (
-  //     tipoEmpresaMatch &&
-  //     patrocinadoraMatch &&
-  //     faculdadeMatch &&
-  //     empresaAtivaMatch
-  //   )
-  // })
-
-
-
 
   const columns: GridColDef[] = [
     {
@@ -225,41 +190,6 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
     },
   ]
 
-  const { register, watch } = useForm<SchemaFilter>()
-
-  const TipoEmpresaFilter = watch('tipo_empresa_filter')
-  const PatrocinadoraFilter = watch('patrocinarora_filter')
-  const FaculdadeAnestesiologiaFilter = watch('faculdade_anestesiologia_filter')
-  const EmpresaAtivaFilter = watch('empresa_ativa_filter')
-
-  const filteredData = data.filter((item: any) => {
-    const tipoEmpresaMatch =
-      TipoEmpresaFilter === undefined ||
-      TipoEmpresaFilter === 'Todos' ||
-      item.tipo_empresa === TipoEmpresaFilter
-
-    const patrocinadoraMatch =
-      PatrocinadoraFilter === undefined ||
-      PatrocinadoraFilter === 'Todos' ||
-      item.patrocinadora === PatrocinadoraFilter
-
-    const faculdadeMatch =
-      FaculdadeAnestesiologiaFilter === undefined ||
-      FaculdadeAnestesiologiaFilter === 'Todos' ||
-      item.faculdade_anestesiologia === FaculdadeAnestesiologiaFilter
-
-    const empresaAtivaMatch =
-      EmpresaAtivaFilter === undefined ||
-      EmpresaAtivaFilter === 'Todos' ||
-      item.empresa_ativa === EmpresaAtivaFilter
-
-    return (
-      tipoEmpresaMatch &&
-      patrocinadoraMatch &&
-      faculdadeMatch &&
-      empresaAtivaMatch
-    )
-  })
   const dataSimNao = [
     {
       id: 1,
@@ -273,49 +203,71 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
 
   return (
     <Container>
-
-
       <p>Empresas</p>
-      <form>
-        <Box style={{ marginTop: '1rem' }}>
-          <SelectNoComplete
-            value="Todos"
-            title="Tipo Empresa"
-            data={dataTipoEmpresa}
-            {...register('tipo_empresa_filter')}
-          />
-          <SelectNoComplete
-            value="Todos"
-            title="Patrocinadora"
-            {...register('patrocinarora_filter')}
-            data={dataSimNao}
-          />
-          <SelectNoComplete
-            value="Todos"
-            title="Faculdade Anestesiologia"
-            {...register('faculdade_anestesiologia_filter')}
-            data={dataSimNao}
-          />
-          <SelectNoComplete
-            value="Todos"
-            title="Empresa Ativa"
-            {...register('empresa_ativa_filter')}
-            data={dataSimNao}
-          />
-        </Box>
-      </form>
+      <div>
+        <Box
+          style={{
+            marginTop: '1rem',
+            justifyContent: 'flex-start',
+            alignItems: 'end',
+          }}
+        >
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <SelectNoComplete
+              p="0px 0px 0px 0.5rem"
+              value="Todos"
+              title="Tipo Empresa"
+              data={dataTipoEmpresa}
+              {...register('tipo_empresa_filter')}
+            />
+            <SelectNoComplete
+              p="0px 0px 0px 0.5rem"
+              value="Todos"
+              title="Patrocinadora"
+              {...register('patrocinarora_filter')}
+              data={dataSimNao}
+            />
+            <SelectNoComplete
+              p="0px 0px 0px 0.5rem"
+              value="Todos"
+              title="Faculdade Anestesiologia"
+              {...register('faculdade_anestesiologia_filter')}
+              data={dataSimNao}
+            />
+            <SelectNoComplete
+              p="0px 0px 0px 0.5rem"
+              value="Todos"
+              title="Empresa Ativa"
+              {...register('empresa_ativa_filter')}
+              data={dataSimNao}
+            />
+          </div>
+          <Button
+            style={{
+              margin: '0px',
+              fontSize: '12px',
+              width: '5rem',
+              border: 'solid 1px',
+              padding: '0.5rem',
+            }}
+            title="Buscar"
+            onClick={BuscarFiltro} 
+            />
 
-      {selectedRowIds.length > 0 &&
-        <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+      </Box>
+        {selectedRowIds.length > 0 &&
+          <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
           <ModalTickets
             title="Gerar Etiqueta"
             bgColor="#0da9a4"
             data={selectedRowIds}
             route="/api/empresa/get/"
           />
-        </Box>}
-      <DataGridDemo columns={columns} rows={filteredData} w="100%" />
+          </Box>
+        }
 
+      </div>
+      <DataGridDemo columns={columns} rows={list} w="100%" />
 
       <Box>
         <Button
