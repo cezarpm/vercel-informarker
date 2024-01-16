@@ -59,11 +59,12 @@ interface schemaModal {
   title: string
   bgColor?: string
   data: any
+  route: any
 }
 export default function ModalTickets({
   title,
   bgColor,
-
+  route,
   data
 
 }: schemaModal) {
