@@ -9,6 +9,8 @@ import { GridColDef } from '@mui/x-data-grid'
 import { toast } from 'react-toastify'
 import Modal from '@/components/Modal'
 import { useEffect, useState } from 'react'
+import Link from 'next/link'
+import { ArrowBendDownLeft } from 'phosphor-react'
 
 export default function ProtocoloList({ data }: any) {
   const router = useRouter()
@@ -37,7 +39,24 @@ export default function ProtocoloList({ data }: any) {
   // SE EXISTIR O ID=4 E O ID=4 FOR DELETADO, AO DELETAR ATUALIZAR A LISTA PARA NÃO MOSTRAR ELE!
   return (
     <Container>
-      <p>Protocolos</p>
+        <Box style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+          <p>Protocolos</p>
+          <Link
+            href="/"
+            style={{
+              textDecoration: 'none',
+              fontFamily: 'Roboto',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              color: '#000',
+            }}
+          >
+            <ArrowBendDownLeft size={32} />
+            Retornar
+          </Link>
+        </Box>
+      
       <DataGridDemo columns={columns} rows={data} w="100%" />
       <Box>
 

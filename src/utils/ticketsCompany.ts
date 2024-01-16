@@ -69,12 +69,9 @@ export const EtiquetaPDFCompany = async (linhas: number[], exibirContatoPrimario
       const contato = exibirContatoPrimario ? nome_contato_primario : nome_contato_secundario;
       const tratamento = exibirContatoPrimario ? tratamento_contato_primario : tratamento_contato_secundario;
   
-      const startX = index % 2 === 0 ? 10 : 110;
-      const startY = Math.floor(index / 2) * 40;  // Aumentei o espaçamento vertical para 40 unidades
+      const startX = 10;
+      const startY = index * 40;  // Aumentei o espaçamento vertical para 40 unidades
   
-      const borderWidth = 90;
-      const borderHeight = 30;
-      doc.rect(startX, 5 + startY, borderWidth, borderHeight);
   
       doc.setFontSize(12);
       const splitNome = doc.splitTextToSize(`${cod_empresa}`, 80);
@@ -97,11 +94,7 @@ export const EtiquetaPDFCompany = async (linhas: number[], exibirContatoPrimario
       toast.error('Erro ao gerar etiquetas')
       console.error('Erro ao buscar empresas:', error);
     }
-
-    
-  };
+  }
 
   doc.save('etiquetas.pdf');
 };
-
-  

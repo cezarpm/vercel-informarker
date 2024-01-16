@@ -1,10 +1,12 @@
-import { Container } from './styled'
+import { Box, Container } from './styled'
 import { useRouter } from 'next/router'
 import { prisma } from '@/lib/prisma'
 import { GetServerSideProps } from 'next'
 import { useId } from '@/context'
 import { GridColDef } from '@mui/x-data-grid'
 import TableBirthdays from '@/components/TableBirthdays'
+import { ArrowBendDownLeft, Backpack } from 'phosphor-react'
+import Link from 'next/link'
 
 export default function AssociadoList({ data }: any) {
 
@@ -43,7 +45,23 @@ export default function AssociadoList({ data }: any) {
   
   return (
     <Container>
-      <h3>Aniversariantes</h3>
+        <Box style={{ justifyContent: 'space-between' }}>
+          <p>Aniversariantes</p>
+          <Link
+            href="/"
+            style={{
+              textDecoration: 'none',
+              fontFamily: 'Roboto',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              color: '#000',
+            }}
+          >
+            <ArrowBendDownLeft size={32} />
+            Retornar
+          </Link>
+        </Box>
 
       <TableBirthdays columns={columnsBirthdays} rows={data} w="100%"/>
       

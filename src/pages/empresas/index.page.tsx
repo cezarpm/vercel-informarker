@@ -14,6 +14,8 @@ import { z } from 'zod'
 import { useState } from 'react'
 import ModalTickets from '@/components/ModalTickets'
 import { formatCNPJ } from '@/utils/formatCnpj'
+import Link from 'next/link'
+import { ArrowBendDownLeft } from 'phosphor-react'
 
 
 const shemaFilter = z.object({
@@ -203,7 +205,24 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
 
   return (
     <Container>
-      <p>Empresas</p>
+        <Box style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+          <p>Empresas</p>
+          <Link
+            href="/"
+            style={{
+              textDecoration: 'none',
+              fontFamily: 'Roboto',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              color: '#000',
+            }}
+          >
+            <ArrowBendDownLeft size={32} />
+            Retornar
+          </Link>
+        </Box>
+      
       <div>
         <Box
           style={{

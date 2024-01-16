@@ -77,9 +77,15 @@ const TableBirthdays = ({ rows, columns, w }: any) => {
 
     useEffect(() => {
         getQuantityRows();
+        setSelection([]);
     },[])
 
+
     useEffect(() => {
+        if(rows.length == 1){
+            setSelection([rows[0].id])
+        }
+
         const date = new Date();
 
         setMes(date.getMonth() + 1 < 10 ? ("0" + (date.getMonth() + 1)).toString() : (date.getMonth() + 1).toString());
@@ -147,9 +153,9 @@ const TableBirthdays = ({ rows, columns, w }: any) => {
     const handleFilterChange = (event: SelectChangeEvent<string>) => {
         setFilter(event.target.value);
     
-        if(event.target.value != "0"){
-            toast.warn('Atenção os demais filtros serão desconsiderados.')
-        }
+        // if(event.target.value != "0"){
+        //     toast.warn('Atenção os demais filtros serão desconsiderados.')
+        // }
     };
 
     /*const seachAssociates = async () => {
@@ -176,7 +182,6 @@ const TableBirthdays = ({ rows, columns, w }: any) => {
 
 
     return (
-
         <>
             <Modal
                 open={open}
@@ -186,7 +191,7 @@ const TableBirthdays = ({ rows, columns, w }: any) => {
             >
                 <Box sx={{position: 'absolute' as 'absolute',  top: '50%',  left: '50%',  transform: 'translate(-50%, -50%)',  width: 400,  bgcolor: 'background.paper', p: 4}}>
                 <p style={{fontFamily: 'Roboto'}}>
-                    Atenção, serão impressas a seleção de um ou mais Associados selecionados.
+                Confirma a impressão de etiquetas para os Associados selecionados.
                 </p>
                 <Box style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'center', gap: '2rem', width: '100%'}}>
                     <Button style={{ padding: '0.5rem', height: 'auto' }} onClick={gerarEtiqueta}>Ok</Button>
@@ -249,6 +254,7 @@ const TableBirthdays = ({ rows, columns, w }: any) => {
                         },
                     }}
                     pageSizeOptions={[10]}
+                    rowHeight={34}
                     checkboxSelection
                     disableRowSelectionOnClick
                     rowSelectionModel={selectedRowIds}
