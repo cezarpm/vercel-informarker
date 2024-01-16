@@ -33,9 +33,7 @@ export default function ChapasList({ data }: any) {
       renderCell: ({ row }) => {
         return (
           <Typography>
-            {row.membros_chapa.map((membro: any,) => (
-              `${membro.nome}, `
-            ))}
+            {row.membros_chapa.map((membro: any) => `${membro.nome}, `)}
           </Typography>
         )
       },
@@ -92,7 +90,6 @@ export default function ChapasList({ data }: any) {
           data={selectedRowIds}
           redirectRouter="/chapas"
         />
-
       </Box>
     </Container>
   )

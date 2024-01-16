@@ -11,11 +11,10 @@ import { api } from '@/lib/axios'
 import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
 
-
 const placeHolderImage = [
-  "https://this-person-does-not-exist.com/img/avatar-gen11080ba46e2948ca0f20c6c9463f302e.jpg",
-  "https://this-person-does-not-exist.com/img/avatar-gen114548412138b56a953eaf4a109c9278.jpg",
-  "https://this-person-does-not-exist.com/img/avatar-gen1cd8f7740afa986a8905887813e1045a.jpg"
+  'https://this-person-does-not-exist.com/img/avatar-gen11080ba46e2948ca0f20c6c9463f302e.jpg',
+  'https://this-person-does-not-exist.com/img/avatar-gen114548412138b56a953eaf4a109c9278.jpg',
+  'https://this-person-does-not-exist.com/img/avatar-gen1cd8f7740afa986a8905887813e1045a.jpg',
 ]
 
 const integranteSchema = z.object({
@@ -97,7 +96,16 @@ export default function VotacaoCreate() {
           <Box>
             <h1>Composição da chapa</h1>
             <Button
-              onClick={() => append({ cargo: '', nome: '', image: placeHolderImage[Math.floor(Math.random() * placeHolderImage.length)] })}
+              onClick={() =>
+                append({
+                  cargo: '',
+                  nome: '',
+                  image:
+                    placeHolderImage[
+                      Math.floor(Math.random() * placeHolderImage.length)
+                    ],
+                })
+              }
               type="button"
               title="+ Adicionar membro"
               style={{ margin: '0px', width: '100%', fontSize: '12px' }}

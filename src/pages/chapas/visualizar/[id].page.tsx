@@ -25,8 +25,6 @@ const schemaChapaForm = z.object({
 
 type SchemaChapaForm = z.infer<typeof schemaChapaForm>
 
-
-
 export default function VotacaoAtualizar({ data }: any) {
   const {
     register,
@@ -47,8 +45,7 @@ export default function VotacaoAtualizar({ data }: any) {
     setValue('integrantes', data.membros_chapa)
   }, [data, setValue])
 
-  console.log(data);
-
+  console.log(data)
 
   return (
     <Container>
@@ -93,23 +90,30 @@ export default function VotacaoAtualizar({ data }: any) {
 
           <div style={{ display: 'flex', gap: 15 }}>
             {fields.map((membro, index) => {
-
-
               return (
                 <Box key={index}>
-                  <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 5 }}>
-                    <img style={{
-                      width: 150,
-                      height: 150,
-                      objectFit: 'cover',
+                  <div
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      gap: 5,
                     }}
+                  >
+                    <img
+                      style={{
+                        width: 150,
+                        height: 150,
+                        objectFit: 'cover',
+                      }}
+                      src={membro.image}
+                    />
 
-                      src={membro.image} />
-
-
-                    <Typography style={{
-                      fontSize: 10,
-                    }}>
+                    <Typography
+                      style={{
+                        fontSize: 10,
+                      }}
+                    >
                       {membro.cargo}
                     </Typography>
 
@@ -117,7 +121,6 @@ export default function VotacaoAtualizar({ data }: any) {
                       {membro.nome}
                     </Typography>
                   </div>
-
                 </Box>
               )
             })}

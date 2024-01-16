@@ -17,9 +17,8 @@ export default function DataGridDemo({ rows, columns, w }: any) {
   useEffect(() => {
     async function GetParams() {
       try {
-        await new Promise((resolve) => setTimeout(resolve, 1000))
+        await new Promise((resolve) => setTimeout(resolve, 500))
         const response = await api.get('/parametros')
-
         const quantidadeLinhasParametros = await response.data.map(
           (item: { quantidade_linhas_listas: number }): any =>
             item.quantidade_linhas_listas,

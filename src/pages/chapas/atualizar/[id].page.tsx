@@ -96,8 +96,6 @@ export default function VotacaoAtualizar({ data }: Props) {
             <span>Atualizar</span>
           </legend>
 
-
-
           <Box>
             <TextInput
               title="Nome da chapa *"

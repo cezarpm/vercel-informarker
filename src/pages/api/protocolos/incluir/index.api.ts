@@ -23,7 +23,7 @@ const schemaProtocoloForm = z.object({
   data_encerramento_protocolo_mes: z.number(),
   data_encerramento_protocolo_ano: z.number(),
   usuario_encerramento_protocolo: z.string(), // ALTERAR PARA USUÁRIO
-});
+})
 
 type SchemaProtocoloForm = z.infer<typeof schemaProtocoloForm>
 

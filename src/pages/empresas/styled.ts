@@ -19,9 +19,9 @@ export const Box = styled('div', {
   button: {
     padding: '1rem 2rem',
   },
-});
+})
 
 export const ButtonEtiqueta = styled(Button, {
   heigth: 'auto',
-  padding: '.5rem'
+  padding: '.5rem',
 })

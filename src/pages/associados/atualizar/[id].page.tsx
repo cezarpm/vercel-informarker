@@ -326,27 +326,27 @@ export default function AssociadosCadastro({
         ...newData
       } = data
       // CODIGO ABAIXO REFERE-SE AO UPLOAD DAS IMAGENS
-       const formData = new FormData()
-       formData.append('comprovante_cpf', data.comprovante_cpf[0])
-       formData.append('comprovante_endereco', data.comprovante_endereco[0])
-       formData.append(
-         'carta_indicacao_2_membros',
-         data.carta_indicacao_2_membros[0],
-       )
-       formData.append('certidao_quitacao_crm', data.certidao_quitacao_crm[0])
-       formData.append(
-         'certificado_conclusao_especializacao',
-         data.certificado_conclusao_especializacao[0],
-       )
+      const formData = new FormData()
+      formData.append('comprovante_cpf', data.comprovante_cpf[0])
+      formData.append('comprovante_endereco', data.comprovante_endereco[0])
+      formData.append(
+        'carta_indicacao_2_membros',
+        data.carta_indicacao_2_membros[0],
+      )
+      formData.append('certidao_quitacao_crm', data.certidao_quitacao_crm[0])
+      formData.append(
+        'certificado_conclusao_especializacao',
+        data.certificado_conclusao_especializacao[0],
+      )
 
-       formData.append('declaracao_hospital', data.declaracao_hospital[0])
-       formData.append('diploma_medicina', data.diploma_medicina[0])
+      formData.append('declaracao_hospital', data.declaracao_hospital[0])
+      formData.append('diploma_medicina', data.diploma_medicina[0])
 
-       const response = await axios.post('/api/upload', formData, {
-         headers: {
-           'Content-Type': 'multipart/form-data',
-         },
-       })
+      const response = await axios.post('/api/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
       console.log(
         newData,
         dataNascimento,
