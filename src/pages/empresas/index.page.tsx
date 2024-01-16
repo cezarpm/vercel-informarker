@@ -278,7 +278,7 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
             } else if (selectedRowIds.length >= 2) {
               toast.warn('selecione 1 empresa para visualizar')
             } else {
-              router.push(/empresas/visualizar/${selectedRowIds})
+              router.push(`/empresas/visualizar/${selectedRowIds}`)
             }
           }}
         />
@@ -292,7 +292,7 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
             } else if (selectedRowIds.length >= 2) {
               toast.warn('selecione 1 empresa para atualizar')
             } else {
-              router.push(/empresas/atualizar/${selectedRowIds})
+              router.push(`/empresas/atualizar/${selectedRowIds}`)
             }
           }}
         />
