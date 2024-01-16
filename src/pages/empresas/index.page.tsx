@@ -15,6 +15,7 @@ import { useState } from 'react'
 import ModalTickets from '@/components/ModalTickets'
 import { formatCNPJ } from '@/utils/formatCnpj'
 import { BackPage } from '@/components/BackPage'
+import Link from 'next/link'
 
 const shemaFilter = z.object({
   tipo_empresa_filter: z.string(),
@@ -203,8 +204,10 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
 
   return (
     <Container>
+
       <BackPage backRoute="/" />
       <p>Empresas</p>
+
       <div>
         <Box
           style={{
@@ -252,8 +255,19 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
               padding: '0.5rem',
             }}
             title="Buscar"
-            onClick={BuscarFiltro}
-          />
+            onClick={BuscarFiltro} 
+            />
+
+          {selectedRowIds.length > 0 &&
+            <ModalTickets
+              title="Gerar Etiqueta"
+              bgColor="#0da9a4"
+              data={selectedRowIds}
+            />
+          }
+
+      </Box>
+
 
           {selectedRowIds.length > 0 && (
             <Box
@@ -344,9 +358,20 @@ export const getServerSideProps: GetServerSideProps = async () => {
         nome_fantasia: item.nome_fantasia,
         cnpj: item.cnpj ? formatCNPJ(item.cnpj) : '',
         cidade: item.cidade,
+        cep: item.cep,
+        logradouro: item.logradouro,
+        numero: item.numero,
+        complemento: item.complemento,
+        bairro: item.bairro,
         uf: item.uf,
+        tratamento_contato_primario: item.tratamento_contato_primario,
         nome_contato_primario: item.nome_contato_primario,
+        telefone_contato_primario: item.telefone_contato_primario,
         email_contato_primario: item.email_contato_primario,
+        tratamento_contato_secundario: item.tratamento_contato_secundario,
+        nome_contato_secundario: item.nome_contato_secundario,
+        telefone_contato_secundario: item.telefone_contato_secundario,
+        email_contato_secundario: item.email_contato_secundario,
       }
     })
 

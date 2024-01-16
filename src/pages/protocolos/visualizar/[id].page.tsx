@@ -77,6 +77,23 @@ export default function Vizualizar({ data }: schemaEmpresasProps) {
   return (
     <Container>
       <form>
+        <Box style={{ justifyContent: 'end' }}>
+          <Link
+            href="/protocolos"
+            style={{
+              textDecoration: 'none',
+              fontFamily: 'Roboto',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              marginBottom: '1rem',
+              color: '#000',
+            }}
+          >
+            <ArrowBendDownLeft size={32} />
+            Retornar
+          </Link>
+        </Box>
         <fieldset>
           <legend>
             <span>
@@ -110,14 +127,17 @@ export default function Vizualizar({ data }: schemaEmpresasProps) {
 
           <Box>
             <p
-              style={{
-                borderBottomColor: '#A9A9B2',
-                fontFamily: 'Roboto, Helvetica, Arial, sans-serif',
-                fontWeight: '400',
-                lineHeight: '1.4375em',
-                letterSpacing: '0.00938em',
-              }}
-            >
+                style={{
+                  borderBottomColor: '#A9A9B2',
+                  fontFamily: 'Roboto, Helvetica, Arial, sans-serif',
+                  fontWeight: '400',
+                  lineHeight: '1.4375em',
+                  letterSpacing: '0.00938em',
+                  maxWidth: '120px',
+                  width: '100%'
+                }}
+              >
+
               Data de Recebimento
             </p>
 
@@ -156,26 +176,31 @@ export default function Vizualizar({ data }: schemaEmpresasProps) {
               <SwitchInput
                 title="Documento de entrada requer resposta?"
                 defaultChecked={data.doc_entrada_requer_resposta}
+                disabled={true}
               />
             </div>
             <div style={{ width: '15%' }}>
               <SwitchInput
                 title="Entregue em mãos?"
                 defaultChecked={data.entregue_em_maos}
+                disabled={true}
               />
             </div>
           </Box>
 
           <Box>
             <p
-              style={{
-                borderBottomColor: '#A9A9B2',
-                fontFamily: 'Roboto, Helvetica, Arial, sans-serif',
-                fontWeight: '400',
-                lineHeight: '1.4375em',
-                letterSpacing: '0.00938em',
-              }}
-            >
+                style={{
+                  borderBottomColor: '#A9A9B2',
+                  fontFamily: 'Roboto, Helvetica, Arial, sans-serif',
+                  fontWeight: '400',
+                  lineHeight: '1.4375em',
+                  letterSpacing: '0.00938em',
+                  maxWidth: '120px',
+                  width: '100%'
+                }}
+              >
+
               Data de Envio
             </p>
 
@@ -257,7 +282,7 @@ export default function Vizualizar({ data }: schemaEmpresasProps) {
 
           <Box>
             <div style={{ width: '60%' }}>
-              <TextInput title="Anexos" value={data.anexos} />
+              <TextInput title="Anexos" value={data.anexos} disabled={true}/>
             </div>
           </Box>
         </fieldset>

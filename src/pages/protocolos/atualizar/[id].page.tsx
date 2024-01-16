@@ -1,19 +1,21 @@
-import { Container, Box } from './styled'
-import React, { useEffect, useRef, useState } from 'react'
-import { z } from 'zod'
-import { useForm } from 'react-hook-form'
-import { GetServerSideProps, GetStaticProps } from 'next'
-import { prisma } from '@/lib/prisma'
-import { Button } from '@/components/Button'
-import { api } from '@/lib/axios'
-import { TextInput } from '@/components/TextInput'
-import { SelectOptions } from '@/components/SelectOptions'
-import { SwitchInput } from '@/components/SwitchInput'
-import { CaretRight } from 'phosphor-react'
-import Link from 'next/link'
-import { toast } from 'react-toastify'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { useRouter } from 'next/router'
+
+import { Container, Box } from './styled';
+import React, { useEffect, useRef, useState } from 'react';
+import { z } from 'zod';
+import { useForm } from 'react-hook-form';
+import { GetServerSideProps, GetStaticProps } from 'next';
+import { prisma } from '@/lib/prisma';
+import { Button } from '@/components/Button';
+import { api } from '@/lib/axios';
+import { TextInput } from '@/components/TextInput';
+import { SelectOptions } from '@/components/SelectOptions';
+import { SwitchInput } from '@/components/SwitchInput';
+import { ArrowBendDownLeft, CaretRight } from 'phosphor-react';
+import Link from 'next/link';
+import { toast } from 'react-toastify';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useRouter } from 'next/router';
+
 // import 'react-date-picker/dist/DatePicker.css';
 // import 'react-calendar/dist/Calendar.css';
 
@@ -178,12 +180,20 @@ export default function ProtocolosAtualizar({ data }: schemaProtocoloProps) {
   } = useForm<SchemaProtocoloForm>()
 
   async function OnSubmit(data: SchemaProtocoloForm) {
-    try {
-      await api.put('/protocolos/update', { ...data })
-      toast.success('Protocolo Atualizado')
-      router.push('/protocolos')
-    } catch (error) {
-      console.log(error)
+
+    var data_envio = new Date(data.data_envio_ano+'-'+data.data_envio_mes+'-'+data.data_envio_dia);
+    var data_recebimento = new Date(data.data_recebimento_ano+'-'+data.data_recebimento_mes+'-'+data.data_recebimento_dia);
+    
+    if(data_recebimento < data_envio){
+      toast.error('A data de recebimento deve ser maior que a data de envio.');
+    }else{
+      try {
+        await api.put('/protocolos/update', { ...data })
+        toast.success('Protocolo Atualizado')
+        router.push('/protocolos')
+      } catch (error) {
+        console.log(error)
+      }
     }
   }
 
@@ -227,6 +237,23 @@ export default function ProtocolosAtualizar({ data }: schemaProtocoloProps) {
   return (
     <Container>
       <form onSubmit={handleSubmit(OnSubmit)}>
+        <Box style={{ justifyContent: 'end' }}>
+          <Link
+            href="/protocolos"
+            style={{
+              textDecoration: 'none',
+              fontFamily: 'Roboto',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              marginBottom: '1rem',
+              color: '#000',
+            }}
+          >
+            <ArrowBendDownLeft size={32} />
+            Retornar
+          </Link>
+        </Box>
         <fieldset>
           <legend>
             <span>
@@ -283,6 +310,8 @@ export default function ProtocolosAtualizar({ data }: schemaProtocoloProps) {
                 fontWeight: '400',
                 lineHeight: '1.4375em',
                 letterSpacing: '0.00938em',
+                maxWidth: '120px',
+                width: '100%'
               }}
             >
               Data de Recebimento
@@ -378,6 +407,8 @@ export default function ProtocolosAtualizar({ data }: schemaProtocoloProps) {
                 fontWeight: '400',
                 lineHeight: '1.4375em',
                 letterSpacing: '0.00938em',
+                maxWidth: '120px',
+                width: '100%'
               }}
             >
               Data de Envio

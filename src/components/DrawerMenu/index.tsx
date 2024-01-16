@@ -22,6 +22,8 @@ import {
   Article,
   UserFocus,
   User,
+  ArchiveBox
+
 } from 'phosphor-react'
 import { useRouter } from 'next/navigation'
 import { Twirl as Hamburger } from 'hamburger-react'
@@ -82,6 +84,7 @@ export function TemporaryDrawer() {
   const arrayIcons = [
     <>
       <Buildings size={30} color="#fff" />
+
     </>,
     <>
       <UsersFour size={30} color="#fff" />
@@ -97,6 +100,9 @@ export function TemporaryDrawer() {
     </>,
     <>
       <UserFocus size={30} color="#fff" />
+    </>,
+    <>
+      <Receipt size={30} color="#fff" />
     </>,
     <>
       <Receipt size={30} color="#fff" />

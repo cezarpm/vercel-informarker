@@ -99,6 +99,9 @@ export default function VotacaoAtualizar({
     const newDate = new Date(concatDate).toISOString()
     const concatDateEnd = `${data.end_month}-${data.end_day}-${data.end_year}`
     const newDateEnd = new Date(concatDateEnd).toISOString()
+    const today = new Date().toISOString().slice(0, 10);
+    const inputDate = newDate.slice(0, 10);
+    
 
     const selectedChapas = data.chapas.map((chapa) => {
       const chapaSelected = chapas.find(
@@ -106,6 +109,20 @@ export default function VotacaoAtualizar({
       )
       return chapaSelected
     })
+
+    if (newDate > newDateEnd) {
+      return toast.error('A data de início não pode ser maior que a data de término!')
+    }
+
+    if (newDate === newDateEnd) {
+      return toast.error('A data de início não pode ser igual a data de término!')
+    }
+
+    
+    if (inputDate < today) {
+      return toast.error('A data de início não pode ser menor que a data atual!');
+    }
+
 
     const body = {
       id: Number(id),
@@ -140,6 +157,14 @@ export default function VotacaoAtualizar({
       setValue('end_year', anoTotalEnd)
     }
   }, [data, setValue])
+
+  useEffect(() => {
+    if (errors.chapas) {
+      toast.error("A votação precisa ter no mínimo 2 chapas!")
+    }
+
+  }, [errors])
+
 
   return (
     <Container>
@@ -242,8 +267,9 @@ export default function VotacaoAtualizar({
             </div>
 
             <SelectOptions
-              description="Selecione a chapa"
-              data={['ATIVO', 'INATIVO']}
+
+              description="Está ativa?"
+              data={['ATIVA', 'INATIVA']}
               w={280}
               defaultValue={data.status}
               {...register('status')}

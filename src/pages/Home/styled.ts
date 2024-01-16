@@ -7,10 +7,11 @@ export const Container = styled('div', {
   section: {
     display: 'flex',
     flexDirection: 'column',
-    justifyContent: 'center',
     alignItems: 'center',
-    gap: '0.5rem',
-    height: '50vh',
+    height: '100%',
+    paddingTop: '2rem',
+    gap: 10,
+
 
     h1: {
       fontSize: '48px',
@@ -22,6 +23,9 @@ export const Container = styled('div', {
       '@media(max-width: 1280px)': {
         width: '90%',
       },
+      '@media(max-width: 500px)': {
+        fontSize: '32px',
+      }
     },
     p: {
       color: '#fff',
@@ -60,6 +64,10 @@ export const ContentColorRadius = styled('div', {
   height: '12rem',
   backgroundColor: '#ffff',
   borderRadius: '50% 50% 0 0',
+
+  '@media(max-width: 1280px)': {
+    height: '5rem',
+  },
 })
 
 // Crie um keyframe para a animação de flutuação

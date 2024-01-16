@@ -9,3 +9,11 @@ export const Container = styled('main', {
     fontFamily: 'Roboto',
   },
 })
+
+
+export const Box = styled('div', {
+  display: 'flex',
+  alignItems: 'center',
+  gap: '2rem',
+})
+

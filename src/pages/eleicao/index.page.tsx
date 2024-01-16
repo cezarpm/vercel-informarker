@@ -19,6 +19,7 @@ import { useEffect, useState } from 'react'
 import { api } from '@/lib/axios'
 import { GetServerSideProps } from 'next'
 import { prisma } from '@/lib/prisma'
+import { ExibirReciboVoto } from '@/utils/voteReceipt'
 
 type Votation = {
   data: any
@@ -33,6 +34,8 @@ export default function Votacao({ data, alreadyVoted }: Votation) {
 
   const [selected, setSelected] = useState('' as any)
   const [votation, setVotation] = useState(data)
+
+  const votationIsStarted = new Date(votation?.data_votacao_inicio) < new Date()
 
   const handleClick = (item: string) => {
     setShowVotation(true)
@@ -54,6 +57,16 @@ export default function Votacao({ data, alreadyVoted }: Votation) {
       nome_chapa: selected,
       votacao_id: votation.id,
       usuario_id: 1,
+    })
+  }
+
+  const saveVotaionInPdf = () => {
+    ExibirReciboVoto({
+      nome: 'Roberto da Silva',
+      cpf: '857.260.010-87',
+      matricula_saerj: votation?.matricula_saerj,
+      chapaVote: selected || userAlreadyVoted.nome_chapa,
+      autenticacao: '0x0000000',
     })
   }
 
@@ -95,12 +108,19 @@ export default function Votacao({ data, alreadyVoted }: Votation) {
     }
   }, [userAlreadyVoted])
 
+  useEffect(() => {
+    if(!votationIsStarted){
+      setVotation(null)
+    }
+  }),[]
+
   if (showVoteReceipt) {
     return (
       <div
         style={{
-          width: 800,
-          margin: '80px auto',
+          maxWidth: 700,
+          margin: '20px auto',
+          padding: '1.2rem',
         }}
       >
         <h1
@@ -111,27 +131,30 @@ export default function Votacao({ data, alreadyVoted }: Votation) {
         >
           Comprovante de votação
         </h1>
-        <Typography id="modal-modal-title" variant="h6" component="h2">
-          Nome: Roberto da Silva
-        </Typography>
-        <Typography id="modal-modal-title" variant="h6" component="h2">
-          CPF: 857.260.010-87
-        </Typography>
-        <Typography id="modal-modal-title" variant="h6" component="h2">
-          Eleição: {votation?.matricula_saerj}
-        </Typography>
-        <Typography id="modal-modal-title" variant="h6" component="h2">
-          Chapa Votada: {selected || userAlreadyVoted.nome_chapa}
-        </Typography>
+        <div>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Nome: Roberto da Silva
+          </Typography>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            CPF: 857.260.010-87
+          </Typography>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Eleição: {votation?.matricula_saerj}
+          </Typography>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Chapa Votada: {selected || userAlreadyVoted.nome_chapa}
+          </Typography>
 
-        <Typography id="modal-modal-title" variant="h6" component="h2">
-          Autentication: 0x0000000
-        </Typography>
+
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Autentication: 0x0000000
+          </Typography>
+        </div>
 
         <div
           style={{
             display: 'flex',
-            gap: 20,
+            gap: 10,
           }}
         >
           <div style={{ width: '50%' }}>
@@ -140,7 +163,7 @@ export default function Votacao({ data, alreadyVoted }: Votation) {
             </OutlinedButton>
           </div>
 
-          <div style={{ width: '50%' }}>
+          <div onClick={saveVotaionInPdf} style={{ width: '80%' }}>
             <Button title="Imprimir / Salvar" />
           </div>
         </div>
@@ -183,6 +206,7 @@ export default function Votacao({ data, alreadyVoted }: Votation) {
                   Você já votou nessa eleição
                 </Typography>
               ) : (
+
                 <button
                   style={{
                     backgroundColor: 'rgb(82, 128, 53)',
@@ -365,6 +389,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
         votacao_id: data?.id,
       },
     })
+
 
     return {
       props: {

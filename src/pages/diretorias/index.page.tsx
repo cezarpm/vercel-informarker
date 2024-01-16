@@ -43,16 +43,10 @@ export default function DiretoriasList({ data }: any) {
         <DataGridDemo columns={columns} rows={data} w="90%" />
       </Box>
       <Box>
-        <Button
-          title="Cadastrar"
-          style={{ backgroundColor: '#f67200' }}
-          onClick={() => {
-            router.push('/diretorias/cadastro')
-          }}
-        />
 
         <Button
           title="Visualizar"
+          style={{ backgroundColor: '#4471C6' }}
           onClick={() => {
             if (selectedRowIds.length === 0) {
               toast.warn('você não selecionou o cargo para visualizar')
@@ -63,9 +57,10 @@ export default function DiretoriasList({ data }: any) {
             }
           }}
         />
+
         <Button
           title="Atualizar"
-          style={{ backgroundColor: '#6f9622' }}
+          style={{ backgroundColor: '#528035' }}
           onClick={() => {
             if (selectedRowIds.length === 0) {
               toast.warn('você não selecionou o cargo para atualizar')
@@ -76,6 +71,17 @@ export default function DiretoriasList({ data }: any) {
             }
           }}
         />
+
+        <Button
+          title="Incluir"
+          style={{ backgroundColor: '#BE0000' }}
+          onClick={() => {
+            router.push('/diretorias/cadastro')
+          }}
+        />
+
+
+
 
         <Modal
           title="Deletar"
