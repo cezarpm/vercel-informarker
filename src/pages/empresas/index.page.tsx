@@ -204,7 +204,6 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
 
   return (
     <Container>
-
       <BackPage backRoute="/" />
       <p>Empresas</p>
 
@@ -255,20 +254,19 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
               padding: '0.5rem',
             }}
             title="Buscar"
-            onClick={BuscarFiltro} 
-            />
+            onClick={BuscarFiltro}
+          />
 
-          {selectedRowIds.length > 0 &&
+          {selectedRowIds.length > 0 && (
             <ModalTickets
               title="Gerar Etiqueta"
               bgColor="#0da9a4"
               data={selectedRowIds}
             />
-          }
+          )}
+        </Box>
 
-      </Box>
-
-
+        <Box>
           {selectedRowIds.length > 0 && (
             <Box
               style={{
@@ -298,7 +296,7 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
             } else if (selectedRowIds.length >= 2) {
               toast.warn('selecione 1 empresa para visualizar')
             } else {
-              router.push(`/empresas/visualizar/${selectedRowIds}`)
+              router.push(/empresas/visualizar/${selectedRowIds})
             }
           }}
         />
@@ -312,7 +310,7 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
             } else if (selectedRowIds.length >= 2) {
               toast.warn('selecione 1 empresa para atualizar')
             } else {
-              router.push(`/empresas/atualizar/${selectedRowIds}`)
+              router.push(/empresas/atualizar/${selectedRowIds})
             }
           }}
         />
