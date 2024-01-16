@@ -39,10 +39,9 @@ export default function AssociadoList({ data }: any) {
       field: 'data_nascimento',
       headerName: 'Data Nascimento',
       width: 200,
-    }
+    },
   ]
 
-  
   return (
     <Container>
         <Box style={{ justifyContent: 'space-between' }}>
@@ -63,12 +62,10 @@ export default function AssociadoList({ data }: any) {
           </Link>
         </Box>
 
-      <TableBirthdays columns={columnsBirthdays} rows={data} w="100%"/>
-      
+      <TableBirthdays columns={columnsBirthdays} rows={data} w="100%" />
     </Container>
   )
 }
-
 
 export const getServerSideProps: GetServerSideProps = async () => {
   try {
@@ -77,8 +74,8 @@ export const getServerSideProps: GetServerSideProps = async () => {
         {
           data_nascimento: 'asc',
         },
-      ]
-    });
+      ],
+    })
 
     const data = await Promise.all(response.map(async (item) => {
       var tratamento = "";
@@ -93,6 +90,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
 
       return {
         ...item,
+
         numero_proposta_SBA: item.numero_proposta_SBA !== null ? item.numero_proposta_SBA.toString() : null,
         data_nascimento: item.data_nascimento !== null ? item.data_nascimento.toISOString().replace(/T.*/, '').split('-').reverse().join('/') : null,
         data_inicio_especializacao: item.data_inicio_especializacao !== null ? item.data_inicio_especializacao.toISOString().replace(/T.*/, '').split('-').reverse().join('/') : null,
@@ -100,6 +98,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
         tratamento: tratamento,
       };
     }));
+
 
     return {
       props: {

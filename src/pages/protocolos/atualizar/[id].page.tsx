@@ -1,3 +1,4 @@
+
 import { Container, Box } from './styled';
 import React, { useEffect, useRef, useState } from 'react';
 import { z } from 'zod';
@@ -14,6 +15,7 @@ import Link from 'next/link';
 import { toast } from 'react-toastify';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/router';
+
 // import 'react-date-picker/dist/DatePicker.css';
 // import 'react-calendar/dist/Calendar.css';
 
@@ -38,19 +40,19 @@ const schemaProtocoloForm = z.object({
   data_encerramento_protocolo_mes: z.number(),
   data_encerramento_protocolo_ano: z.number(),
   usuario_encerramento_protocolo: z.string(), // ALTERAR PARA USUÁRIO
-});
+})
 
 const dayOptionsData = Array.from({ length: 31 }, (_, index) => ({
   id: index + 1,
   label: Number(index + 1),
-}));
+}))
 
 const monthOptionsData = Array.from({ length: 12 }, (_, index) => ({
   id: index + 1,
   label: Number(index + 1),
-}));
+}))
 
-const currentYear = new Date().getFullYear();
+const currentYear = new Date().getFullYear()
 
 const yearOptionsData = Array.from(
   { length: currentYear - (currentYear - 30) + 1 },
@@ -58,7 +60,7 @@ const yearOptionsData = Array.from(
     id: currentYear - 30 + index,
     label: Number(currentYear - 30 + index),
   }),
-);
+)
 
 // ATUALIZAR QUANDO HOUVER API CORRESPONDENTE - TIPO PROTOCOLO
 
@@ -81,7 +83,7 @@ const yearOptionsData = Array.from(
 const tipoProtocoloOptionsData = [
   { id: 1, label: 'Entrada' },
   { id: 2, label: 'Saída' },
-];
+]
 
 // ATUALIZAR QUANDO HOUVER API CORRESPONDENTE - MEIO PROTOCOLO
 
@@ -106,7 +108,7 @@ const meioProtocoloOptionsData = [
   { id: 2, label: 'Email' },
   { id: 3, label: 'Whatsapp' },
   { id: 4, label: 'Web Site' },
-];
+]
 
 // ATUALIZAR QUANDO HOUVER API CORRESPONDENTE - ASSUNTO PROTOCOLO
 
@@ -130,7 +132,7 @@ const assuntoProtocoloOptionsData = [
   { id: 1, label: 'Protocolo de Entrada' },
   { id: 2, label: 'Protocolo de Saída' },
   { id: 3, label: 'Confidencial' },
-];
+]
 
 // ATUALIZAR QUANDO HOUVER API CORRESPONDENTE - QUEM REDIGIU O DOCUMENTO A SER ENVIADO
 
@@ -150,34 +152,35 @@ const assuntoProtocoloOptionsData = [
         })
       }
   */
-const quemRedigiuDocumentoOptionsData = [{ id: 1, label: 'Dr. Calazan' }];
+const quemRedigiuDocumentoOptionsData = [{ id: 1, label: 'Dr. Calazan' }]
 
-type SchemaProtocoloForm = z.infer<typeof schemaProtocoloForm>;
+type SchemaProtocoloForm = z.infer<typeof schemaProtocoloForm>
 interface schemaProtocoloProps {
   data: SchemaProtocoloForm
 }
 
-export default function ProtocolosAtualizar({data}: schemaProtocoloProps) {
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+export default function ProtocolosAtualizar({ data }: schemaProtocoloProps) {
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([])
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const fileList = event.target.files;
+    const fileList = event.target.files
     if (fileList) {
-      const filesArray = Array.from(fileList);
-      setSelectedFiles(filesArray);
+      const filesArray = Array.from(fileList)
+      setSelectedFiles(filesArray)
     }
-  };
+  }
 
-  const router = useRouter();
+  const router = useRouter()
 
   const {
     register,
     handleSubmit,
     setValue,
     formState: { isSubmitting, errors },
-  } = useForm<SchemaProtocoloForm>();
+  } = useForm<SchemaProtocoloForm>()
 
   async function OnSubmit(data: SchemaProtocoloForm) {
+
     var data_envio = new Date(data.data_envio_ano+'-'+data.data_envio_mes+'-'+data.data_envio_dia);
     var data_recebimento = new Date(data.data_recebimento_ano+'-'+data.data_recebimento_mes+'-'+data.data_recebimento_dia);
     
@@ -207,14 +210,28 @@ export default function ProtocolosAtualizar({data}: schemaProtocoloProps) {
     setValue('data_envio_ano', data.data_envio_ano)
     setValue('meio_recebimento', data.meio_recebimento)
     setValue('meio_envio', data.meio_envio)
-    setValue('quem_redigiu_documento_a_ser_enviado', data.quem_redigiu_documento_a_ser_enviado)
+    setValue(
+      'quem_redigiu_documento_a_ser_enviado',
+      data.quem_redigiu_documento_a_ser_enviado,
+    )
     setValue('entregue_em_maos', data.entregue_em_maos)
     setValue('doc_entrada_requer_resposta', data.doc_entrada_requer_resposta)
-    setValue('data_encerramento_protocolo_dia', data.data_encerramento_protocolo_dia)
-    setValue('data_encerramento_protocolo_mes', data.data_encerramento_protocolo_mes)
-    setValue('data_encerramento_protocolo_ano', data.data_encerramento_protocolo_ano)
-    setValue('usuario_encerramento_protocolo', data.usuario_encerramento_protocolo)
-    
+    setValue(
+      'data_encerramento_protocolo_dia',
+      data.data_encerramento_protocolo_dia,
+    )
+    setValue(
+      'data_encerramento_protocolo_mes',
+      data.data_encerramento_protocolo_mes,
+    )
+    setValue(
+      'data_encerramento_protocolo_ano',
+      data.data_encerramento_protocolo_ano,
+    )
+    setValue(
+      'usuario_encerramento_protocolo',
+      data.usuario_encerramento_protocolo,
+    )
   }, [])
 
   return (
@@ -260,7 +277,11 @@ export default function ProtocolosAtualizar({data}: schemaProtocoloProps) {
                 description="Tipo Protocolo"
                 w={200}
                 {...register('tipo_protocolo')}
-                defaultValue={tipoProtocoloOptionsData.find(option => option.label === data.tipo_protocolo) || null}
+                defaultValue={
+                  tipoProtocoloOptionsData.find(
+                    (option) => option.label === data.tipo_protocolo,
+                  ) || null
+                }
               />
             </div>
           </Box>
@@ -272,7 +293,11 @@ export default function ProtocolosAtualizar({data}: schemaProtocoloProps) {
                 description="Assunto Protocolo"
                 w={500}
                 {...register('assunto_protocolo')}
-                defaultValue={assuntoProtocoloOptionsData.find(option => option.label === data.assunto_protocolo) || null}
+                defaultValue={
+                  assuntoProtocoloOptionsData.find(
+                    (option) => option.label === data.assunto_protocolo,
+                  ) || null
+                }
               />
             </div>
           </Box>
@@ -299,9 +324,13 @@ export default function ProtocolosAtualizar({data}: schemaProtocoloProps) {
                 w={100}
                 {...register('data_recebimento_dia', {
                   valueAsNumber: true, // Essa opção indica que o valor deve ser tratado como número
-                  setValueAs: value => parseInt(value), // Função para converter o valor para número
+                  setValueAs: (value) => parseInt(value), // Função para converter o valor para número
                 })}
-                defaultValue={dayOptionsData.find(option => option.label == data.data_recebimento_dia) || null}
+                defaultValue={
+                  dayOptionsData.find(
+                    (option) => option.label == data.data_recebimento_dia,
+                  ) || null
+                }
               />
             </div>
 
@@ -312,9 +341,13 @@ export default function ProtocolosAtualizar({data}: schemaProtocoloProps) {
                 w={100}
                 {...register('data_recebimento_mes', {
                   valueAsNumber: true, // Essa opção indica que o valor deve ser tratado como número
-                  setValueAs: value => parseInt(value), // Função para converter o valor para número
+                  setValueAs: (value) => parseInt(value), // Função para converter o valor para número
                 })}
-                defaultValue={monthOptionsData.find(option => option.label == data.data_recebimento_mes) || null}
+                defaultValue={
+                  monthOptionsData.find(
+                    (option) => option.label == data.data_recebimento_mes,
+                  ) || null
+                }
               />
             </div>
 
@@ -325,9 +358,13 @@ export default function ProtocolosAtualizar({data}: schemaProtocoloProps) {
                 w={150}
                 {...register('data_recebimento_ano', {
                   valueAsNumber: true, // Essa opção indica que o valor deve ser tratado como número
-                  setValueAs: value => parseInt(value), // Função para converter o valor para número
+                  setValueAs: (value) => parseInt(value), // Função para converter o valor para número
                 })}
-                defaultValue={yearOptionsData.find(option => option.label == data.data_recebimento_ano) || null}
+                defaultValue={
+                  yearOptionsData.find(
+                    (option) => option.label == data.data_recebimento_ano,
+                  ) || null
+                }
               />
             </div>
 
@@ -337,7 +374,11 @@ export default function ProtocolosAtualizar({data}: schemaProtocoloProps) {
                 description="Meio de Recebimento"
                 w={225}
                 {...register('meio_recebimento')}
-                defaultValue={meioProtocoloOptionsData.find(option => option.label === data.meio_recebimento) || null}
+                defaultValue={
+                  meioProtocoloOptionsData.find(
+                    (option) => option.label === data.meio_recebimento,
+                  ) || null
+                }
               />
             </div>
 
@@ -380,9 +421,13 @@ export default function ProtocolosAtualizar({data}: schemaProtocoloProps) {
                 w={100}
                 {...register('data_envio_dia', {
                   valueAsNumber: true, // Essa opção indica que o valor deve ser tratado como número
-                  setValueAs: value => parseInt(value), // Função para converter o valor para número
+                  setValueAs: (value) => parseInt(value), // Função para converter o valor para número
                 })}
-                defaultValue={dayOptionsData.find(option => option.label == data.data_envio_dia) || null}
+                defaultValue={
+                  dayOptionsData.find(
+                    (option) => option.label == data.data_envio_dia,
+                  ) || null
+                }
               />
             </div>
 
@@ -393,9 +438,13 @@ export default function ProtocolosAtualizar({data}: schemaProtocoloProps) {
                 w={100}
                 {...register('data_envio_mes', {
                   valueAsNumber: true, // Essa opção indica que o valor deve ser tratado como número
-                  setValueAs: value => parseInt(value), // Função para converter o valor para número
+                  setValueAs: (value) => parseInt(value), // Função para converter o valor para número
                 })}
-                defaultValue={monthOptionsData.find(option => option.label == data.data_envio_mes) || null}
+                defaultValue={
+                  monthOptionsData.find(
+                    (option) => option.label == data.data_envio_mes,
+                  ) || null
+                }
               />
             </div>
 
@@ -406,9 +455,13 @@ export default function ProtocolosAtualizar({data}: schemaProtocoloProps) {
                 w={150}
                 {...register('data_envio_ano', {
                   valueAsNumber: true, // Essa opção indica que o valor deve ser tratado como número
-                  setValueAs: value => parseInt(value), // Função para converter o valor para número
+                  setValueAs: (value) => parseInt(value), // Função para converter o valor para número
                 })}
-                defaultValue={yearOptionsData.find(option => option.label == data.data_envio_ano) || null}
+                defaultValue={
+                  yearOptionsData.find(
+                    (option) => option.label == data.data_envio_ano,
+                  ) || null
+                }
               />
             </div>
 
@@ -418,7 +471,11 @@ export default function ProtocolosAtualizar({data}: schemaProtocoloProps) {
                 description="Meio de Envio"
                 w={225}
                 {...register('meio_envio')}
-                defaultValue={meioProtocoloOptionsData.find(option => option.label == data.meio_envio) || null}
+                defaultValue={
+                  meioProtocoloOptionsData.find(
+                    (option) => option.label == data.meio_envio,
+                  ) || null
+                }
               />
             </div>
           </Box>
@@ -430,7 +487,12 @@ export default function ProtocolosAtualizar({data}: schemaProtocoloProps) {
                 description="Quem redigiu documento a ser enviado?"
                 w={500}
                 {...register('quem_redigiu_documento_a_ser_enviado')}
-                defaultValue={quemRedigiuDocumentoOptionsData.find(option => option.label == data.quem_redigiu_documento_a_ser_enviado) || null}
+                defaultValue={
+                  quemRedigiuDocumentoOptionsData.find(
+                    (option) =>
+                      option.label == data.quem_redigiu_documento_a_ser_enviado,
+                  ) || null
+                }
               />
             </div>
           </Box>
@@ -455,9 +517,14 @@ export default function ProtocolosAtualizar({data}: schemaProtocoloProps) {
                 w={100}
                 {...register('data_encerramento_protocolo_dia', {
                   valueAsNumber: true, // Essa opção indica que o valor deve ser tratado como número
-                  setValueAs: value => parseInt(value), // Função para converter o valor para número
+                  setValueAs: (value) => parseInt(value), // Função para converter o valor para número
                 })}
-                defaultValue={dayOptionsData.find(option => option.label == data.data_encerramento_protocolo_dia) || null}
+                defaultValue={
+                  dayOptionsData.find(
+                    (option) =>
+                      option.label == data.data_encerramento_protocolo_dia,
+                  ) || null
+                }
               />
             </div>
 
@@ -468,9 +535,14 @@ export default function ProtocolosAtualizar({data}: schemaProtocoloProps) {
                 w={100}
                 {...register('data_encerramento_protocolo_mes', {
                   valueAsNumber: true, // Essa opção indica que o valor deve ser tratado como número
-                  setValueAs: value => parseInt(value), // Função para converter o valor para número
+                  setValueAs: (value) => parseInt(value), // Função para converter o valor para número
                 })}
-                defaultValue={monthOptionsData.find(option => option.label == data.data_encerramento_protocolo_mes) || null}
+                defaultValue={
+                  monthOptionsData.find(
+                    (option) =>
+                      option.label == data.data_encerramento_protocolo_mes,
+                  ) || null
+                }
               />
             </div>
 
@@ -481,16 +553,21 @@ export default function ProtocolosAtualizar({data}: schemaProtocoloProps) {
                 w={150}
                 {...register('data_encerramento_protocolo_ano', {
                   valueAsNumber: true, // Essa opção indica que o valor deve ser tratado como número
-                  setValueAs: value => parseInt(value), // Função para converter o valor para número
+                  setValueAs: (value) => parseInt(value), // Função para converter o valor para número
                 })}
-                defaultValue={yearOptionsData.find(option => option.label == data.data_encerramento_protocolo_ano) || null}
+                defaultValue={
+                  yearOptionsData.find(
+                    (option) =>
+                      option.label == data.data_encerramento_protocolo_ano,
+                  ) || null
+                }
               />
             </div>
             <div style={{ width: '15%' }}>
               <TextInput
                 title="Usuário Encerramento Protocolo"
                 {...register('usuario_encerramento_protocolo')}
-                defaultValue={data.usuario_encerramento_protocolo }
+                defaultValue={data.usuario_encerramento_protocolo}
               />
             </div>
           </Box>
@@ -552,7 +629,7 @@ export default function ProtocolosAtualizar({data}: schemaProtocoloProps) {
         </fieldset>
       </form>
     </Container>
-  );
+  )
 }
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -563,57 +640,69 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       where: {
         id: Number(id),
       },
-    });
+    })
 
     if (data) {
-      var data_recebimento;
-      var data_envio;
-      var data_encerramento_protocolo;
+      let data_recebimento
+      let data_envio
+      let data_encerramento_protocolo
 
-      if (data.data_recebimento_ano && data.data_recebimento_mes && data.data_recebimento_dia ) {
+      if (
+        data.data_recebimento_ano &&
+        data.data_recebimento_mes &&
+        data.data_recebimento_dia
+      ) {
         data_recebimento = new Date(
           data.data_recebimento_ano,
           data.data_recebimento_mes - 1,
-          data.data_recebimento_dia
-        );
+          data.data_recebimento_dia,
+        )
       }
-      
+
       if (data.data_envio_ano && data.data_envio_mes && data.data_envio_dia) {
         data_envio = new Date(
           data.data_envio_ano,
           data.data_envio_mes - 1,
-          data.data_envio_dia
-        );
+          data.data_envio_dia,
+        )
       }
 
-      if (data.data_encerramento_protocolo_ano && data.data_encerramento_protocolo_mes && data.data_encerramento_protocolo_dia) {
+      if (
+        data.data_encerramento_protocolo_ano &&
+        data.data_encerramento_protocolo_mes &&
+        data.data_encerramento_protocolo_dia
+      ) {
         data_encerramento_protocolo = new Date(
           data.data_encerramento_protocolo_ano,
           data.data_encerramento_protocolo_mes - 1,
-          data.data_encerramento_protocolo_dia
-        );
+          data.data_encerramento_protocolo_dia,
+        )
       }
 
       // Converter as propriedades de data para strings no formato ISO 8601
       const serializedData = {
         ...data,
-        data_recebimento: data_recebimento ? data_recebimento.toISOString() : null,
+        data_recebimento: data_recebimento
+          ? data_recebimento.toISOString()
+          : null,
         data_envio: data_envio ? data_envio.toISOString() : null,
-        data_encerramento_protocolo: data_encerramento_protocolo ? data_encerramento_protocolo.toISOString() : null,
-      };
+        data_encerramento_protocolo: data_encerramento_protocolo
+          ? data_encerramento_protocolo.toISOString()
+          : null,
+      }
 
       return {
         props: {
           data: serializedData,
         },
-      };
+      }
     } else {
-      console.error('Registro não encontrado');
+      console.error('Registro não encontrado')
       return {
         props: {
           data: {},
         },
-      };
+      }
     }
   } catch (error) {
     console.error('Erro ao obter dados de tipo de empresa:', error)

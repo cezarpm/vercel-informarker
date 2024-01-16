@@ -21,38 +21,38 @@ const style = {
 }
 
 interface EtiquetaProps {
-  id: number;
-  cod_empresa?: string;
-  tipo_empresa?: string;
-  patrocinadora?: boolean;
-  faculdade_anestesiologia?: boolean;
-  empresa_ativa?: boolean;
-  cnpj?: string;
-  razao_social?: string;
-  nome_fantasia?: string;
-  cep?: string;
-  logradouro?: string;
-  numero?: number;
-  complemento?: string;
-  cidade?: string;
-  uf?: string;
-  pais?: string;
-  bairro?: string;
-  telefone_comercial?: string;
-  tratamento_contato_primario?: string;
-  nome_contato_primario?: string;
-  cargo_contato_primario?: string;
-  email_contato_primario?: string;
-  telefone_contato_primario?: string;
-  tratamento_contato_secundario?: string;
-  nome_contato_secundario?: string;
-  cargo_contato_secundario?: string;
-  email_contato_secundario?: string;
-  telefone_contato_secundario?: string;
-  home_page?: string;
-  inscricao_estadual?: string;
-  inscricao_municipal?: string;
-  observacoes?: string;
+  id: number
+  cod_empresa?: string
+  tipo_empresa?: string
+  patrocinadora?: boolean
+  faculdade_anestesiologia?: boolean
+  empresa_ativa?: boolean
+  cnpj?: string
+  razao_social?: string
+  nome_fantasia?: string
+  cep?: string
+  logradouro?: string
+  numero?: number
+  complemento?: string
+  cidade?: string
+  uf?: string
+  pais?: string
+  bairro?: string
+  telefone_comercial?: string
+  tratamento_contato_primario?: string
+  nome_contato_primario?: string
+  cargo_contato_primario?: string
+  email_contato_primario?: string
+  telefone_contato_primario?: string
+  tratamento_contato_secundario?: string
+  nome_contato_secundario?: string
+  cargo_contato_secundario?: string
+  email_contato_secundario?: string
+  telefone_contato_secundario?: string
+  home_page?: string
+  inscricao_estadual?: string
+  inscricao_municipal?: string
+  observacoes?: string
 }
 
 interface schemaModal {
@@ -63,12 +63,31 @@ interface schemaModal {
 export default function ModalTickets({
   title,
   bgColor,
-  data
-}: schemaModal) {
 
+  data
+
+}: schemaModal) {
   const [open, setOpen] = useState(false)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
+
+
+ // const [dataSelected, setDataSelected] = useState<EtiquetaProps[]>([])
+
+  //useEffect(() => {
+  //  setDataSelected([])
+   // data.map(async (item: any) => {
+ //     try {
+     //   const response = await fetch(`${route}${item}`)
+   //     const data = await response.json()
+ //       setDataSelected((prev) => [...prev, data])
+//      } catch (error) {
+//        toast.success('Erro ao gerar etiquetas')
+//        console.error('Erro ao buscar empresas:', error)
+//      }
+//    })
+//  }, [data])
+
 
   const gerarEtiqueta = (primario: boolean) => {
     EtiquetaPDFCompany(data, primario)

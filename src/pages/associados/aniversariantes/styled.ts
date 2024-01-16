@@ -10,8 +10,10 @@ export const Container = styled('main', {
   },
 })
 
+
 export const Box = styled('div', {
   display: 'flex',
   alignItems: 'center',
   gap: '2rem',
 })
+

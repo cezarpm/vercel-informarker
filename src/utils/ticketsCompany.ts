@@ -1,50 +1,50 @@
-'use client';
+'use client'
 
 import { jsPDF } from 'jspdf';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'react-toastify';
 
 interface EtiquetaProps {
-  id: number;
-  cod_empresa?: string;
-  tipo_empresa?: string;
-  patrocinadora?: boolean;
-  faculdade_anestesiologia?: boolean;
-  empresa_ativa?: boolean;
-  cnpj?: string;
-  razao_social?: string;
-  nome_fantasia?: string;
-  cep?: string;
-  logradouro?: string;
-  numero?: number;
-  complemento?: string;
-  cidade?: string;
-  uf?: string;
-  pais?: string;
-  bairro?: string;
-  telefone_comercial?: string;
-  tratamento_contato_primario?: string;
-  nome_contato_primario?: string;
-  cargo_contato_primario?: string;
-  email_contato_primario?: string;
-  telefone_contato_primario?: string;
-  tratamento_contato_secundario?: string;
-  nome_contato_secundario?: string;
-  cargo_contato_secundario?: string;
-  email_contato_secundario?: string;
-  telefone_contato_secundario?: string;
-  home_page?: string;
-  inscricao_estadual?: string;
-  inscricao_municipal?: string;
-  observacoes?: string;
+  id: number
+  cod_empresa?: string
+  tipo_empresa?: string
+  patrocinadora?: boolean
+  faculdade_anestesiologia?: boolean
+  empresa_ativa?: boolean
+  cnpj?: string
+  razao_social?: string
+  nome_fantasia?: string
+  cep?: string
+  logradouro?: string
+  numero?: number
+  complemento?: string
+  cidade?: string
+  uf?: string
+  pais?: string
+  bairro?: string
+  telefone_comercial?: string
+  tratamento_contato_primario?: string
+  nome_contato_primario?: string
+  cargo_contato_primario?: string
+  email_contato_primario?: string
+  telefone_contato_primario?: string
+  tratamento_contato_secundario?: string
+  nome_contato_secundario?: string
+  cargo_contato_secundario?: string
+  email_contato_secundario?: string
+  telefone_contato_secundario?: string
+  home_page?: string
+  inscricao_estadual?: string
+  inscricao_municipal?: string
+  observacoes?: string
 }
-
 
 export const EtiquetaPDFCompany = async (linhas: number[], exibirContatoPrimario: boolean) => {
   var doc = new jsPDF({
+
     unit: 'mm',
     format: 'a4',
-  });
+  })
 
   for (let index = 0; index < linhas.length; index++) {
     try {
@@ -98,3 +98,4 @@ export const EtiquetaPDFCompany = async (linhas: number[], exibirContatoPrimario
 
   doc.save('etiquetas.pdf');
 };
+

@@ -1,4 +1,3 @@
-'use client';
 
 import { jsPDF } from 'jspdf';
 import { toast } from 'react-toastify';
@@ -54,9 +53,10 @@ interface EtiquetaProps {
 
 export const EtiquetaPDF = async (linhas: number[]) => {
   var doc = new jsPDF({
+
     unit: 'mm',
     format: 'a4',
-  });
+  })
 
   for (let index = 0; index < linhas.length; index++) {
     try {
@@ -142,3 +142,4 @@ export const EtiquetaPDF = async (linhas: number[]) => {
 
   doc.save('etiquetas.pdf');
 };
+

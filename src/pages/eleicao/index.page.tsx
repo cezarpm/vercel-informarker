@@ -53,7 +53,11 @@ export default function Votacao({ data, alreadyVoted }: Votation) {
     setShowVotation(false)
     setUserAlreadyVoted(true)
 
-    await api.post('/votos/cadastro', { nome_chapa: selected, votacao_id: votation.id, usuario_id: 1 })
+    await api.post('/votos/cadastro', {
+      nome_chapa: selected,
+      votacao_id: votation.id,
+      usuario_id: 1,
+    })
   }
 
   const saveVotaionInPdf = () => {
@@ -67,7 +71,6 @@ export default function Votacao({ data, alreadyVoted }: Votation) {
   }
 
   const expandCandidates = (index: number) => {
-
     const expanded = votation.chapas.chapas.map((item: any, i: number) => {
       if (i === index) {
         return {
@@ -85,7 +88,6 @@ export default function Votacao({ data, alreadyVoted }: Votation) {
         chapas: expanded,
       },
     })
-
   }
 
   const revertVote = () => {
@@ -171,13 +173,12 @@ export default function Votacao({ data, alreadyVoted }: Votation) {
 
   return (
     <Container>
-
-      <h1 style={{ textAlign: 'center' }}>Votação {votation?.matricula_saerj}</h1>
-
+      <h1 style={{ textAlign: 'center' }}>
+        Votação {votation?.matricula_saerj}
+      </h1>
 
       <Dialog open={open} onClose={() => setOpen(false)} setOpen={setOpen}>
         <WelcomeModal>
-
           {votation ? (
             <div>
               <Typography id="modal-modal-title" variant="h6" component="h2">
@@ -188,14 +189,20 @@ export default function Votacao({ data, alreadyVoted }: Votation) {
                 Perído de Votação
               </Typography>
               <Typography id="modal-modal-title" variant="h6" component="h2">
-                Início : {new Date(votation?.data_votacao_inicio).toLocaleDateString()}
+                Início :{' '}
+                {new Date(votation?.data_votacao_inicio).toLocaleDateString()}
               </Typography>
               <Typography id="modal-modal-title" variant="h6" component="h2">
-                Encerramento: {new Date(votation?.data_votacao_fim).toLocaleDateString()}
+                Encerramento:{' '}
+                {new Date(votation?.data_votacao_fim).toLocaleDateString()}
               </Typography>
 
               {userAlreadyVoted ? (
-                <Typography style={{ marginTop: 10 }} variant="h6" component="h5">
+                <Typography
+                  style={{ marginTop: 10 }}
+                  variant="h6"
+                  component="h5"
+                >
                   Você já votou nessa eleição
                 </Typography>
               ) : (
@@ -217,7 +224,7 @@ export default function Votacao({ data, alreadyVoted }: Votation) {
                 </button>
               )}
             </div>
-          ) :
+          ) : (
             <div>
               <Typography id="modal-modal-title" variant="h6" component="h2">
                 Bem-Vindo as Eleições da SAERJ
@@ -226,10 +233,8 @@ export default function Votacao({ data, alreadyVoted }: Votation) {
               <Typography id="modal-modal-title" variant="h6" component="h2">
                 Ainda não existe nenhuma eleição ativa
               </Typography>
-
             </div>
-          }
-
+          )}
         </WelcomeModal>
       </Dialog>
 
@@ -280,51 +285,54 @@ export default function Votacao({ data, alreadyVoted }: Votation) {
       </Dialog>
 
       <Container>
-        {votation && votation.chapas?.chapas?.map((item: any, index: number) => (
-          <>
-            <div key={index}>
-              <BoxOptions >
-                <Checkbox
-                  onClick={() => handleClick(item.nome_chapa)}
-                  type="radio"
-                  name="voto"
-                  value="1"
-                  checked={selected === item.nome_chapa}
-                />
+        {votation &&
+          votation.chapas?.chapas?.map((item: any, index: number) => (
+            <>
+              <div key={index}>
+                <BoxOptions>
+                  <Checkbox
+                    onClick={() => handleClick(item.nome_chapa)}
+                    type="radio"
+                    name="voto"
+                    value="1"
+                    checked={selected === item.nome_chapa}
+                  />
 
-                <div style={{ flex: 1 }}>
-                  <BoxOptionName onClick={() => expandCandidates(index)}>
-                    <p>{item.nome_chapa}</p>
+                  <div style={{ flex: 1 }}>
+                    <BoxOptionName onClick={() => expandCandidates(index)}>
+                      <p>{item.nome_chapa}</p>
 
-                    <Typography
-                      onClick={() => expandCandidates(index)}
-                      id="modal-modal-title"
-                      variant="h6"
-                      component="h2"
-                    >
-                      +
-                    </Typography>
-                  </BoxOptionName>
+                      <Typography
+                        onClick={() => expandCandidates(index)}
+                        id="modal-modal-title"
+                        variant="h6"
+                        component="h2"
+                      >
+                        +
+                      </Typography>
+                    </BoxOptionName>
 
-                  {item.expandend && (
-                    <div>
-                      {item.membros_chapa.map((canditate: any, index: number) => (
-                        <BoxCandidates key={index}>
-                          <Avatar alt="Remy Sharp" src={canditate.image} />
+                    {item.expandend && (
+                      <div>
+                        {item.membros_chapa.map(
+                          (canditate: any, index: number) => (
+                            <BoxCandidates key={index}>
+                              <Avatar alt="Remy Sharp" src={canditate.image} />
 
-                          <CanditateName>{canditate.nome}</CanditateName>
-                          <CanditatePosition>
-                            {canditate.cargo}
-                          </CanditatePosition>
-                        </BoxCandidates>
-                      ))}
-                    </div>
-                  )}
-                </div>
-              </BoxOptions>
-            </div>
-          </>
-        ))}
+                              <CanditateName>{canditate.nome}</CanditateName>
+                              <CanditatePosition>
+                                {canditate.cargo}
+                              </CanditatePosition>
+                            </BoxCandidates>
+                          ),
+                        )}
+                      </div>
+                    )}
+                  </div>
+                </BoxOptions>
+              </div>
+            </>
+          ))}
 
         {votation && (
           <>
@@ -334,7 +342,6 @@ export default function Votacao({ data, alreadyVoted }: Votation) {
                 checked={selected === 'BRANCO'}
                 type="radio"
               />
-
 
               <WhiteButton>
                 <p>BRANCO</p>
@@ -366,12 +373,11 @@ export default function Votacao({ data, alreadyVoted }: Votation) {
   )
 }
 
-
 export const getServerSideProps: GetServerSideProps = async () => {
   try {
     const data = await prisma.votacao.findFirst({
       where: {
-        status: 'ATIVA'
+        status: 'ATIVA',
       },
     })
 
@@ -388,7 +394,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
     return {
       props: {
         data,
-        alreadyVoted
+        alreadyVoted,
       },
     }
   } catch (error) {

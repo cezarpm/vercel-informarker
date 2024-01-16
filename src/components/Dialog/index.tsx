@@ -15,7 +15,6 @@ export default function DialogComponent({
   onClose,
   closeOnBackdropClick = true,
 }: Props) {
-
   const handleClose = (event: any, reason: any) => {
     if (!closeOnBackdropClick && reason === 'backdropClick') return
     onClose()

@@ -5,7 +5,7 @@ import type { AppProps } from 'next/app'
 import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 
-import { LocalizationProvider } from '@mui/x-date-pickers';
+import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs'
 
 globalStyles()
@@ -31,7 +31,7 @@ export default function App({
             theme="light"
           />
           <Component {...pageProps} />
-        </SelecaoProvider >
+        </SelecaoProvider>
       </LocalizationProvider>
     </>
   )

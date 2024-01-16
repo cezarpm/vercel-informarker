@@ -13,6 +13,7 @@ import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { Suspense, useState } from 'react'
 import { Loading } from './loading'
+import { BackPage } from '@/components/BackPage'
 
 const shemaFilter = z.object({
   categoria_filter: z.string(),
@@ -36,27 +37,35 @@ export default function AssociadoList({
     {
       field: 'nome_completo',
       headerName: 'Nome Associado',
-      width: 230,
+      flex: 0.4,
     },
     {
       field: 'matricula_SAERJ',
       headerName: 'Matricula SAERJ',
-      flex: 1,
+      width: 177,
+      align: 'left',
+      headerAlign: 'left',
     },
     {
       field: 'situacao',
       headerName: 'Situação',
-      flex: 1,
+      width: 170,
+      align: 'left',
+      headerAlign: 'left',
     },
     {
       field: 'categoria',
       headerName: 'Categoria',
-      flex: 1,
+      width: 150,
+      align: 'left',
+      headerAlign: 'left',
     },
     {
       field: 'pendencias_SAERJ',
       headerName: 'Pendencias Saerj',
-      flex: 1,
+      flex: 0.1,
+      align: 'left',
+      headerAlign: 'left',
     },
   ]
 
@@ -109,10 +118,10 @@ export default function AssociadoList({
     console.log(filteredList)
   }
 
-  console.log(List)
   return (
     <Suspense fallback={<Loading />}>
       <Container>
+        <BackPage backRoute="/" />
         <p>Associados</p>
         <ContainerFormFilter>
           <Box style={{ justifyContent: 'start', alignItems: 'end' }}>
@@ -266,31 +275,3 @@ export const getServerSideProps: GetServerSideProps = async () => {
     }
   }
 }
-
-// export const getServerSideProps: GetServerSideProps = async () => {
-//   try {
-//     const response = await prisma.associados.findMany()
-//     const data = response.map((item) => {
-//       return {
-//         ...item,
-//       }
-//     })
-
-//     let dataSituacao
-
-//     return {
-//       props: {
-//         data,
-//         dataSituacao,
-//       },
-//     }
-//   } catch (error) {
-//     console.error('Erro ao obter dados da empresa:', error)
-//     return {
-//       props: {
-//         data: [],
-//       },
-//     }
-//   }
-
-

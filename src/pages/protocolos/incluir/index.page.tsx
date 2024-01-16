@@ -15,6 +15,7 @@ import Link from 'next/link';
 import { toast } from 'react-toastify';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/router';
+
 // import 'react-date-picker/dist/DatePicker.css';
 // import 'react-calendar/dist/Calendar.css';
 
@@ -38,19 +39,19 @@ const schemaProtocoloForm = z.object({
   data_encerramento_protocolo_mes: z.number(),
   data_encerramento_protocolo_ano: z.number(),
   usuario_encerramento_protocolo: z.string(), // ALTERAR PARA USUÁRIO
-});
+})
 
 const dayOptionsData = Array.from({ length: 31 }, (_, index) => ({
   id: index + 1,
   label: `${index + 1}`,
-}));
+}))
 
 const monthOptionsData = Array.from({ length: 12 }, (_, index) => ({
   id: index + 1,
   label: `${index + 1}`,
-}));
+}))
 
-const currentYear = new Date().getFullYear();
+const currentYear = new Date().getFullYear()
 
 const yearOptionsData = Array.from(
   { length: currentYear - (currentYear - 30) + 1 },
@@ -58,7 +59,7 @@ const yearOptionsData = Array.from(
     id: currentYear - 30 + index,
     label: `${currentYear - 30 + index}`,
   }),
-);
+)
 
 // ATUALIZAR QUANDO HOUVER API CORRESPONDENTE - TIPO PROTOCOLO
 
@@ -81,7 +82,7 @@ const yearOptionsData = Array.from(
 const tipoProtocoloOptionsData = [
   { id: 1, label: 'Entrada' },
   { id: 2, label: 'Saída' },
-];
+]
 
 // ATUALIZAR QUANDO HOUVER API CORRESPONDENTE - MEIO PROTOCOLO
 
@@ -106,7 +107,7 @@ const meioProtocoloOptionsData = [
   { id: 2, label: 'Email' },
   { id: 3, label: 'Whatsapp' },
   { id: 4, label: 'Web Site' },
-];
+]
 
 // ATUALIZAR QUANDO HOUVER API CORRESPONDENTE - ASSUNTO PROTOCOLO
 
@@ -130,7 +131,7 @@ const assuntoProtocoloOptionsData = [
   { id: 1, label: 'Protocolo de Entrada' },
   { id: 2, label: 'Protocolo de Saída' },
   { id: 3, label: 'Confidencial' },
-];
+]
 
 // ATUALIZAR QUANDO HOUVER API CORRESPONDENTE - QUEM REDIGIU O DOCUMENTO A SER ENVIADO
 
@@ -150,34 +151,35 @@ const assuntoProtocoloOptionsData = [
         })
       }
   */
-const quemRedigiuDocumentoOptionsData = [{ id: 1, label: 'Dr. Calazan' }];
+const quemRedigiuDocumentoOptionsData = [{ id: 1, label: 'Dr. Calazan' }]
 
-type SchemaProtocoloForm = z.infer<typeof schemaProtocoloForm>;
+type SchemaProtocoloForm = z.infer<typeof schemaProtocoloForm>
 
-type ValuePiece = Date | null;
+type ValuePiece = Date | null
 
-type Value = ValuePiece | [ValuePiece, ValuePiece];
+type Value = ValuePiece | [ValuePiece, ValuePiece]
 
 export default function Protocolos() {
-  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([])
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const fileList = event.target.files;
+    const fileList = event.target.files
     if (fileList) {
-      const filesArray = Array.from(fileList);
-      setSelectedFiles(filesArray);
+      const filesArray = Array.from(fileList)
+      setSelectedFiles(filesArray)
     }
-  };
+  }
 
-  const router = useRouter();
+  const router = useRouter()
 
   const {
     register,
     handleSubmit,
     formState: { isSubmitting, errors },
-  } = useForm<SchemaProtocoloForm>();
+  } = useForm<SchemaProtocoloForm>()
 
   async function handleOnSubmit(data: SchemaProtocoloForm) {
+
     var data_envio = new Date(data.data_envio_ano+'-'+data.data_envio_mes+'-'+data.data_envio_dia);
     var data_recebimento = new Date(data.data_recebimento_ano+'-'+data.data_recebimento_mes+'-'+data.data_recebimento_dia);
     
@@ -192,7 +194,6 @@ export default function Protocolos() {
         console.log(error);
         return toast.error('Ops, algo deu errado ao cadastrar o protocolo...');
       }
-
     }
 
   }
@@ -277,7 +278,7 @@ export default function Protocolos() {
                 w={100}
                 {...register('data_recebimento_dia', {
                   valueAsNumber: true, // Essa opção indica que o valor deve ser tratado como número
-                  setValueAs: value => parseInt(value), // Função para converter o valor para número
+                  setValueAs: (value) => parseInt(value), // Função para converter o valor para número
                 })}
               />
             </div>
@@ -289,7 +290,7 @@ export default function Protocolos() {
                 w={100}
                 {...register('data_recebimento_mes', {
                   valueAsNumber: true, // Essa opção indica que o valor deve ser tratado como número
-                  setValueAs: value => parseInt(value), // Função para converter o valor para número
+                  setValueAs: (value) => parseInt(value), // Função para converter o valor para número
                 })}
               />
             </div>
@@ -301,7 +302,7 @@ export default function Protocolos() {
                 w={150}
                 {...register('data_recebimento_ano', {
                   valueAsNumber: true, // Essa opção indica que o valor deve ser tratado como número
-                  setValueAs: value => parseInt(value), // Função para converter o valor para número
+                  setValueAs: (value) => parseInt(value), // Função para converter o valor para número
                 })}
               />
             </div>
@@ -352,7 +353,7 @@ export default function Protocolos() {
                 w={100}
                 {...register('data_envio_dia', {
                   valueAsNumber: true, // Essa opção indica que o valor deve ser tratado como número
-                  setValueAs: value => parseInt(value), // Função para converter o valor para número
+                  setValueAs: (value) => parseInt(value), // Função para converter o valor para número
                 })}
               />
             </div>
@@ -364,7 +365,7 @@ export default function Protocolos() {
                 w={100}
                 {...register('data_envio_mes', {
                   valueAsNumber: true, // Essa opção indica que o valor deve ser tratado como número
-                  setValueAs: value => parseInt(value), // Função para converter o valor para número
+                  setValueAs: (value) => parseInt(value), // Função para converter o valor para número
                 })}
               />
             </div>
@@ -376,7 +377,7 @@ export default function Protocolos() {
                 w={150}
                 {...register('data_envio_ano', {
                   valueAsNumber: true, // Essa opção indica que o valor deve ser tratado como número
-                  setValueAs: value => parseInt(value), // Função para converter o valor para número
+                  setValueAs: (value) => parseInt(value), // Função para converter o valor para número
                 })}
               />
             </div>
@@ -422,7 +423,7 @@ export default function Protocolos() {
                 w={100}
                 {...register('data_encerramento_protocolo_dia', {
                   valueAsNumber: true, // Essa opção indica que o valor deve ser tratado como número
-                  setValueAs: value => parseInt(value), // Função para converter o valor para número
+                  setValueAs: (value) => parseInt(value), // Função para converter o valor para número
                 })}
               />
             </div>
@@ -434,7 +435,7 @@ export default function Protocolos() {
                 w={100}
                 {...register('data_encerramento_protocolo_mes', {
                   valueAsNumber: true, // Essa opção indica que o valor deve ser tratado como número
-                  setValueAs: value => parseInt(value), // Função para converter o valor para número
+                  setValueAs: (value) => parseInt(value), // Função para converter o valor para número
                 })}
               />
             </div>
@@ -446,7 +447,7 @@ export default function Protocolos() {
                 w={100}
                 {...register('data_encerramento_protocolo_ano', {
                   valueAsNumber: true, // Essa opção indica que o valor deve ser tratado como número
-                  setValueAs: value => parseInt(value), // Função para converter o valor para número
+                  setValueAs: (value) => parseInt(value), // Função para converter o valor para número
                 })}
               />
             </div>
@@ -515,5 +516,5 @@ export default function Protocolos() {
         </fieldset>
       </form>
     </Container>
-  );
+  )
 }

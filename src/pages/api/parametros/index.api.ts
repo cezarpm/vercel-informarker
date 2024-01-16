@@ -16,5 +16,7 @@ export default async function handler(
   } catch (error) {
     const MessageError = `Error connect db`
     res.status(500).json({ message: `${MessageError}, ${error}` })
+  } finally {
+    prisma.$disconnect()
   }
 }

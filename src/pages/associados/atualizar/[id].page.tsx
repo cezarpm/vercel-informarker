@@ -70,10 +70,6 @@ const schemaAssociados = z.object({
   sigla_regional: z.string(),
   comprovante_cpf: z.any(),
 
-  // data_nascimento: z.string(),
-  // data_inicio_especializacao: z.string(),
-  // data_previsao_conclusao: z.string(),
-
   yearNasc: z.string(),
   monthNasc: z.string(),
   dayNasc: z.string(),
@@ -330,54 +326,54 @@ export default function AssociadosCadastro({
         ...newData
       } = data
       // CODIGO ABAIXO REFERE-SE AO UPLOAD DAS IMAGENS
-      // const formData = new FormData()
-      // formData.append('comprovante_cpf', data.comprovante_cpf[0])
-      // formData.append('comprovante_endereco', data.comprovante_endereco[0])
-      // formData.append(
-      //   'carta_indicacao_2_membros',
-      //   data.carta_indicacao_2_membros[0],
-      // )
-      // formData.append('certidao_quitacao_crm', data.certidao_quitacao_crm[0])
-      // formData.append(
-      //   'certificado_conclusao_especializacao',
-      //   data.certificado_conclusao_especializacao[0],
-      // )
+      const formData = new FormData()
+      formData.append('comprovante_cpf', data.comprovante_cpf[0])
+      formData.append('comprovante_endereco', data.comprovante_endereco[0])
+      formData.append(
+        'carta_indicacao_2_membros',
+        data.carta_indicacao_2_membros[0],
+      )
+      formData.append('certidao_quitacao_crm', data.certidao_quitacao_crm[0])
+      formData.append(
+        'certificado_conclusao_especializacao',
+        data.certificado_conclusao_especializacao[0],
+      )
 
-      // formData.append('declaracao_hospital', data.declaracao_hospital[0])
-      // formData.append('diploma_medicina', data.diploma_medicina[0])
+      formData.append('declaracao_hospital', data.declaracao_hospital[0])
+      formData.append('diploma_medicina', data.diploma_medicina[0])
 
-      // const response = await axios.post('/api/upload', formData, {
-      //   headers: {
-      //     'Content-Type': 'multipart/form-data',
-      //   },
-      // })
+      const response = await axios.post('/api/upload', formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      })
       console.log(
         newData,
         dataNascimento,
         dataInicioEspecializacao,
         dataPrevisaoConclusao,
-        // response.data.names_arquivos,
+        response.data.names_arquivos,
       )
 
-      await api.put('/associados/update', {
-        ...newData,
-        declaro_quite_SAERJ: String(data.declaro_quite_SAERJ),
-        declaro_verdadeiras: String(data.declaro_verdadeiras),
-        data_nascimento: dataNascimento,
-        data_inicio_especializacao: dataInicioEspecializacao,
-        data_previsao_conclusao: dataPrevisaoConclusao,
+      // await api.put('/associados/update', {
+      //   ...newData,
+      //   declaro_quite_SAERJ: String(data.declaro_quite_SAERJ),
+      //   declaro_verdadeiras: String(data.declaro_verdadeiras),
+      //   data_nascimento: dataNascimento,
+      //   data_inicio_especializacao: dataInicioEspecializacao,
+      //   data_previsao_conclusao: dataPrevisaoConclusao,
 
-        // CODIGO A BAIXO REFERE-SE AO SALVAMENTO DOS NOMES DOS ARQUIVOS => PRECISA AJUSTAR A LOGICA
-        //  comprovante_cpf: await response.data.names_arquivos[0],
-        //  comprovante_endereco: await response.data.names_arquivos[1],
-        //  carta_indicacao_2_membros: await response.data.names_arquivos[2],
-        //  certidao_quitacao_crm: await response.data.names_arquivos[3],
-        //  certificado_conclusao_especializacao:
-        //    await response.data.names_arquivos[4],
-        //  declaracao_hospital: await response.data.names_arquivos[5],
-        //  diploma_medicina: await response.data.names_arquivos[6],
-      })
-      toast.success('Associado cadastrado')
+      //   // // CODIGO A BAIXO REFERE-SE AO SALVAMENTO DOS NOMES DOS ARQUIVOS => PRECISA AJUSTAR A LOGICA
+      //    comprovante_cpf: await response.data.names_arquivos[0],
+      //    comprovante_endereco: await response.data.names_arquivos[1],
+      //    carta_indicacao_2_membros: await response.data.names_arquivos[2],
+      //    certidao_quitacao_crm: await response.data.names_arquivos[3],
+      //    certificado_conclusao_especializacao:
+      //      await response.data.names_arquivos[4],
+      //    declaracao_hospital: await response.data.names_arquivos[5],
+      //    diploma_medicina: await response.data.names_arquivos[6],
+      // })
+      // toast.success('Associado cadastrado')
       router.push('/associados')
     } catch (error) {
       console.log(error)

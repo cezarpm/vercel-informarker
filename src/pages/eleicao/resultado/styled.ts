@@ -37,5 +37,4 @@ export const Table = styled('table', {
       backgroundColor: '#70B888',
     },
   },
-  
 })

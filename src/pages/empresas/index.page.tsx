@@ -14,9 +14,8 @@ import { z } from 'zod'
 import { useState } from 'react'
 import ModalTickets from '@/components/ModalTickets'
 import { formatCNPJ } from '@/utils/formatCnpj'
+import { BackPage } from '@/components/BackPage'
 import Link from 'next/link'
-import { ArrowBendDownLeft } from 'phosphor-react'
-
 
 const shemaFilter = z.object({
   tipo_empresa_filter: z.string(),
@@ -26,38 +25,38 @@ const shemaFilter = z.object({
 })
 
 interface EtiquetaProps {
-  id: number;
-  cod_empresa?: string;
-  tipo_empresa?: string;
-  patrocinadora?: boolean;
-  faculdade_anestesiologia?: boolean;
-  empresa_ativa?: boolean;
-  cnpj?: string;
-  razao_social?: string;
-  nome_fantasia?: string;
-  cep?: string;
-  logradouro?: string;
-  numero?: number;
-  complemento?: string;
-  cidade?: string;
-  uf?: string;
-  pais?: string;
-  bairro?: string;
-  telefone_comercial?: string;
-  tratamento_contato_primario?: string;
-  nome_contato_primario?: string;
-  cargo_contato_primario?: string;
-  email_contato_primario?: string;
-  telefone_contato_primario?: string;
-  tratamento_contato_secundario?: string;
-  nome_contato_secundario?: string;
-  cargo_contato_secundario?: string;
-  email_contato_secundario?: string;
-  telefone_contato_secundario?: string;
-  home_page?: string;
-  inscricao_estadual?: string;
-  inscricao_municipal?: string;
-  observacoes?: string;
+  id: number
+  cod_empresa?: string
+  tipo_empresa?: string
+  patrocinadora?: boolean
+  faculdade_anestesiologia?: boolean
+  empresa_ativa?: boolean
+  cnpj?: string
+  razao_social?: string
+  nome_fantasia?: string
+  cep?: string
+  logradouro?: string
+  numero?: number
+  complemento?: string
+  cidade?: string
+  uf?: string
+  pais?: string
+  bairro?: string
+  telefone_comercial?: string
+  tratamento_contato_primario?: string
+  nome_contato_primario?: string
+  cargo_contato_primario?: string
+  email_contato_primario?: string
+  telefone_contato_primario?: string
+  tratamento_contato_secundario?: string
+  nome_contato_secundario?: string
+  cargo_contato_secundario?: string
+  email_contato_secundario?: string
+  telefone_contato_secundario?: string
+  home_page?: string
+  inscricao_estadual?: string
+  inscricao_municipal?: string
+  observacoes?: string
 }
 
 type SchemaFilter = z.infer<typeof shemaFilter>
@@ -68,7 +67,7 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
   const [list, setList] = useState(data)
 
   const { register, watch } = useForm<SchemaFilter>()
-    
+
   function BuscarFiltro() {
     const TipoEmpresaFilter = watch('tipo_empresa_filter')
     const PatrocinadoraFilter = watch('patrocinarora_filter')
@@ -205,24 +204,10 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
 
   return (
     <Container>
-        <Box style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-          <p>Empresas</p>
-          <Link
-            href="/"
-            style={{
-              textDecoration: 'none',
-              fontFamily: 'Roboto',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              color: '#000',
-            }}
-          >
-            <ArrowBendDownLeft size={32} />
-            Retornar
-          </Link>
-        </Box>
-      
+
+      <BackPage backRoute="/" />
+      <p>Empresas</p>
+
       <div>
         <Box
           style={{
@@ -282,12 +267,27 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
           }
 
       </Box>
-        
 
 
+          {selectedRowIds.length > 0 && (
+            <Box
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'flex-end',
+              }}
+            >
+              <ModalTickets
+                title="Gerar Etiqueta"
+                bgColor="#0da9a4"
+                data={selectedRowIds}
+                route="/api/empresa/get/"
+              />
+            </Box>
+          )}
+        </Box>
       </div>
       <DataGridDemo columns={columns} rows={list} w="100%" />
-
       <Box>
         <Button
           style={{ backgroundColor: '#4471C6' }}

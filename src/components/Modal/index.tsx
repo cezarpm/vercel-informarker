@@ -70,7 +70,7 @@ export default function Modal({
       >
         <Box sx={style}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            Você deseja realmente Excluir os items selecionados?
+            Você deseja realmente excluir os items selecionados?
           </Typography>
           <Button
             title="Sim"

@@ -70,7 +70,6 @@ export default function Vizualizar({
 }: any) {
   const router = useRouter()
 
-
   const [cepInvalido, setCepInvalido] = useState()
   const [disabledButtonCep, setDisabledButtonCep] = useState(false)
 
