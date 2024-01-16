@@ -11,12 +11,11 @@ import CircularProgress from '@mui/material/CircularProgress'
 
 export default function DataGridDemo({ rows, columns, w }: any) {
   const { setSelection, selectedRowIds } = useId()
-  const [quantidadeLinhas, setQuantidadeLinhas] = useState(10);
 
-  useEffect(() => {
-    getQuantityRows();
-    setSelection([]);
-  },[]);
+//  useEffect(() => {
+  //  getQuantityRows();
+ //   setSelection([]);
+//  },[]);
 
   useEffect(() => {
     if(rows.length == 1){
