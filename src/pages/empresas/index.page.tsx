@@ -14,6 +14,7 @@ import { z } from 'zod'
 import { useState } from 'react'
 import ModalTickets from '@/components/ModalTickets'
 import { formatCNPJ } from '@/utils/formatCnpj'
+import { BackPage } from '@/components/BackPage'
 
 
 const shemaFilter = z.object({
@@ -203,6 +204,9 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
 
   return (
     <Container>
+      <BackPage
+      backRoute='/'
+      />
       <p>Empresas</p>
       <div>
         <Box
@@ -254,21 +258,19 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
             onClick={BuscarFiltro} 
             />
 
+          {selectedRowIds.length > 0 &&
+            <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
+              <ModalTickets
+                title="Gerar Etiqueta"
+                bgColor="#0da9a4"
+                data={selectedRowIds}
+                route="/api/empresa/get/"
+              />
+            </Box>
+          }
       </Box>
-        {selectedRowIds.length > 0 &&
-          <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-          <ModalTickets
-            title="Gerar Etiqueta"
-            bgColor="#0da9a4"
-            data={selectedRowIds}
-            route="/api/empresa/get/"
-          />
-          </Box>
-        }
-
       </div>
       <DataGridDemo columns={columns} rows={list} w="100%" />
-
       <Box>
         <Button
           style={{ backgroundColor: '#4471C6' }}

@@ -21,6 +21,10 @@ DATABASE_URL="mysql://root:mysql@localhost:3306/mysql-container"
 npx prisma generate
 npx prisma migrate dev
 
+   "@mui/x-date-pickers": "^6.18.7",
+ "jspdf": "^2.5.1",
+    "jspdf-autotable": "^3.8.1",
+    "jspdf-react": "^1.0.11",
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.

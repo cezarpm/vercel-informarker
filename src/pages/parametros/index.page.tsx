@@ -12,6 +12,7 @@ import { api } from '@/lib/axios'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/router'
 import { useArrayDate } from '@/utils/useArrayDate'
+import { BackPage } from '@/components/BackPage'
 
 interface schemaCategorias {
   label: string
@@ -155,39 +156,35 @@ export default function Parametros({
   return (
     <Container>
       <form onSubmit={handleSubmit(handleOnSubmit)}>
+        <BackPage backRoute="/" />
+
         <fieldset>
           <legend>
             <span>Parametros</span>
             {/* <CaretRight size={14} />
             <span>Atualizar</span> */}
           </legend>
+
           <Box>
-            <div style={{ flex: 1 }}>
-              <SwitchInput
-                title="Acesso externo ao sistema autorizado?"
-                {...register('acesso_externo_sis')}
-                defaultChecked={dataParametros.acesso_externo_sis}
+            <div>
+              <TextInput
+                title="Random"
+                w={100}
+                disabled
+                defaultValue={dataParametros.random}
               />
             </div>
-            <div style={{ flex: 1 }}>
+            <div style={{ flex: 0.8 }}>
               <SwitchInput
-                title="CEP inválido"
+                title="CEP inválido: Aceita preenchimento manual do endereço?"
                 {...register('cep_invalido')}
                 defaultChecked={dataParametros.cep_invalido}
               />
             </div>
-            <div style={{ flex: 1 }}>
-              <Button
-                type="button"
-                title="Associados"
-                onClick={handleNextPage}
-              />
-            </div>
-          </Box>
-          <Box>
+
             <div style={{ display: 'flex', alignItems: 'end', width: '38rem' }}>
               <Text>
-                Data limite pagamento antecipado anuidade com desconto:
+                Data limite para pagamento antecipado da Anuidade com desconto?
               </Text>
 
               <SelectOptions
@@ -215,8 +212,9 @@ export default function Parametros({
               />
             </div>
             <TextInput
+              w={380}
               type="number"
-              title="% Desconto Pgto Antecipado Anuidade"
+              title="Percentual de desconto para pagamento antecipado da Anuidade"
               {...register('percent_desc_pgto_antecipado_anuidade', {
                 valueAsNumber: true,
               })}
@@ -225,14 +223,24 @@ export default function Parametros({
               }
             />
 
-            <TextInput
-              title="Taxa (valor) pagamento da Anuidade após o prazo"
-              {...register('taxa_pgto_atrasado_anuidade', {
-                valueAsNumber: true,
-              })}
-              defaultValue={dataParametros.taxa_pgto_atrasado_anuidade}
+            <Button
+              style={{ width: '100%' }}
+              type="button"
+              title="Associados"
+              onClick={handleNextPage}
             />
-
+          </Box>
+          <Box>
+            <div>
+              <TextInput
+                w={330}
+                title="Taxa (valor) para pagamento da Anuidade após o prazo"
+                {...register('taxa_pgto_atrasado_anuidade', {
+                  valueAsNumber: true,
+                })}
+                defaultValue={dataParametros.taxa_pgto_atrasado_anuidade}
+              />
+            </div>
             <SelectOptions
               {...register('parcelamento_permitido_anuidade')}
               w={440}
@@ -242,12 +250,10 @@ export default function Parametros({
                 label: dataParametros.parcelamento_permitido_anuidade,
               }}
             />
-          </Box>
 
-          <Box>
             <div style={{ display: 'flex', alignItems: 'end', width: '38rem' }}>
               <Text>
-                Data limite para pagamento antecipado da JAER com desconto:
+                Data limite para pagamento antecipado da JAER com desconto?
               </Text>
 
               <SelectOptions
@@ -274,40 +280,39 @@ export default function Parametros({
                 defaultValue={{ label: newDateAnuidadeJaer.ano }}
               />
             </div>
-
             <TextInput
               type="number"
-              title="% Desconto Pgto antecipado JAER"
+              title="Percentual de desconto para pagamento antecipado da JAER"
               {...register('percent_desc_pgto_antecipado_JAER', {
                 valueAsNumber: true,
               })}
               defaultValue={dataParametros.percent_desc_pgto_antecipado_JAER}
             />
-            <TextInput
-              title="Taxa (valor) para pagamento JAER após o prazo"
-              {...register('taxa_pgto_atrasado_JAER', {
-                valueAsNumber: true,
-              })}
-              defaultValue={dataParametros.taxa_pgto_atrasado_JAER}
-            />
-            <SelectOptions
-              data={newDataCategory}
-              w={440}
-              description="Parcelamento JAER Permitido para Categorias"
-              {...register('parcelamento_permitido_JAER')}
-              defaultValue={{
-                label: dataParametros.parcelamento_permitido_JAER,
-              }}
-            />
           </Box>
 
           <Box>
-            <TextInput
-              w={300}
-              title="Duracao mandato da diretoria em anos"
-              {...register('duracao_mandato', { valueAsNumber: true })}
-              defaultValue={dataParametros.duracao_mandato}
-            />
+            <div>
+              <TextInput
+                w={330}
+                title="Taxa (valor) para pagamento da JAER após o prazo"
+                {...register('taxa_pgto_atrasado_JAER', {
+                  valueAsNumber: true,
+                })}
+                defaultValue={dataParametros.taxa_pgto_atrasado_JAER}
+              />
+            </div>
+            <div>
+              <SelectOptions
+                data={newDataCategory}
+                w={440}
+                description="Parcelamento JAER Permitido para Categorias"
+                {...register('parcelamento_permitido_JAER')}
+                defaultValue={{
+                  label: dataParametros.parcelamento_permitido_JAER,
+                }}
+              />
+            </div>
+
             <SwitchInput
               title="Presidente pode se reeleger?"
               {...register('presidente_pode_se_reeleger')}
@@ -319,19 +324,40 @@ export default function Parametros({
               {...register('demais_podem_se_reeleger')}
               defaultChecked={dataParametros.demais_podem_se_reeleger}
             />
+          </Box>
+
+          <Box>
+            <div>
+              <TextInput
+                w={200}
+                title="Duração Mandato Diretoria em anos"
+                {...register('duracao_mandato', { valueAsNumber: true })}
+                defaultValue={dataParametros.duracao_mandato}
+              />
+            </div>
             <SwitchInput
-              title="Exibe listas na imediato ou aguarda clicar botao pesquisar"
+              title="Exibe LIstas na imediato ou aguarda clicar botão pesquisar?"
               {...register('exite_listas_imediato')}
               defaultChecked={dataParametros.exite_listas_imediato}
             />
-            <TextInput
-              type="number"
-              title="Quantidade de linhas por pagina nas listas"
-              {...register('quantidade_linhas_listas', {
-                valueAsNumber: true,
-              })}
-              defaultValue={dataParametros.quantidade_linhas_listas}
-            />
+            <div>
+              <TextInput
+                w={300}
+                type="number"
+                title="Quantidade de linhas por pagina nas listas"
+                {...register('quantidade_linhas_listas', {
+                  valueAsNumber: true,
+                })}
+                defaultValue={dataParametros.quantidade_linhas_listas}
+              />
+            </div>
+            <div style={{ flex: 1 }}>
+              <SwitchInput
+                title="Acesso externo ao sistema autorizado?"
+                {...register('acesso_externo_sis')}
+                defaultChecked={dataParametros.acesso_externo_sis}
+              />
+            </div>
           </Box>
 
           <Box>
@@ -366,7 +392,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
   try {
     const dataCategory = await prisma.tabelas.findMany({
       where: {
-        codigo_tabela: 'categoria',
+        codigo_tabela: 'Categoria_Associado',
       },
     })
     const newDataCategory = dataCategory.map((item) => {

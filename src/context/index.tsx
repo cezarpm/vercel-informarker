@@ -5,7 +5,6 @@ type schemaContext = {
   setSelection: any
   updateListAll: boolean
   setUpdateListAll: any
-  // Logs: any
 }
 
 // Criando o contexto
@@ -20,6 +19,7 @@ type schemaProvider = {
 export const SelecaoProvider: React.FC<schemaProvider> = ({ children }) => {
   const [selectedRowIds, setSelectedRowIds] = React.useState<number[]>([])
   const [updateListAll, setUpdateListAll] = React.useState<boolean>(false)
+
   const setSelection = (newSelection: number[]) => {
     setSelectedRowIds(newSelection)
   }

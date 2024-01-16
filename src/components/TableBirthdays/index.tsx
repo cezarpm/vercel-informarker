@@ -6,7 +6,6 @@ import { FormControlLabel, FormLabel, InputLabel, MenuItem, Modal, Radio, RadioG
 import { ButtonEtiqueta, ContainerFilters, HeaderBirthdays, TextNoFilter } from './styled'
 import { Button } from '@ignite-ui/react'
 import { toast } from 'react-toastify'
-import { prisma } from '@/lib/prisma'
 import { EtiquetaPDF } from '@/utils/ticketsAssociates'
 
 interface EtiquetaProps {
