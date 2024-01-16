@@ -59,106 +59,86 @@ export const EtiquetaPDF = async (linhas: number[]) => {
   });
 
   for (let index = 0; index < linhas.length; index++) {
-
     try {
       const response = await fetch(`/api/associados/get/${linhas[index]}`);
       const data = await response.json();
 
-      try{
-          const response_saerj = await fetch(`/api/adicionais_saerj/get/${data.matricula_SAERJ}`);
-          const data_saerj = await response_saerj.json();
+      try {
+        const response_saerj = await fetch(`/api/adicionais_saerj/get/${data.matricula_SAERJ}`);
+        const data_saerj = await response_saerj.json();
 
-          if(response_saerj.status != 404){
-            data['tratamento'] = data_saerj.tratamento;
-          }else{
-            data['tratamento'] = "";
+        if (response_saerj.status !== 404) {
+          data['tratamento'] = data_saerj.tratamento + ' ';
+        } else {
+          data['tratamento'] = '';
+        }
+
+        const { nome_completo, bairro, cep, cidade, complemento, logradouro, numero, tratamento, uf } = data;
+
+        if (nome_completo == null || nome_completo == '') {
+          toast.error('Erro ao gerar etiquetas');
+          return false;
+        }
+
+        var endereco = '';
+        if (logradouro != null && logradouro != '') {
+          endereco += '' + logradouro;
+
+          if (numero != null && numero != '') {
+            endereco += ', ' + numero;
           }
 
-          const {
-            nome_completo,
-            bairro,
-            cep,
-            cidade,
-            complemento,
-            logradouro,
-            numero,
-            tratamento,
-            uf,
-          } = data;
-
-          console.log("DATA", data);
-
-          if(nome_completo == null || nome_completo == ""){
-            toast.error('Erro ao gerar etiquetas')
-            return false;
+          if (complemento != null && complemento != '') {
+            endereco += ' ' + complemento;
           }
+        }
 
-          var endereco = "";
-          if(logradouro != null && logradouro != ""){
-            endereco += ""+logradouro;
+        var linhaCidade = '';
 
-            if(numero != null && numero != ""){
-              endereco += ", "+numero;
-            }
+        if (cep != null && cep != '') {
+          linhaCidade += '' + cep + ' - ';
+        }
 
-            if(complemento != null && complemento != ""){
-              endereco += " "+complemento;
-            }
-          }
+        if ((cidade != null && cidade != '') && (uf != null && uf != '')) {
+          linhaCidade += '' + cidade + '/' + uf;
+        }
 
-          var linhaCidade = "";
-      
-          if(cep != null && cep != ""){
-            linhaCidade += ""+cep+" - "
-          }
+        if (endereco == '' && linhaCidade == '') {
+          toast.error('Um ou mais associados selecionados não possui todos os dados para gerar etiqueta.');
+          return false;
+        }
 
-          if((cidade != null && cidade != "") && (uf != null && uf != "")){
-            linhaCidade += ""+cidade+"/"+uf;
-          }
+        const startX = 10;
+        const startY = index * 40; // Aumentei o espaçamento vertical para 40 unidades
 
-          if(endereco == "" && linhaCidade == ""){
-            toast.error('Um ou mais associados selecionados não possui todos os dados para gerar etiqueta.');
-            return false
-          }
 
-          const startX = index % 2 === 0 ? 10 : 110;
-          const startY = Math.floor(index / 2) * 40;  // Aumentei o espaçamento vertical para 40 unidades
-      
-          const borderWidth = 90;
-          const borderHeight = 30;
-          doc.rect(startX, 5 + startY, borderWidth, borderHeight);
-      
-          doc.setFontSize(12);
-          const splitNome = doc.splitTextToSize(`${tratamento} ${nome_completo}`, 80);
-          doc.text(splitNome, startX + 4, 12 + startY);
-      
-          if(endereco != ""){
-            doc.setFontSize(10);
-            const splitEndereco = doc.splitTextToSize(`${endereco}`, 80);
-            doc.text(splitEndereco, startX + 4, 17 + startY);
-          }
+        doc.setFontSize(12);
+        const splitNome = doc.splitTextToSize(`${tratamento}${nome_completo}`, 80);
+        doc.text(splitNome, startX + 4, 12 + startY);
 
-          if((bairro != "" && bairro != null) && linhaCidade != ""){
-            const splitBairro = doc.splitTextToSize(bairro, 80);
-            doc.text(splitBairro, startX + 4, 22 + startY);
+        if (endereco != '') {
+          doc.setFontSize(10);
+          const splitEndereco = doc.splitTextToSize(`${endereco}`, 80);
+          doc.text(splitEndereco, startX + 4, 17 + startY);
+        }
 
-            const splitCidade = doc.splitTextToSize(`${linhaCidade}`, 80);
-            doc.text(splitCidade, startX + 4, 27 + startY);
-          }
+        if ((bairro != '' && bairro != null) && linhaCidade != '') {
+          const splitBairro = doc.splitTextToSize(bairro, 80);
+          doc.text(splitBairro, startX + 4, 22 + startY);
 
-      }catch{
+          const splitCidade = doc.splitTextToSize(`${linhaCidade}`, 80);
+          doc.text(splitCidade, startX + 4, 27 + startY);
+        }
+      } catch {
         toast.error('Erro ao gerar etiquetas');
         return false;
       }
-      
     } catch (error) {
       toast.error('Erro ao gerar etiquetas');
       console.error('Erro ao buscar associados:', error);
       return false;
     }
-
-    
-  };
+  }
 
   doc.save('etiquetas.pdf');
 };
