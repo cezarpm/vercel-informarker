@@ -21,7 +21,9 @@ import {
   UsersFour,
   Article,
   UserFocus,
-  User
+  User,
+  ArchiveBox
+
 } from 'phosphor-react'
 import { useRouter } from 'next/navigation'
 import { Twirl as Hamburger } from 'hamburger-react'
@@ -41,69 +43,48 @@ export function TemporaryDrawer() {
   function handleNextPage(text: string): void {
     if (text === 'Parametros') {
       router.push('/parametros')
-    }
-
-    else if (text === 'Empresas') {
+    } else if (text === 'Empresas') {
       router.push('/empresas')
-    }
-
-    else if (text === 'Tabelas') {
+    } else if (text === 'Tabelas') {
       router.push('/tabelas')
-    }
-
-    else if (text === 'Associados') {
+    } else if (text === 'Associados') {
       router.push('/associados')
-
-    }
-
-    else if (text === 'Logs') {
+    } else if (text === 'Logs') {
       router.push('/logs')
-    }
-
-    else if (text === 'Aniversariantes') {
+    } else if (text === 'Aniversariantes') {
       router.push('/associados/aniversariantes')
-    }
-
-    else if (text === 'Protocolos') {
+    } else if (text === 'Protocolos') {
       router.push('/protocolos')
-    }
-
-    else if (text === 'Chapas') {
+    } else if (text === 'Chapas') {
       router.push('/chapas')
-    }
-
-    else if (text === 'Diretorias') {
+    } else if (text === 'Diretorias') {
       router.push('/diretorias')
-    }
-
-    else if (text === 'Eleições') {
+    } else if (text === 'Eleições') {
       router.push('/eleicao/lista')
-    }
-
-    else if (text === 'Votação') {
+    } else if (text === 'Votação') {
       router.push('/eleicao')
     }
   }
 
-
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
-      (event: React.KeyboardEvent | React.MouseEvent) => {
-        if (
-          event.type === 'keydown' &&
-          ((event as React.KeyboardEvent).key === 'Tab' ||
-            (event as React.KeyboardEvent).key === 'Shift')
-        ) {
-          return
-        }
-
-        setState({ ...state, [anchor]: open })
-        setOpen(open)
+    (event: React.KeyboardEvent | React.MouseEvent) => {
+      if (
+        event.type === 'keydown' &&
+        ((event as React.KeyboardEvent).key === 'Tab' ||
+          (event as React.KeyboardEvent).key === 'Shift')
+      ) {
+        return
       }
+
+      setState({ ...state, [anchor]: open })
+      setOpen(open)
+    }
 
   const arrayIcons = [
     <>
       <Buildings size={30} color="#fff" />
+
     </>,
     <>
       <UsersFour size={30} color="#fff" />
@@ -124,8 +105,11 @@ export function TemporaryDrawer() {
       <Receipt size={30} color="#fff" />
     </>,
     <>
+      <Receipt size={30} color="#fff" />
+    </>,
+    <>
       <User size={30} color="#fff" />
-    </>
+    </>,
   ]
 
   const arrayIconsTwoList = [
@@ -165,7 +149,6 @@ export function TemporaryDrawer() {
       </div>
 
       <List>
-
         {[
           'Empresas',
           'Associados',
@@ -174,7 +157,7 @@ export function TemporaryDrawer() {
           'Chapas',
           'Eleições',
           'Votação',
-          'Diretorias'
+          'Diretorias',
         ].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton
@@ -187,12 +170,11 @@ export function TemporaryDrawer() {
             </ListItemButton>
           </ListItem>
         ))}
-
       </List>
       <Divider />
       {/* two list */}
       <List>
-        {['Tabelas', 'Parametros', 'Logs',].map((text, index) => (
+        {['Tabelas', 'Parametros', 'Logs'].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton
               onClick={() => {

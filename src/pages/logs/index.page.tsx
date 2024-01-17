@@ -7,6 +7,7 @@ import { useId } from '@/context'
 import { Button } from '@/components/Button'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/router'
+import { BackPage } from '@/components/BackPage'
 
 export default function Logs({ data }: any) {
   console.log(data)
@@ -39,19 +40,19 @@ export default function Logs({ data }: any) {
   return (
     <Container>
       <p>Logs</p>
+      <BackPage backRoute="/" />
 
-      <Box>
-        <DataGridDemo columns={columns} rows={data} w={'50%'} />
-      </Box>
+      <DataGridDemo columns={columns} rows={data} w={'100%'} />
+
       <Box>
         <Button
           style={{ backgroundColor: '#4471C6' }}
           title="Visualizar"
           onClick={() => {
             if (selectedRowIds.length === 0) {
-              toast.warn('você não selecionou a empresa para visualizar')
+              toast.warn('você não selecionou nenhum Log para visualizar')
             } else if (selectedRowIds.length >= 2) {
-              toast.warn('selecione 1 empresa para visualizar')
+              toast.warn('selecione 1 Log para visualizar')
             } else {
               router.push(`/logs/visualizar/${selectedRowIds}`)
             }

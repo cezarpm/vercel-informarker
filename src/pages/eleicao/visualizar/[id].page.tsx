@@ -8,7 +8,6 @@ import { GetServerSideProps } from 'next/types'
 import { SelectOptions } from '@/components/SelectOptions'
 import { Typography } from '@mui/material'
 
-
 export default function VotacaoRead({ data }: any) {
   const newDate = new Date(data.data_votacao_inicio)
   const diaMes = String(newDate.getDate())
@@ -54,51 +53,26 @@ export default function VotacaoRead({ data }: any) {
                 title="Nome da eleicao *"
                 defaultValue={data.matricula_saerj}
               />
-
-
             </div>
 
             <div style={{ display: 'flex', alignItems: 'end', width: '31rem' }}>
-              <Text>
-                Data de início da votação
-              </Text>
+              <Text>Data de início da votação</Text>
 
-              <TextInput
-                title="Dia *"
-                defaultValue={diaMes}
-              />
+              <TextInput title="Dia *" defaultValue={diaMes} />
 
+              <TextInput title="Mês *" defaultValue={mesAno} />
 
-              <TextInput
-                title="Mês *"
-                defaultValue={mesAno}
-              />
-
-              <TextInput
-                title="Ano *"
-                defaultValue={anoTotal}
-              />
+              <TextInput title="Ano *" defaultValue={anoTotal} />
             </div>
 
             <div style={{ display: 'flex', alignItems: 'end', width: '32rem' }}>
-              <Text>
-                Data de término da votação
-              </Text>
+              <Text>Data de término da votação</Text>
 
-              <TextInput
-                title="Dia *"
-                defaultValue={diaMesEnd}
-              />
+              <TextInput title="Dia *" defaultValue={diaMesEnd} />
 
-              <TextInput
-                title="Mês *"
-                defaultValue={mesAnoEnd}
-              />
+              <TextInput title="Mês *" defaultValue={mesAnoEnd} />
 
-              <TextInput
-                title="Ano *"
-                defaultValue={anoTotalEnd}
-              />
+              <TextInput title="Ano *" defaultValue={anoTotalEnd} />
             </div>
 
             <SelectOptions
@@ -107,7 +81,6 @@ export default function VotacaoRead({ data }: any) {
               w={280}
               defaultValue={data.status}
             />
-
           </Box>
 
           <Box>
@@ -116,19 +89,15 @@ export default function VotacaoRead({ data }: any) {
             </Typography>
           </Box>
 
-
-          {data?.chapas.chapas.map((membro: any, index: number) =>
+          {data?.chapas.chapas.map((membro: any, index: number) => (
             <Box key={index}>
               <TextInput
                 w={280}
-                title={"Chapa " + (index + 1)}
+                title={'Chapa ' + (index + 1)}
                 defaultValue={membro.nome_chapa}
-
               />
             </Box>
-          )}
-
-
+          ))}
         </fieldset>
       </form>
     </Container>

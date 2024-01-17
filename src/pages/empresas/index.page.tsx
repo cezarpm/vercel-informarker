@@ -14,7 +14,8 @@ import { z } from 'zod'
 import { useState } from 'react'
 import ModalTickets from '@/components/ModalTickets'
 import { formatCNPJ } from '@/utils/formatCnpj'
-
+import { BackPage } from '@/components/BackPage'
+import Link from 'next/link'
 
 const shemaFilter = z.object({
   tipo_empresa_filter: z.string(),
@@ -24,38 +25,38 @@ const shemaFilter = z.object({
 })
 
 interface EtiquetaProps {
-  id: number;
-  cod_empresa?: string;
-  tipo_empresa?: string;
-  patrocinadora?: boolean;
-  faculdade_anestesiologia?: boolean;
-  empresa_ativa?: boolean;
-  cnpj?: string;
-  razao_social?: string;
-  nome_fantasia?: string;
-  cep?: string;
-  logradouro?: string;
-  numero?: number;
-  complemento?: string;
-  cidade?: string;
-  uf?: string;
-  pais?: string;
-  bairro?: string;
-  telefone_comercial?: string;
-  tratamento_contato_primario?: string;
-  nome_contato_primario?: string;
-  cargo_contato_primario?: string;
-  email_contato_primario?: string;
-  telefone_contato_primario?: string;
-  tratamento_contato_secundario?: string;
-  nome_contato_secundario?: string;
-  cargo_contato_secundario?: string;
-  email_contato_secundario?: string;
-  telefone_contato_secundario?: string;
-  home_page?: string;
-  inscricao_estadual?: string;
-  inscricao_municipal?: string;
-  observacoes?: string;
+  id: number
+  cod_empresa?: string
+  tipo_empresa?: string
+  patrocinadora?: boolean
+  faculdade_anestesiologia?: boolean
+  empresa_ativa?: boolean
+  cnpj?: string
+  razao_social?: string
+  nome_fantasia?: string
+  cep?: string
+  logradouro?: string
+  numero?: number
+  complemento?: string
+  cidade?: string
+  uf?: string
+  pais?: string
+  bairro?: string
+  telefone_comercial?: string
+  tratamento_contato_primario?: string
+  nome_contato_primario?: string
+  cargo_contato_primario?: string
+  email_contato_primario?: string
+  telefone_contato_primario?: string
+  tratamento_contato_secundario?: string
+  nome_contato_secundario?: string
+  cargo_contato_secundario?: string
+  email_contato_secundario?: string
+  telefone_contato_secundario?: string
+  home_page?: string
+  inscricao_estadual?: string
+  inscricao_municipal?: string
+  observacoes?: string
 }
 
 type SchemaFilter = z.infer<typeof shemaFilter>
@@ -66,7 +67,7 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
   const [list, setList] = useState(data)
 
   const { register, watch } = useForm<SchemaFilter>()
-    
+
   function BuscarFiltro() {
     const TipoEmpresaFilter = watch('tipo_empresa_filter')
     const PatrocinadoraFilter = watch('patrocinarora_filter')
@@ -203,7 +204,9 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
 
   return (
     <Container>
+      <BackPage backRoute="/" />
       <p>Empresas</p>
+
       <div>
         <Box
           style={{
@@ -251,24 +254,20 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
               padding: '0.5rem',
             }}
             title="Buscar"
-            onClick={BuscarFiltro} 
-            />
-
-      </Box>
-        {selectedRowIds.length > 0 &&
-          <Box style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end' }}>
-          <ModalTickets
-            title="Gerar Etiqueta"
-            bgColor="#0da9a4"
-            data={selectedRowIds}
-            route="/api/empresa/get/"
+            onClick={BuscarFiltro}
           />
-          </Box>
-        }
 
+          {selectedRowIds.length > 0 && (
+            <ModalTickets
+              title="Gerar Etiqueta"
+              bgColor="#0da9a4"
+              data={selectedRowIds}
+            />
+          )}
+        </Box>
       </div>
-      <DataGridDemo columns={columns} rows={filteredData} w="100%" />
 
+      <DataGridDemo columns={columns} rows={list} w="100%" />
       <Box>
         <Button
           style={{ backgroundColor: '#4471C6' }}
@@ -339,9 +338,20 @@ export const getServerSideProps: GetServerSideProps = async () => {
         nome_fantasia: item.nome_fantasia,
         cnpj: item.cnpj ? formatCNPJ(item.cnpj) : '',
         cidade: item.cidade,
+        cep: item.cep,
+        logradouro: item.logradouro,
+        numero: item.numero,
+        complemento: item.complemento,
+        bairro: item.bairro,
         uf: item.uf,
+        tratamento_contato_primario: item.tratamento_contato_primario,
         nome_contato_primario: item.nome_contato_primario,
+        telefone_contato_primario: item.telefone_contato_primario,
         email_contato_primario: item.email_contato_primario,
+        tratamento_contato_secundario: item.tratamento_contato_secundario,
+        nome_contato_secundario: item.nome_contato_secundario,
+        telefone_contato_secundario: item.telefone_contato_secundario,
+        email_contato_secundario: item.email_contato_secundario,
       }
     })
 

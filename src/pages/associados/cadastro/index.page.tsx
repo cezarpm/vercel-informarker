@@ -29,7 +29,7 @@ import { useArrayUfBrasil } from '@/utils/useArrayUfBrasil'
 
 const schemaParams = z.object({
   numero_proposta_SBA: z.number(),
-  matricula_SAERJ: z.number(),
+  matricula_SAERJ: z.number().min(1, { message: 'Campo obrigatório' }),
   matricula_SBA: z.number(),
   situacao: z.string(),
   uf_crm: z.string(),
@@ -42,9 +42,7 @@ const schemaParams = z.object({
   cep: z.string(),
   logradouro: z.string(),
   numero: z.number(),
-
   complemento: z.string(),
-
   bairro: z.string(),
   cidade: z.string(),
   uf: z.string(),
@@ -70,23 +68,15 @@ const schemaParams = z.object({
   nome_presidente_regional: z.string(),
   sigla_regional: z.string(),
   comprovante_cpf: z.any(),
-
-  // data_nascimento: z.string(),
-  // data_inicio_especializacao: z.string(),
-  // data_previsao_conclusao: z.string(),
-
   yearNasc: z.string(),
   monthNasc: z.string(),
   dayNasc: z.string(),
-
   dayInicioEspec: z.string(),
   monthInicioEspec: z.string(),
   yearInicioEspec: z.string(),
-
   dayPrevConcl: z.string(),
   monthPrevConcl: z.string(),
   yearPrevConcl: z.string(),
-
   confirmarEmail: z.string(),
 })
 
@@ -115,11 +105,7 @@ export default function AssociadosCadastro({
   const [cepInvalido, setCepInvalido] = useState()
   const [disableCamposCepInvalido, setDisableCamposCepInvalido] =
     useState(false)
-  const [adjunto, setAdjunto] = useState<boolean>(false)
-  // const [confirmEmail, setConfirmEmail] = useState<string>('')
   const router = useRouter()
-  const dataAssociados = data[0]
-  // console.log(confirmEmail)
 
   const dataDays = useArrayDate.Dia()
   const dataMonths = useArrayDate.Mes()
@@ -129,10 +115,9 @@ export default function AssociadosCadastro({
 
   const checkEmailValidade = watch('confirmarEmail')
   const checkEmail = watch('email')
-  // console.log('checkEmail', checkEmail  )
 
   const checkCategoria = watch('categoria')
-  // console.log(checkCategoria)
+
   const nomeArquivoComprovanteCpf = watch('comprovante_cpf')
   const nomeArquivoComprovanteEndereco = watch('comprovante_endereco')
   const nomeArquivoCartaIndicacao2Membros = watch('carta_indicacao_2_membros')
@@ -181,7 +166,6 @@ export default function AssociadosCadastro({
   }
 
   async function OnSubmit(data: SchemaParametros) {
-    alert('teste')
     try {
       let dataNascimento
       let dataInicioEspecializacao
@@ -421,14 +405,6 @@ export default function AssociadosCadastro({
             </legend>
             <Box>
               <div>
-                <SelectOptions
-                  data={dataPais}
-                  w={260}
-                  description="País onde reside *"
-                  {...register('pais')}
-                />
-              </div>
-              <div>
                 <div
                   style={{
                     display: 'flex',
@@ -454,37 +430,20 @@ export default function AssociadosCadastro({
                 </div>
               </div>
 
-              <TextInput
-                disabled={disableCamposCepInvalido}
-                title="Logradouro *"
-                {...register('logradouro')}
-              />
               <div>
-                <TextInput
-                  disabled={disableCamposCepInvalido}
-                  w={90}
-                  title="Número *"
-                  {...register('numero', {
-                    valueAsNumber: true,
-                  })}
+                <SelectOptions
+                  data={dataPais}
+                  w={260}
+                  description="País onde reside *"
+                  {...register('pais')}
                 />
               </div>
               <div>
                 <TextInput
                   disabled={disableCamposCepInvalido}
-                  title="Complemento *"
-                  w={200}
-                  {...register('complemento')}
-                />
-              </div>
-            </Box>
-            <Box>
-              <div>
-                <TextInput
-                  w={300}
-                  disabled={disableCamposCepInvalido}
-                  title="Bairro *"
-                  {...register('bairro')}
+                  w={100}
+                  title="UF *"
+                  {...register('uf')}
                 />
               </div>
               <div>
@@ -495,12 +454,43 @@ export default function AssociadosCadastro({
                   {...register('cidade')}
                 />
               </div>
+
+              <div>
+                <TextInput
+                  w={300}
+                  disabled={disableCamposCepInvalido}
+                  title="Bairro *"
+                  {...register('bairro')}
+                />
+              </div>
+            </Box>
+            <Box>
+              <div>
+                <TextInput
+                  w={400}
+                  disabled={disableCamposCepInvalido}
+                  title="Logradouro *"
+                  {...register('logradouro')}
+                />
+              </div>
+
               <div>
                 <TextInput
                   disabled={disableCamposCepInvalido}
-                  w={100}
-                  title="UF *"
-                  {...register('uf')}
+                  w={90}
+                  title="Número *"
+                  {...register('numero', {
+                    valueAsNumber: true,
+                  })}
+                />
+              </div>
+
+              <div>
+                <TextInput
+                  disabled={disableCamposCepInvalido}
+                  title="Complemento *"
+                  w={400}
+                  {...register('complemento')}
                 />
               </div>
             </Box>

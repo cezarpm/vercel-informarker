@@ -59,16 +59,17 @@ const schemaChapaForm = z.object({
   status: z.string().min(1, { message: 'O campo status é obrigatório' }),
 })
 
-
 type SchemaChapaForm = z.infer<typeof schemaChapaForm>
-
 
 type VotacaoAtualizarProps = {
   data: any
   chapas: any
 }
 
-export default function VotacaoAtualizar({ data, chapas }: VotacaoAtualizarProps) {
+export default function VotacaoAtualizar({
+  data,
+  chapas,
+}: VotacaoAtualizarProps) {
   const newDate = new Date(data.data_votacao_inicio)
   const diaMes = String(newDate.getDate())
   const mesAno = String(newDate.getMonth() + 1)
@@ -82,7 +83,6 @@ export default function VotacaoAtualizar({ data, chapas }: VotacaoAtualizarProps
   const router = useRouter()
   const { id }: any = router.query
 
-
   const {
     register,
     handleSubmit,
@@ -93,19 +93,36 @@ export default function VotacaoAtualizar({ data, chapas }: VotacaoAtualizarProps
     resolver: zodResolver(schemaChapaForm),
   })
 
-
-
   async function handleOnSubmit(data: SchemaChapaForm) {
     const concatDate = `${data.start_month}-${data.start_day}-${data.start_year}`
 
     const newDate = new Date(concatDate).toISOString()
     const concatDateEnd = `${data.end_month}-${data.end_day}-${data.end_year}`
     const newDateEnd = new Date(concatDateEnd).toISOString()
+    const today = new Date().toISOString().slice(0, 10);
+    const inputDate = newDate.slice(0, 10);
+    
 
     const selectedChapas = data.chapas.map((chapa) => {
-      const chapaSelected = chapas.find((item: any) => item.nome_chapa === chapa.nome_chapa)
+      const chapaSelected = chapas.find(
+        (item: any) => item.nome_chapa === chapa.nome_chapa,
+      )
       return chapaSelected
     })
+
+    if (newDate > newDateEnd) {
+      return toast.error('A data de início não pode ser maior que a data de término!')
+    }
+
+    if (newDate === newDateEnd) {
+      return toast.error('A data de início não pode ser igual a data de término!')
+    }
+
+    
+    if (inputDate < today) {
+      return toast.error('A data de início não pode ser menor que a data atual!');
+    }
+
 
     const body = {
       id: Number(id),
@@ -141,6 +158,13 @@ export default function VotacaoAtualizar({ data, chapas }: VotacaoAtualizarProps
     }
   }, [data, setValue])
 
+  useEffect(() => {
+    if (errors.chapas) {
+      toast.error("A votação precisa ter no mínimo 2 chapas!")
+    }
+
+  }, [errors])
+
 
   return (
     <Container>
@@ -171,7 +195,6 @@ export default function VotacaoAtualizar({ data, chapas }: VotacaoAtualizarProps
             <span>Atualizar</span>
           </legend>
 
-
           <Box>
             <div style={{ width: '30%' }}>
               <TextInput
@@ -179,14 +202,10 @@ export default function VotacaoAtualizar({ data, chapas }: VotacaoAtualizarProps
                 {...register('matricula_saerj')}
                 error={errors.matricula_saerj?.message}
               />
-
-
             </div>
 
             <div style={{ display: 'flex', alignItems: 'end', width: '31rem' }}>
-              <Text>
-                Data de início da votação
-              </Text>
+              <Text>Data de início da votação</Text>
 
               <SelectOptions
                 description="Dia"
@@ -195,7 +214,6 @@ export default function VotacaoAtualizar({ data, chapas }: VotacaoAtualizarProps
                 w={90}
                 {...register('start_day')}
                 error={errors.start_day?.message}
-
               />
 
               <SelectOptions
@@ -205,7 +223,6 @@ export default function VotacaoAtualizar({ data, chapas }: VotacaoAtualizarProps
                 w={90}
                 {...register('start_month')}
                 error={errors.start_month?.message}
-
               />
 
               <SelectOptions
@@ -215,14 +232,11 @@ export default function VotacaoAtualizar({ data, chapas }: VotacaoAtualizarProps
                 data={dataYears}
                 {...register('start_year')}
                 error={errors.start_year?.message}
-
               />
             </div>
 
             <div style={{ display: 'flex', alignItems: 'end', width: '32rem' }}>
-              <Text>
-                Data de término da votação
-              </Text>
+              <Text>Data de término da votação</Text>
 
               <SelectOptions
                 description="Dia"
@@ -231,8 +245,6 @@ export default function VotacaoAtualizar({ data, chapas }: VotacaoAtualizarProps
                 w={90}
                 {...register('end_day')}
                 error={errors.end_day?.message}
-
-
               />
 
               <SelectOptions
@@ -242,7 +254,6 @@ export default function VotacaoAtualizar({ data, chapas }: VotacaoAtualizarProps
                 w={90}
                 {...register('end_month')}
                 error={errors.end_month?.message}
-
               />
 
               <SelectOptions
@@ -252,20 +263,18 @@ export default function VotacaoAtualizar({ data, chapas }: VotacaoAtualizarProps
                 defaultValue={anoTotalEnd}
                 {...register('end_year')}
                 error={errors.end_year?.message}
-
               />
             </div>
 
             <SelectOptions
-              description="Selecione a chapa"
-              data={['ATIVO', 'INATIVO']}
+
+              description="Está ativa?"
+              data={['ATIVA', 'INATIVA']}
               w={280}
               defaultValue={data.status}
               {...register('status')}
               error={errors.status?.message}
-
             />
-
           </Box>
 
           <Box>
@@ -279,12 +288,9 @@ export default function VotacaoAtualizar({ data, chapas }: VotacaoAtualizarProps
               title="+ Adicionar"
               style={{ margin: '0px', width: '100%', fontSize: '12px' }}
             />
-
-
           </Box>
 
-
-          {fields.map((membro, index) =>
+          {fields.map((membro, index) => (
             <Box key={index}>
               <SelectOptions
                 description="Selecione a chapa"
@@ -295,7 +301,7 @@ export default function VotacaoAtualizar({ data, chapas }: VotacaoAtualizarProps
                 error={errors.chapas?.[index]?.nome_chapa?.message}
               />
             </Box>
-          )}
+          ))}
 
           <Button
             title={isSubmitting ? 'Enviando...' : 'Enviar'}

@@ -60,7 +60,8 @@ export default function VotacaoAtualizar({ data }: Props) {
 
     await api.put('/votacao/update', dataToSend)
 
-    router.push('/votacao/lista')
+    router.push('/chapas')
+
     return toast.success('Chapa atualizada!')
   }
 
@@ -68,6 +69,14 @@ export default function VotacaoAtualizar({ data }: Props) {
     setValue('nome_da_chapa', data.nome_chapa)
     setValue('integrantes', data.membros_chapa)
   }, [data, setValue])
+
+  useEffect(() => {
+    if (errors.integrantes) {
+      toast.error("A votação precisa ter no mínimo 1 membro!")
+    }
+
+  }, [errors])
+
 
   return (
     <Container>
@@ -95,8 +104,6 @@ export default function VotacaoAtualizar({ data }: Props) {
             <CaretRight size={14} />
             <span>Atualizar</span>
           </legend>
-
-
 
           <Box>
             <TextInput

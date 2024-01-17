@@ -19,8 +19,8 @@ export default async function handler(
       data: {
         id,
         membros_chapa,
-        nome_chapa
-      }
+        nome_chapa,
+      },
     })
     return res.status(200).end()
   } catch (error) {

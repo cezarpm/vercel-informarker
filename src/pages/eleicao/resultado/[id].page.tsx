@@ -38,12 +38,12 @@ export default function Resultado() {
     const percentage = (count / votation?.votosCount) * 100
 
     return percentage.toFixed(2)
-
   }
 
   const calculatePercentageOfValidVotes = (count: number) => {
     if (!votation?.votosCount) return 0
-    const total = votation?.votosChapas[0].count + votation?.votosChapas[1].count
+    const total =
+      votation?.votosChapas[0].count + votation?.votosChapas[1].count
 
     const percentage = (count / total) * 100
 
@@ -113,7 +113,6 @@ export default function Resultado() {
           </tr>
         </thead>
         <tbody>
-
           {votation?.votosChapas?.map((item, index) => (
             <tr key={index}>
               <td>{item.chapaNome}</td>
@@ -122,7 +121,6 @@ export default function Resultado() {
               <td>{calculatePercentageOfValidVotes(item.count)}%</td>
             </tr>
           ))}
-
 
           <tr>
             <td>Brancos</td>

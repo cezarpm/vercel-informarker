@@ -11,6 +11,7 @@ import Modal from '@/components/Modal'
 import SelectNoComplete from '@/components/SelectNoComplete'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
+import { BackPage } from '@/components/BackPage'
 
 const shemaFilter = z.object({
   codigo_tabela: z.string(),
@@ -28,24 +29,25 @@ export default function EmpresaList({ data }: any) {
     {
       field: 'codigo_tabela',
       headerName: 'Código tabela',
-      flex: 1,
-    },
-    {
-      field: 'complemento_ocorrencia_selecao',
-      headerName: 'Complemento ocorrencia seleção',
-      flex: 1,
-      editable: true,
+      width: 170,
     },
     {
       field: 'ocorrencia_tabela',
-      headerName: 'Ocorrencia tabela',
-      flex: 1,
+      headerName: 'Ocorrencia',
+      width: 220,
       editable: true,
     },
     {
+      field: 'complemento_ocorrencia_selecao',
+      headerName: 'Complemento',
+      flex: 0.2,
+      editable: true,
+    },
+
+    {
       field: 'ocorrencia_ativa',
-      headerName: 'Ocorrencia ativa',
-      flex: 1,
+      headerName: 'Ativo',
+      width: 110,
       editable: true,
     },
   ]
@@ -80,10 +82,11 @@ export default function EmpresaList({ data }: any) {
 
   return (
     <Container>
+      <BackPage backRoute="/" />
       <p>Tabelas</p>
-
-      <form>
+      <form style={{ width: '10%' }}>
         <SelectNoComplete
+          p="0px 0px 0px 5px"
           title="Código Tabela"
           value="Todos"
           {...register('codigo_tabela')}

@@ -4,7 +4,7 @@ import React, { forwardRef } from 'react'
 
 // eslint-disable-next-line react/display-name
 export const SwitchInput = forwardRef<any, any>((props, ref) => {
-  const { title, defaultChecked, ...rest } = props
+  const { title, defaultChecked, disabled, ...rest } = props
   return (
     <Container>
       <Text>{title}</Text>
@@ -14,6 +14,7 @@ export const SwitchInput = forwardRef<any, any>((props, ref) => {
         variant="standard"
         {...rest}
         defaultChecked={defaultChecked}
+        disabled={disabled}
       />
     </Container>
   )

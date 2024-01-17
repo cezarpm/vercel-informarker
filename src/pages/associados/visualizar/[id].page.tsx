@@ -265,41 +265,48 @@ export default function AssociadosCadastro({
             <Box>
               <div>
                 <TextInput
-                  w={260}
-                  title="País onde reside *"
-                  value={data.pais}
-                />
-              </div>
-              <div>
-                <TextInput
                   w={200}
                   title="Cep *"
                   value={data.cep}
                   mask="99999-999"
                 />
               </div>
+              <div>
+                <TextInput
+                  w={260}
+                  title="País onde reside *"
+                  value={data.pais}
+                />
+              </div>
+              <div>
+                <TextInput w={100} title="UF *" value={data.uf} />
+              </div>
 
-              <TextInput title="Logradouro *" value={data.logradouro} />
+              <div>
+                <TextInput w={400} title="Cidade *" value={data.cidade} />
+              </div>
+
+              <div>
+                <TextInput w={300} title="Bairro *" value={data.bairro} />
+              </div>
+            </Box>
+            <Box>
+              <div>
+                <TextInput
+                  w={400}
+                  title="Logradouro *"
+                  value={data.logradouro}
+                />
+              </div>
               <div>
                 <TextInput w={90} title="Número *" value={data.numero} />
               </div>
               <div>
                 <TextInput
                   title="Complemento"
-                  w={200}
+                  w={400}
                   value={data.complemento}
                 />
-              </div>
-            </Box>
-            <Box>
-              <div>
-                <TextInput w={300} title="Bairro *" value={data.bairro} />
-              </div>
-              <div>
-                <TextInput w={400} title="Cidade *" value={data.cidade} />
-              </div>
-              <div>
-                <TextInput w={100} title="UF *" value={data.uf} />
               </div>
             </Box>
           </Fieldset>

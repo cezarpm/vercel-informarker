@@ -1,5 +1,5 @@
 import { Container, Box } from './styled'
-import React from 'react'
+import React, { use, useEffect } from 'react'
 import { z } from 'zod'
 import { useFieldArray, useForm } from 'react-hook-form'
 import { Button } from '@/components/Button'
@@ -11,11 +11,10 @@ import { api } from '@/lib/axios'
 import { useRouter } from 'next/router'
 import { toast } from 'react-toastify'
 
-
 const placeHolderImage = [
-  "https://this-person-does-not-exist.com/img/avatar-gen11080ba46e2948ca0f20c6c9463f302e.jpg",
-  "https://this-person-does-not-exist.com/img/avatar-gen114548412138b56a953eaf4a109c9278.jpg",
-  "https://this-person-does-not-exist.com/img/avatar-gen1cd8f7740afa986a8905887813e1045a.jpg"
+  'https://this-person-does-not-exist.com/img/avatar-gen11080ba46e2948ca0f20c6c9463f302e.jpg',
+  'https://this-person-does-not-exist.com/img/avatar-gen114548412138b56a953eaf4a109c9278.jpg',
+  'https://this-person-does-not-exist.com/img/avatar-gen1cd8f7740afa986a8905887813e1045a.jpg',
 ]
 
 const integranteSchema = z.object({
@@ -49,6 +48,21 @@ export default function VotacaoCreate() {
     name: 'membros_chapa',
     control,
   })
+
+  async function handleOnSubmit(data: SchemaChapaForm) {
+    await api.post('/votacao/cadastro', data)
+
+    router.push('/chapas')
+    return toast.success('Chapa cadastrada!')
+  }
+
+  useEffect(() => {
+    if (errors.membros_chapa) {
+      toast.error("A votação precisa ter no mínimo 1 membro!")
+    }
+
+  }, [errors])
+
 
   async function handleOnSubmit(data: SchemaChapaForm) {
     await api.post('/votacao/cadastro', data)
@@ -97,7 +111,16 @@ export default function VotacaoCreate() {
           <Box>
             <h1>Composição da chapa</h1>
             <Button
-              onClick={() => append({ cargo: '', nome: '', image: placeHolderImage[Math.floor(Math.random() * placeHolderImage.length)] })}
+              onClick={() =>
+                append({
+                  cargo: '',
+                  nome: '',
+                  image:
+                    placeHolderImage[
+                      Math.floor(Math.random() * placeHolderImage.length)
+                    ],
+                })
+              }
               type="button"
               title="+ Adicionar membro"
               style={{ margin: '0px', width: '100%', fontSize: '12px' }}

@@ -21,82 +21,83 @@ const style = {
 }
 
 interface EtiquetaProps {
-  id: number;
-  cod_empresa?: string;
-  tipo_empresa?: string;
-  patrocinadora?: boolean;
-  faculdade_anestesiologia?: boolean;
-  empresa_ativa?: boolean;
-  cnpj?: string;
-  razao_social?: string;
-  nome_fantasia?: string;
-  cep?: string;
-  logradouro?: string;
-  numero?: number;
-  complemento?: string;
-  cidade?: string;
-  uf?: string;
-  pais?: string;
-  bairro?: string;
-  telefone_comercial?: string;
-  tratamento_contato_primario?: string;
-  nome_contato_primario?: string;
-  cargo_contato_primario?: string;
-  email_contato_primario?: string;
-  telefone_contato_primario?: string;
-  tratamento_contato_secundario?: string;
-  nome_contato_secundario?: string;
-  cargo_contato_secundario?: string;
-  email_contato_secundario?: string;
-  telefone_contato_secundario?: string;
-  home_page?: string;
-  inscricao_estadual?: string;
-  inscricao_municipal?: string;
-  observacoes?: string;
+  id: number
+  cod_empresa?: string
+  tipo_empresa?: string
+  patrocinadora?: boolean
+  faculdade_anestesiologia?: boolean
+  empresa_ativa?: boolean
+  cnpj?: string
+  razao_social?: string
+  nome_fantasia?: string
+  cep?: string
+  logradouro?: string
+  numero?: number
+  complemento?: string
+  cidade?: string
+  uf?: string
+  pais?: string
+  bairro?: string
+  telefone_comercial?: string
+  tratamento_contato_primario?: string
+  nome_contato_primario?: string
+  cargo_contato_primario?: string
+  email_contato_primario?: string
+  telefone_contato_primario?: string
+  tratamento_contato_secundario?: string
+  nome_contato_secundario?: string
+  cargo_contato_secundario?: string
+  email_contato_secundario?: string
+  telefone_contato_secundario?: string
+  home_page?: string
+  inscricao_estadual?: string
+  inscricao_municipal?: string
+  observacoes?: string
 }
 
 interface schemaModal {
   title: string
   bgColor?: string
   data: any
-  route: string
+  route?: any
 }
 export default function ModalTickets({
   title,
   bgColor,
-  data,
-  route
-}: schemaModal) {
+  route,
+  data
 
+}: schemaModal) {
   const [open, setOpen] = useState(false)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
 
-  const [dataSelected, setDataSelected] = useState<EtiquetaProps[]>([])
 
-  useEffect(() => {
-    setDataSelected([]);
-    data.map(async (item: any) => {
-      try {
-        const response = await fetch(`${route}${item}`);
-        const data = await response.json();
-        setDataSelected((prev) => [...prev, data]);
+ // const [dataSelected, setDataSelected] = useState<EtiquetaProps[]>([])
 
-      } catch (error) {
-        toast.success('Erro ao gerar etiquetas')
-        console.error('Erro ao buscar empresas:', error);
-      }
-    });
-  }, [data]);
+  //useEffect(() => {
+  //  setDataSelected([])
+   // data.map(async (item: any) => {
+ //     try {
+     //   const response = await fetch(`${route}${item}`)
+   //     const data = await response.json()
+ //       setDataSelected((prev) => [...prev, data])
+//      } catch (error) {
+//        toast.success('Erro ao gerar etiquetas')
+//        console.error('Erro ao buscar empresas:', error)
+//      }
+//    })
+//  }, [data])
+
 
   const gerarEtiqueta = (primario: boolean) => {
-    EtiquetaPDFCompany(dataSelected, primario)
+    EtiquetaPDFCompany(data, primario)
   }
 
   return (
     <div>
       <Button
-        style={{ backgroundColor: `${bgColor}` }}
+        style={{ backgroundColor: `${bgColor}`,  margin: '0px', fontSize: '12px', border: 'solid 1px', padding: '0.5rem', }}
         title={title}
         onClick={() => {
           if (data.length === 0) {
@@ -119,13 +120,15 @@ export default function ModalTickets({
           <Button
             title="Primário"
             onClick={() => {
-              gerarEtiqueta(true)
+              gerarEtiqueta(true);
+              handleClose()
             }}
           />
           <Button
             title="Secundário"
             onClick={() => {
-              gerarEtiqueta(false)
+              gerarEtiqueta(false);
+              handleClose()
             }}
           />
         </Box>

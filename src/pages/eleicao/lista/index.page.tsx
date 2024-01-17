@@ -11,8 +11,6 @@ import { Typography } from '@mui/material'
 import { prisma } from '@/lib/prisma'
 import dayjs from 'dayjs'
 
-
-
 export default function EleicaoList({ data }: any) {
   const router = useRouter()
   const { selectedRowIds } = useId()
@@ -35,33 +33,35 @@ export default function EleicaoList({ data }: any) {
       width: 150,
       renderCell: (params) => {
         return (
-          <Typography>
-            {dayjs(params.value).format('DD/MM/YYYY')}
-          </Typography>
+          <Typography>{dayjs(params.value).format('DD/MM/YYYY')}</Typography>
         )
-      }
+      },
     },
 
     {
       field: 'data_votacao_fim',
-      headerName: 'Data do fim da votação',
+      headerName: 'Data do término',
       width: 150,
       renderCell: (params) => {
         return (
-          <Typography>
-            {dayjs(params.value).format('DD/MM/YYYY')}
-          </Typography>
+          <Typography>{dayjs(params.value).format('DD/MM/YYYY')}</Typography>
         )
-      }
+      },
     },
 
     {
       field: 'status',
-      headerName: 'Estado da votação',
+      headerName: 'Está ativa?',
       disableColumnMenu: true,
-      width: 80,
+      width: 100,
+      renderCell: (params) => {
+        return (
+          <Typography>
+            {params.value === 'INATIVA' ? 'Não' : 'Sim'}
+          </Typography>
+        )
+      }
     },
-
   ]
 
   return (

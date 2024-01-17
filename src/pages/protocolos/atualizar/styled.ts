@@ -32,7 +32,7 @@ export const Box = styled('div', {
 
 export const FormErrorMessage = styled('p', {
   color: 'red',
-});
+})
 
 export const TextAreaInput = styled(TextArea, {
   backgroundColor: 'white',
