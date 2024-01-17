@@ -22,7 +22,7 @@ export function BackPage({ backRoute }: schemaBackPageComponent) {
             color: '#000',
           }}
         >
-          <ArrowBendDownLeft size={32} />
+          <ArrowBendDownLeft size={24} />
           Retornar
         </Link>
       </Box>

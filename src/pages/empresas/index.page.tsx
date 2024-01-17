@@ -1,5 +1,6 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Button } from '@/components/Button'
-import { Container, Box, ButtonEtiqueta } from './styled'
+import { Container, Box } from './styled'
 import { useRouter } from 'next/router'
 import DataGridDemo from '@/components/TableList'
 import { prisma } from '@/lib/prisma'
@@ -11,53 +12,19 @@ import Modal from '@/components/Modal'
 import SelectNoComplete from '@/components/SelectNoComplete'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import ModalTickets from '@/components/ModalTickets'
 import { formatCNPJ } from '@/utils/formatCnpj'
 import { BackPage } from '@/components/BackPage'
-import Link from 'next/link'
+import { useArrayUfBrasil } from '@/utils/useArrayUfBrasil'
 
 const shemaFilter = z.object({
   tipo_empresa_filter: z.string(),
   patrocinarora_filter: z.string(),
   faculdade_anestesiologia_filter: z.string(),
   empresa_ativa_filter: z.string(),
+  uf_filter: z.string(),
 })
-
-interface EtiquetaProps {
-  id: number
-  cod_empresa?: string
-  tipo_empresa?: string
-  patrocinadora?: boolean
-  faculdade_anestesiologia?: boolean
-  empresa_ativa?: boolean
-  cnpj?: string
-  razao_social?: string
-  nome_fantasia?: string
-  cep?: string
-  logradouro?: string
-  numero?: number
-  complemento?: string
-  cidade?: string
-  uf?: string
-  pais?: string
-  bairro?: string
-  telefone_comercial?: string
-  tratamento_contato_primario?: string
-  nome_contato_primario?: string
-  cargo_contato_primario?: string
-  email_contato_primario?: string
-  telefone_contato_primario?: string
-  tratamento_contato_secundario?: string
-  nome_contato_secundario?: string
-  cargo_contato_secundario?: string
-  email_contato_secundario?: string
-  telefone_contato_secundario?: string
-  home_page?: string
-  inscricao_estadual?: string
-  inscricao_municipal?: string
-  observacoes?: string
-}
 
 type SchemaFilter = z.infer<typeof shemaFilter>
 
@@ -66,18 +33,32 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
   const { selectedRowIds } = useId()
   const [list, setList] = useState(data)
 
-  const { register, watch } = useForm<SchemaFilter>()
+  const ufBrasil = useArrayUfBrasil.map((item) => {
+    return {
+      ocorrencia_tabela: item,
+    }
+  })
+
+  const { register, watch, setValue } = useForm<SchemaFilter>()
 
   function BuscarFiltro() {
-    const TipoEmpresaFilter = watch('tipo_empresa_filter')
+    // Inicialize a lista com os dados originais
+    let filteredList = data
     const PatrocinadoraFilter = watch('patrocinarora_filter')
+    const TipoEmpresaFilter = watch('tipo_empresa_filter')
     const FaculdadeAnestesiologiaFilter = watch(
       'faculdade_anestesiologia_filter',
     )
     const EmpresaAtivaFilter = watch('empresa_ativa_filter')
+    const UfBrasilFilter = watch('uf_filter')
 
-    // Inicialize a lista com os dados originais
-    let filteredList = data
+    console.log(
+      PatrocinadoraFilter,
+      TipoEmpresaFilter,
+      FaculdadeAnestesiologiaFilter,
+      EmpresaAtivaFilter,
+      UfBrasilFilter,
+    )
 
     // Realize a filtragem com base nos valores selecionados
     if (TipoEmpresaFilter !== 'Todos') {
@@ -110,11 +91,19 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
       })
     }
 
+    if (EmpresaAtivaFilter && EmpresaAtivaFilter !== 'Todos') {
+      filteredList = filteredList.filter((item: any) => {
+        return item.empresa_ativa === EmpresaAtivaFilter
+      })
+    }
+    if (UfBrasilFilter && UfBrasilFilter !== 'Todos') {
+      filteredList = filteredList.filter((item: any) => {
+        return item.uf === UfBrasilFilter
+      })
+    }
+    console.log(filteredList)
     // Atualize o estado com os dados filtrados
     setList(filteredList)
-
-    // Imprima a lista filtrada (opcional, apenas para fins de depuração)
-    // console.log(filteredList)
   }
 
   const columns: GridColDef[] = [
@@ -122,7 +111,7 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
       field: 'id',
       headerName: 'id',
       disableColumnMenu: true,
-      width: 80,
+      width: 50,
     },
     {
       field: 'tipo_empresa',
@@ -131,37 +120,37 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
     },
     {
       field: 'patrocinadora',
-      headerName: 'Patrocinadora',
-      width: 120,
+      headerName: 'Patr.',
+      width: 100,
     },
     {
       field: 'faculdade_anestesiologia',
-      headerName: 'Faculdade Anestesiologia',
-      width: 220,
+      headerName: 'Fac. Anest.',
+      width: 120,
       disableColumnMenu: true,
     },
     {
       field: 'empresa_ativa',
-      headerName: 'Empresa Ativa',
-      width: 120,
+      headerName: 'Ativa',
+      width: 90,
       disableColumnMenu: true,
     },
     {
       field: 'razao_social',
       headerName: 'Razão Social',
-      flex: 1,
+      width: 400,
       disableColumnMenu: true,
     },
     {
       field: 'nome_fantasia',
       headerName: 'Nome Fantasia',
-      flex: 1,
+      width: 130,
       disableColumnMenu: true,
     },
     {
       field: 'cnpj',
       headerName: 'Cnpj',
-      width: 140,
+      width: 150,
       disableColumnMenu: true,
     },
     {
@@ -179,8 +168,8 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
 
     {
       field: 'nome_contato_primario',
-      headerName: 'Nome Contato Primário',
-      width: 180,
+      headerName: 'Contato Primário',
+      width: 140,
       disableColumnMenu: true,
     },
     {
@@ -201,7 +190,13 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
       ocorrencia_tabela: 'não',
     },
   ]
-
+  useEffect(() => {
+    setValue('tipo_empresa_filter', 'Todos')
+    setValue('uf_filter', 'Todos')
+    setValue('empresa_ativa_filter', 'Todos')
+    setValue('patrocinarora_filter', 'Todos')
+    setValue('faculdade_anestesiologia_filter', 'Todos')
+  }, [])
   return (
     <Container>
       <BackPage backRoute="/" />
@@ -210,7 +205,7 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
       <div>
         <Box
           style={{
-            marginTop: '1rem',
+            marginTop: '0.5rem',
             justifyContent: 'flex-start',
             alignItems: 'end',
           }}
@@ -244,6 +239,13 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
               {...register('empresa_ativa_filter')}
               data={dataSimNao}
             />
+            <SelectNoComplete
+              p="0px 0px 0px 0.5rem"
+              value="Todos"
+              title="UF"
+              {...register('uf_filter')}
+              data={ufBrasil}
+            />
           </div>
           <Button
             style={{
@@ -267,7 +269,8 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
         </Box>
       </div>
 
-      <DataGridDemo columns={columns} rows={list} w="100%" />
+      {list && <DataGridDemo columns={columns} rows={list} w="100%" />}
+
       <Box>
         <Button
           style={{ backgroundColor: '#4471C6' }}
