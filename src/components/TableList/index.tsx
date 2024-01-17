@@ -14,6 +14,8 @@ export default function DataGridDemo({ rows, columns, w }: any) {
   useEffect(() => {
     if (rows.length == 1) {
       setSelection([rows[0].id])
+    } else {
+      setSelection([])
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rows])
