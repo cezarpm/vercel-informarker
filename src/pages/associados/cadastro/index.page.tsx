@@ -26,6 +26,7 @@ import axios from 'axios'
 import Checkbox from '@mui/material/Checkbox'
 import SelectNoComplete from '@/components/SelectNoComplete'
 import { useArrayUfBrasil } from '@/utils/useArrayUfBrasil'
+import { BackPage } from '@/components/BackPage'
 
 const schemaParams = z.object({
   numero_proposta_SBA: z.number(),
@@ -283,23 +284,7 @@ export default function AssociadosCadastro({
   return (
     <Container>
       <form onSubmit={handleSubmit(OnSubmit)}>
-        <Box style={{ flexDirection: 'row-reverse' }}>
-          <Link
-            href="/associados"
-            style={{
-              textDecoration: 'none',
-              fontFamily: 'Roboto',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              marginBottom: '1rem',
-              color: '#000',
-            }}
-          >
-            <ArrowBendDownLeft size={32} />
-            Retornar
-          </Link>
-        </Box>
+        <BackPage backRoute="/associados" />
         <fieldset>
           <legend>
             <Link href="/associados">Associados</Link>
