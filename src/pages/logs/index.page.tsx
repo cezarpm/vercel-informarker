@@ -58,14 +58,6 @@ export default function Logs({ data }: any) {
             }
           }}
         />
-
-        <Button
-          title="Retornar"
-          style={{ backgroundColor: '#b34db2' }}
-          onClick={() => {
-            router.push('/')
-          }}
-        />
       </Box>
     </Container>
   )
