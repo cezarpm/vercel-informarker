@@ -166,7 +166,7 @@ export default function Vizualizar({
   async function handleCheckCnpj(cnpj: any) {
     try {
       const response = await api.get(`/util/checkCnpj?cnpj=${cnpj}`)
-      // console.log(response)
+      console.log(response)
       if (response.data.message) {
         toast.warn('CNPJ Inválido')
       } else {

@@ -179,6 +179,7 @@ export default function Vizualizar({ data }: schemaEmpresasProps) {
           <Box>
             <div>
               <TextInput
+                w={300}
                 type="email"
                 title="Email"
                 value={data.email_contato_primario}
@@ -197,7 +198,7 @@ export default function Vizualizar({ data }: schemaEmpresasProps) {
           <Box>
             <TextInput
               type="text"
-              title="Nome do Contato Secundario"
+              title="Nome do Contato Secundário"
               value={data.nome_contato_secundario}
             />
 
@@ -211,7 +212,7 @@ export default function Vizualizar({ data }: schemaEmpresasProps) {
             <div>
               <TextInput
                 type="email"
-                title="Email"
+                title="Email Contato Secundário"
                 value={data.email_contato_secundario}
               />
             </div>
