@@ -44,7 +44,7 @@ export default function DataGridDemo({ rows, columns, w }: any) {
 
   return (
     <Container>
-      <Box sx={{ height: '50vh', width: w, marginTop: '1rem' }}>
+      <Box sx={{ height: '100%', width: w, marginTop: '1rem' }}>
         {linhas.length > 0 ? (
           <DataGrid
             rows={rows}
