@@ -63,6 +63,8 @@ export function TemporaryDrawer() {
       router.push('/eleicao/lista')
     } else if (text === 'Votação') {
       router.push('/eleicao')
+    } else if (text === 'Importação anuidades') {
+      router.push('/importacaoPagamentos')
     }
   }
 
@@ -152,6 +154,7 @@ export function TemporaryDrawer() {
         {[
           'Empresas',
           'Associados',
+          'Importação anuidades',
           'Aniversariantes',
           'Protocolos',
           'Chapas',
