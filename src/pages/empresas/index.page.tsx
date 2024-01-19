@@ -33,13 +33,13 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
   const { selectedRowIds } = useId()
   const [list, setList] = useState(data)
 
+  const { register, watch, setValue } = useForm<SchemaFilter>()
+
   const ufBrasil = useArrayUfBrasil.map((item) => {
     return {
       ocorrencia_tabela: item,
     }
   })
-
-  const { register, watch, setValue } = useForm<SchemaFilter>()
 
   function BuscarFiltro() {
     // Inicialize a lista com os dados originais
@@ -114,6 +114,12 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
       width: 50,
     },
     {
+      field: 'cod_empresa',
+      headerName: 'Cod',
+      disableColumnMenu: true,
+      width: 100,
+    },
+    {
       field: 'tipo_empresa',
       headerName: 'Tipo Empresa',
       width: 120,
@@ -149,7 +155,7 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
     },
     {
       field: 'cnpj',
-      headerName: 'Cnpj',
+      headerName: 'CNPJ',
       width: 150,
       disableColumnMenu: true,
     },
@@ -201,7 +207,6 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
     <Container>
       <BackPage backRoute="/" />
       <p>Empresas</p>
-
       <div>
         <Box
           style={{
@@ -333,6 +338,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
     const data = response.map((item) => {
       return {
         id: item.id,
+        cod_empresa: item.cod_empresa,
         patrocinadora: item.patrocinadora ? 'sim' : 'não',
         faculdade_anestesiologia: item.faculdade_anestesiologia ? 'sim' : 'não',
         empresa_ativa: item.empresa_ativa ? 'sim' : 'não',

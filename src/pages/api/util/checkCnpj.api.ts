@@ -1,3 +1,4 @@
+/* eslint-disable no-useless-escape */
 import axios from 'axios'
 import type { NextApiRequest, NextApiResponse } from 'next'
 // ESSA ROTA VERIFICA O CNPJ NA RECEITA FEDERAL, A REQUEST É FEITA PELO LADO DO SERVIDOR PARA EVITAR ERRO DE CORS
@@ -9,10 +10,20 @@ export default async function handler(
     const MessageErrorMethodInvalid = `Error method invalid`
     return res.status(405).json({ message: `${MessageErrorMethodInvalid}` })
   }
+
+  function removerCaracteresEspeciais(texto: any): any {
+    // Use uma expressão regular para encontrar os caracteres especiais e substituí-los por uma string vazia
+    const textoSemEspeciais = texto.replace(/[.\-\/]/g, '')
+
+    return textoSemEspeciais
+  }
+
   const data = req.query.cnpj
-  // console.log(data)
+  const cnpjLimpo = removerCaracteresEspeciais(data)
+  console.log(cnpjLimpo)
+
   await axios
-    .get(`https://www.receitaws.com.br/v1/cnpj/${data}`)
+    .get(`https://www.receitaws.com.br/v1/cnpj/${cnpjLimpo}`)
     .then((response) => {
       // console.log(response.data)
       return res.status(200).json(response.data)

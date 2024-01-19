@@ -14,6 +14,8 @@ export default function DataGridDemo({ rows, columns, w }: any) {
   useEffect(() => {
     if (rows.length == 1) {
       setSelection([rows[0].id])
+    } else {
+      setSelection([])
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rows])
@@ -42,7 +44,13 @@ export default function DataGridDemo({ rows, columns, w }: any) {
 
   return (
     <Container>
-      <Box sx={{ height: '50vh', width: w, marginTop: '1rem' }}>
+      <Box
+        sx={{
+          height: linhas[0] === 8 ? '100%' : '50vh',
+          width: w,
+          marginTop: '1rem',
+        }}
+      >
         {linhas.length > 0 ? (
           <DataGrid
             rows={rows}
