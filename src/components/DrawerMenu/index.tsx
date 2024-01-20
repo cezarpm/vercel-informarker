@@ -22,8 +22,7 @@ import {
   Article,
   UserFocus,
   User,
-  ArchiveBox
-
+  ArchiveBox,
 } from 'phosphor-react'
 import { useRouter } from 'next/navigation'
 import { Twirl as Hamburger } from 'hamburger-react'
@@ -38,7 +37,7 @@ export function TemporaryDrawer() {
 
   const router = useRouter()
 
-  // const { Logs } = useId()
+  // const { Logs } = useContextCustom()
 
   function handleNextPage(text: string): void {
     if (text === 'Parametros') {
@@ -68,23 +67,22 @@ export function TemporaryDrawer() {
 
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
-    (event: React.KeyboardEvent | React.MouseEvent) => {
-      if (
-        event.type === 'keydown' &&
-        ((event as React.KeyboardEvent).key === 'Tab' ||
-          (event as React.KeyboardEvent).key === 'Shift')
-      ) {
-        return
-      }
+      (event: React.KeyboardEvent | React.MouseEvent) => {
+        if (
+          event.type === 'keydown' &&
+          ((event as React.KeyboardEvent).key === 'Tab' ||
+            (event as React.KeyboardEvent).key === 'Shift')
+        ) {
+          return
+        }
 
-      setState({ ...state, [anchor]: open })
-      setOpen(open)
-    }
+        setState({ ...state, [anchor]: open })
+        setOpen(open)
+      }
 
   const arrayIcons = [
     <>
       <Buildings size={30} color="#fff" />
-
     </>,
     <>
       <UsersFour size={30} color="#fff" />

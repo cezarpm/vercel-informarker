@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import DataGridDemo from '@/components/TableList'
 import { prisma } from '@/lib/prisma'
 import { GetServerSideProps } from 'next'
-import { useId } from '@/context'
+import { useContextCustom } from '@/context'
 import { GridColDef } from '@mui/x-data-grid'
 import { toast } from 'react-toastify'
 import Modal from '@/components/Modal'
@@ -29,7 +29,7 @@ export default function AssociadoList({
   categoriaAssociado,
 }: any) {
   const router = useRouter()
-  const { selectedRowIds } = useId()
+  const { selectedRowIds } = useContextCustom()
   const [List, setList] = useState(data)
 
   const columns: GridColDef[] = [
@@ -193,7 +193,7 @@ export default function AssociadoList({
                   'Você não selecionou nenhum associado para atualizar',
                 )
               } else if (selectedRowIds.length >= 2) {
-                toast.warn('Selecione 1 associados para atualizar')
+                toast.warn('Selecione 1 associado para atualizar')
               } else {
                 router.push(`/associados/atualizar/${selectedRowIds}`)
               }

@@ -3,7 +3,7 @@
 import React, { useEffect, useState } from 'react'
 import Box from '@mui/material/Box'
 import { DataGrid } from '@mui/x-data-grid'
-import { useId } from '@/context'
+import { useContextCustom } from '@/context'
 import {
   InputLabel,
   MenuItem,
@@ -17,7 +17,7 @@ import { EtiquetaPDF } from '@/utils/ticketsAssociates'
 import { Button as ButtonEtiqueta } from '../Button'
 
 const TableBirthdays = ({ rows, columns, w }: any) => {
-  const { setSelection, selectedRowIds } = useId()
+  const { setSelection, selectedRowIds } = useContextCustom()
 
   const [filter, setFilter] = useState('0')
   const [quantidadeLinhas, setQuantidadeLinhas] = useState(10)

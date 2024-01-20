@@ -176,7 +176,7 @@ export default function Vizualizar({
       console.log(error)
     }
   }
-
+  console.log(data)
   useEffect(() => {
     setValue('id', data.id)
     setValue('cod_empresa', data.cod_empresa)
@@ -192,7 +192,6 @@ export default function Vizualizar({
     setValue('bairro', data.bairro)
     setValue('cidade', data.cidade)
     setValue('uf', data.uf)
-    setValue('pais', data.pais)
     setValue('nome_contato_primario', data.nome_contato_primario)
     setValue('tratamento_contato_primario', data.tratamento_contato_primario)
     setValue('cargo_contato_primario', data.cargo_contato_primario)
@@ -354,7 +353,7 @@ export default function Vizualizar({
                 w={140}
                 data={newDataPais}
                 {...register('pais')}
-                defaultValue={{ label: data.pais }}
+                defaultValue={{ label: data.pais ? data.pais : 'Brasil' }}
               />
             </div>
             <div style={{ width: '15%' }}>
@@ -377,14 +376,22 @@ export default function Vizualizar({
               data={newDataTratamento}
               w={300}
               {...register('tratamento_contato_primario')}
-              defaultValue={{ label: data.tratamento_contato_primario }}
+              defaultValue={{
+                label: data.tratamento_contato_primario
+                  ? data.tratamento_contato_primario
+                  : '',
+              }}
             />
             <SelectOptions
               description="Cargo"
               data={newDataCargo}
               w={180}
               {...register('cargo_contato_primario')}
-              defaultValue={{ label: data.cargo_contato_primario }}
+              defaultValue={{
+                label: data.cargo_contato_primario
+                  ? data.cargo_contato_primario
+                  : '',
+              }}
             />
           </Box>
 
@@ -418,7 +425,11 @@ export default function Vizualizar({
               w={300}
               description="Tratamento"
               {...register('tratamento_contato_secundario')}
-              defaultValue={{ label: data.tratamento_contato_secundario }}
+              defaultValue={{
+                label: data.tratamento_contato_secundario
+                  ? data.tratamento_contato_secundario
+                  : '',
+              }}
             />
             {/* <TextInput
               title="Cargo"
@@ -429,7 +440,11 @@ export default function Vizualizar({
               description="Cargo"
               w={180}
               {...register('cargo_contato_secundario')}
-              defaultValue={{ label: data.cargo_contato_secundario }}
+              defaultValue={{
+                label: data.cargo_contato_secundario
+                  ? data.cargo_contato_secundario
+                  : '',
+              }}
             />
           </Box>
 

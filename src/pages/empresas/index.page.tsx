@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import DataGridDemo from '@/components/TableList'
 import { prisma } from '@/lib/prisma'
 import { GetServerSideProps } from 'next'
-import { useId } from '@/context'
+import { useContextCustom } from '@/context'
 import { GridColDef } from '@mui/x-data-grid'
 import { toast } from 'react-toastify'
 import Modal from '@/components/Modal'
@@ -30,7 +30,7 @@ type SchemaFilter = z.infer<typeof shemaFilter>
 
 export default function EmpresaList({ data, dataTipoEmpresa }: any) {
   const router = useRouter()
-  const { selectedRowIds } = useId()
+  const { selectedRowIds } = useContextCustom()
   const [list, setList] = useState(data)
 
   const { register, watch, setValue } = useForm<SchemaFilter>()
@@ -110,79 +110,68 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
     {
       field: 'id',
       headerName: 'id',
-      disableColumnMenu: true,
-      width: 50,
+      width: 110,
     },
     {
       field: 'cod_empresa',
       headerName: 'Cod',
-      disableColumnMenu: true,
-      width: 100,
+      width: 130,
     },
     {
       field: 'tipo_empresa',
       headerName: 'Tipo Empresa',
-      width: 120,
+      width: 190,
     },
     {
       field: 'patrocinadora',
       headerName: 'Patr.',
-      width: 100,
+      width: 140,
     },
     {
       field: 'faculdade_anestesiologia',
       headerName: 'Fac. Anest.',
-      width: 120,
-      disableColumnMenu: true,
+      width: 170,
     },
     {
       field: 'empresa_ativa',
       headerName: 'Ativa',
-      width: 90,
-      disableColumnMenu: true,
+      width: 130,
     },
     {
       field: 'razao_social',
       headerName: 'Razão Social',
       width: 400,
-      disableColumnMenu: true,
     },
     {
       field: 'nome_fantasia',
       headerName: 'Nome Fantasia',
-      width: 130,
-      disableColumnMenu: true,
+      width: 200,
     },
     {
       field: 'cnpj',
       headerName: 'CNPJ',
       width: 150,
-      disableColumnMenu: true,
     },
     {
       field: 'cidade',
       headerName: 'Cidade',
-      width: 120,
-      disableColumnMenu: true,
+      width: 150,
     },
     {
       field: 'uf',
       headerName: 'Uf',
-      width: 50,
-      disableColumnMenu: true,
+      width: 120,
     },
 
     {
       field: 'nome_contato_primario',
       headerName: 'Contato Primário',
-      width: 140,
-      disableColumnMenu: true,
+      width: 210,
     },
     {
       field: 'email_contato_primario',
       headerName: 'Email Contato Primário',
-      width: 180,
-      disableColumnMenu: true,
+      width: 250,
     },
   ]
 
@@ -205,7 +194,7 @@ export default function EmpresaList({ data, dataTipoEmpresa }: any) {
   }, [])
   return (
     <Container>
-      <BackPage backRoute="/" />
+      <BackPage backRoute="/" discartPageBack />
       <p>Empresas</p>
       <div>
         <Box

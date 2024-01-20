@@ -5,6 +5,8 @@ type schemaContext = {
   setSelection: any
   updateListAll: boolean
   setUpdateListAll: any
+  setVoltarPagina: any
+  voltarPagina: any
 }
 
 // Criando o contexto
@@ -19,7 +21,7 @@ type schemaProvider = {
 export const SelecaoProvider: React.FC<schemaProvider> = ({ children }) => {
   const [selectedRowIds, setSelectedRowIds] = React.useState<number[]>([])
   const [updateListAll, setUpdateListAll] = React.useState<boolean>(false)
-
+  const [voltarPagina, setVoltarPagina] = React.useState(0)
   const setSelection = (newSelection: number[]) => {
     setSelectedRowIds(newSelection)
   }
@@ -31,6 +33,8 @@ export const SelecaoProvider: React.FC<schemaProvider> = ({ children }) => {
         setSelection,
         updateListAll,
         setUpdateListAll,
+        voltarPagina,
+        setVoltarPagina,
       }}
     >
       {children}
@@ -39,11 +43,13 @@ export const SelecaoProvider: React.FC<schemaProvider> = ({ children }) => {
 }
 
 // Criando um hook personalizado para usar o contexto
-export const useId = (): schemaContext => {
+export const useContextCustom = (): schemaContext => {
   const context = useContext(SelecaoContext)
 
   if (!context) {
-    throw new Error('useId deve ser usado dentro de um SelecaoProvider')
+    throw new Error(
+      'useContextCustom deve ser usado dentro de um SelecaoProvider',
+    )
   }
 
   return context

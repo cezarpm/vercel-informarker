@@ -1,6 +1,3 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -124,24 +121,24 @@ model Associados {
 
 model Adicionais_SAERJ {
   id              Int    @id @default(autoincrement())
-  matricula_saerj String
-  admissao_saerj  String
-  categoria_saerj String
-  situacao        String
-  cooperativa     String
-  nome_pai        String
-  nome_mae        String
-  tsa             String
-  observacao_1    String
-  observacao_2    String
-  observacao_3    String
-  hospital_1      String
-  hospital_2      String
-  tratamento      String
-  nacionalidade   String
-  foto_associado  String
-  cet_data_inicio String
-  cet_data_fim    String
+  matricula_saerj String?
+  admissao_saerj  DateTime?
+  categoria_saerj String?
+  situacao        String?
+  cooperativa     String?
+  nome_pai        String?
+  nome_mae        String?
+  tsa             String?
+  observacao_1    String?
+  observacao_2    String?
+  observacao_3    String?
+  hospital_1      String?
+  hospital_2      String?
+  tratamento      String?
+  nacionalidade   String?
+  foto_associado  String?
+  cet_data_inicio String?
+  cet_data_fim    String?
 }
 
 model Pagamentos {
@@ -154,7 +151,7 @@ model Pagamentos {
   data_pagto_parcela_1  String
   valor_pagto_parcela_1 String
   data_pagto_parcela_2  String
-  valor_pagto_parcela_2 String 
+  valor_pagto_parcela_2 String
   data_pagto_parcela_3  String
   valor_pagto_parcela_3 String
 }
@@ -184,11 +181,6 @@ model Protocolos {
   usuario_encerramento_protocolo       String?
 }
 
-enum Status {
-  ATIVA
-  INATIVA
-}
-
 model Votacao {
   id                  Int    @id @default(autoincrement())
   matricula_saerj     String
@@ -214,13 +206,13 @@ model Chapas_Eleicoes {
   chapa_vencedora  Boolean? @default(false)
 }
 
- model Chapas {
-   id              Int      @id @default(autoincrement())
-   titulo_chapa    String
-   nome_presidente String
-   data_formacao   DateTime
-   pessoas_compoe  String
- }
+model Chapas {
+  id              Int      @id @default(autoincrement())
+  titulo_chapa    String
+  nome_presidente String
+  data_formacao   DateTime
+  pessoas_compoe  String
+}
 
 model Diretorias {
   id              Int    @id @default(autoincrement())
@@ -244,4 +236,9 @@ model Logs {
   cod_log        String
   ocorrencia_log String
   data_hora_log  DateTime
+}
+
+enum Status {
+  ATIVA
+  INATIVA
 }

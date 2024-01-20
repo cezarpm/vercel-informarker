@@ -4,6 +4,7 @@ import {
   ContainerTextField,
   ContentMaskInput,
   ContainerMaskInput,
+  FormError,
 } from './styled'
 interface schemaTextField {
   title: string
@@ -41,9 +42,18 @@ export const TextInput = forwardRef<HTMLInputElement, schemaTextField>(
       <Container>
         {mask ? (
           <>
-            <ContainerMaskInput style={{ width: w }}>
+            <ContainerMaskInput
+              style={{ width: w, color: error ? '#d32f2f' : '' }}
+            >
               {title}
-              <ContentMaskInput mask={mask} ref={ref} value={value} {...rest} />
+              <ContentMaskInput
+                style={{ borderBottomColor: error ? '#d32f2f' : '' }}
+                mask={mask}
+                ref={ref}
+                value={value}
+                {...rest}
+              />
+              <FormError>{helperText}</FormError>
             </ContainerMaskInput>
           </>
         ) : (

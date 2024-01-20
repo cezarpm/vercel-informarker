@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import DataGridDemo from '@/components/TableList'
 import { prisma } from '@/lib/prisma'
 import { GetServerSideProps } from 'next'
-import { useId } from '@/context'
+import { useContextCustom } from '@/context'
 import { GridColDef } from '@mui/x-data-grid'
 import { toast } from 'react-toastify'
 import Modal from '@/components/Modal'
@@ -19,7 +19,7 @@ const shemaFilter = z.object({
 
 type SchemaFilter = z.infer<typeof shemaFilter>
 export default function EmpresaList({ data }: any) {
-  const { selectedRowIds } = useId()
+  const { selectedRowIds } = useContextCustom()
   const router = useRouter()
   const { register, watch } = useForm<SchemaFilter>()
   // console.log(selectedRowIds)

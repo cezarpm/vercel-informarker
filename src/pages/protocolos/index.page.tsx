@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import DataGridDemo from '@/components/TableList'
 import { prisma } from '@/lib/prisma'
 import { GetServerSideProps } from 'next'
-import { useId } from '@/context'
+import { useContextCustom } from '@/context'
 import { GridColDef } from '@mui/x-data-grid'
 import { toast } from 'react-toastify'
 import Modal from '@/components/Modal'
@@ -14,8 +14,7 @@ import { ArrowBendDownLeft } from 'phosphor-react'
 
 export default function ProtocoloList({ data }: any) {
   const router = useRouter()
-  const { selectedRowIds } = useId()
-  
+  const { selectedRowIds } = useContextCustom()
 
   // console.log(selectedRowIds)
   const columns: GridColDef[] = [
@@ -63,24 +62,24 @@ export default function ProtocoloList({ data }: any) {
   // SE EXISTIR O ID=4 E O ID=4 FOR DELETADO, AO DELETAR ATUALIZAR A LISTA PARA NÃO MOSTRAR ELE!
   return (
     <Container>
-        <Box style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-          <p>Protocolos</p>
-          <Link
-            href="/"
-            style={{
-              textDecoration: 'none',
-              fontFamily: 'Roboto',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              color: '#000',
-            }}
-          >
-            <ArrowBendDownLeft size={32} />
-            Retornar
-          </Link>
-        </Box>
-      
+      <Box style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+        <p>Protocolos</p>
+        <Link
+          href="/"
+          style={{
+            textDecoration: 'none',
+            fontFamily: 'Roboto',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            color: '#000',
+          }}
+        >
+          <ArrowBendDownLeft size={32} />
+          Retornar
+        </Link>
+      </Box>
+
       <DataGridDemo columns={columns} rows={data} w="100%" />
       <Box>
         <Button
@@ -176,29 +175,29 @@ export const getServerSideProps: GetServerSideProps = async () => {
         data_recebimento:
           data_recebimento != undefined
             ? data_recebimento
-                .toISOString()
-                .replace(/T.*/, '')
-                .split('-')
-                .reverse()
-                .join('/')
+              .toISOString()
+              .replace(/T.*/, '')
+              .split('-')
+              .reverse()
+              .join('/')
             : null,
         data_envio:
           data_envio != undefined
             ? data_envio
-                .toISOString()
-                .replace(/T.*/, '')
-                .split('-')
-                .reverse()
-                .join('/')
+              .toISOString()
+              .replace(/T.*/, '')
+              .split('-')
+              .reverse()
+              .join('/')
             : null,
         data_encerramento_protocolo:
           data_encerramento_protocolo != undefined
             ? data_encerramento_protocolo
-                .toISOString()
-                .replace(/T.*/, '')
-                .split('-')
-                .reverse()
-                .join('/')
+              .toISOString()
+              .replace(/T.*/, '')
+              .split('-')
+              .reverse()
+              .join('/')
             : null,
         entregue_em_maos:
           item.entregue_em_maos != undefined
