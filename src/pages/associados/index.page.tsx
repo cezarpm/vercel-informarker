@@ -70,7 +70,7 @@ export default function AssociadoList({
     },
   ]
 
-  const { register, watch } = useForm<SchemaFilter>()
+  const { register, watch, setValue } = useForm<SchemaFilter>()
 
   const dataSimNao = [
     {
@@ -118,9 +118,18 @@ export default function AssociadoList({
     // Imprima a lista filtrada (opcional, apenas para fins de depuração)
     console.log(filteredList)
   }
+
+  function valuesDefaultFilter() {
+    setValue('categoria_filter', 'Todos')
+    setValue('pendenciaAssociado_filter', 'Todos')
+    setValue('situacao_filter', 'Todos')
+  }
+
   useEffect(() => {
     setList(data)
+    valuesDefaultFilter()
   }, [data])
+
   return (
     <Container>
       <BackPage backRoute="/" discartPageBack />
