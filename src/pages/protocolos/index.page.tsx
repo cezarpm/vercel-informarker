@@ -58,8 +58,6 @@ export default function ProtocoloList({ data }: any) {
     },
   ]
 
-  // PRECISO ATUALIZAR A LISTA PRO USUARIO VER O ITEM QUE FOI DELETADO SUMIR
-  // SE EXISTIR O ID=4 E O ID=4 FOR DELETADO, AO DELETAR ATUALIZAR A LISTA PARA NÃO MOSTRAR ELE!
   return (
     <Container>
       <Box style={{ justifyContent: 'space-between', alignItems: 'center' }}>
@@ -175,29 +173,29 @@ export const getServerSideProps: GetServerSideProps = async () => {
         data_recebimento:
           data_recebimento != undefined
             ? data_recebimento
-              .toISOString()
-              .replace(/T.*/, '')
-              .split('-')
-              .reverse()
-              .join('/')
+                .toISOString()
+                .replace(/T.*/, '')
+                .split('-')
+                .reverse()
+                .join('/')
             : null,
         data_envio:
           data_envio != undefined
             ? data_envio
-              .toISOString()
-              .replace(/T.*/, '')
-              .split('-')
-              .reverse()
-              .join('/')
+                .toISOString()
+                .replace(/T.*/, '')
+                .split('-')
+                .reverse()
+                .join('/')
             : null,
         data_encerramento_protocolo:
           data_encerramento_protocolo != undefined
             ? data_encerramento_protocolo
-              .toISOString()
-              .replace(/T.*/, '')
-              .split('-')
-              .reverse()
-              .join('/')
+                .toISOString()
+                .replace(/T.*/, '')
+                .split('-')
+                .reverse()
+                .join('/')
             : null,
         entregue_em_maos:
           item.entregue_em_maos != undefined

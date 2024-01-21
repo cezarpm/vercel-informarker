@@ -1064,9 +1064,17 @@ export default function AssociadosCadastro({
                   })}
                 />
               </div>
-
+              <div>
+                <SelectOptions
+                  w={200}
+                  description="Situação"
+                  data={dataSituacao}
+                  defaultValue={{ label: data.situacao }}
+                  {...register('situacao')}
+                />
+              </div>
               <TextInput
-                title="Pendências SERJ"
+                title="Pendências SAERJ"
                 {...register('pendencias_SAERJ')}
               />
               <div>
@@ -1081,16 +1089,6 @@ export default function AssociadosCadastro({
                   w={100}
                   title="Sigla Regional"
                   {...register('sigla_regional')}
-                />
-              </div>
-
-              <div>
-                <SelectOptions
-                  w={200}
-                  description="Situação"
-                  data={dataSituacao}
-                  defaultValue={{ label: data.situacao }}
-                  {...register('situacao')}
                 />
               </div>
             </Box>

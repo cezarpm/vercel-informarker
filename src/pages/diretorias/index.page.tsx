@@ -84,7 +84,7 @@ export default function DiretoriasList({ data }: any) {
 
 
         <Modal
-          title="Deletar"
+          title="Excluir"
           bgColor="#ff0000"
           routeDelete="/diretorias/delete"
           data={selectedRowIds}
