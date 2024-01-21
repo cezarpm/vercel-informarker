@@ -310,7 +310,7 @@ export default function Associados({ data }: schemaParametrosProps) {
               <div>
                 <TextInput
                   w={130}
-                  title="Pendências SERJ"
+                  title="Pendências SAERJ"
                   {...register('pendencias_SAERJ')}
                   defaultValue={dataAssociados.pendencias_SAERJ}
                 />

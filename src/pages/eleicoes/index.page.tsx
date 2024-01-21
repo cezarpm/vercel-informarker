@@ -97,7 +97,7 @@ export default function EleicoesList({ data }: any) {
         />
 
         <Modal
-          title="Deletar"
+          title="Excluir"
           bgColor="#ff0000"
           routeDelete="/eleicoes/delete"
           data={selectedRowIds}

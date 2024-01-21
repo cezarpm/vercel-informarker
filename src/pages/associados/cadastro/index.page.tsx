@@ -892,11 +892,19 @@ export default function AssociadosCadastro({
                   })}
                 />
               </div>
-
+              <div>
+                <SelectOptions
+                  w={200}
+                  description="Situação"
+                  data={dataSituacao}
+                  {...register('situacao')}
+                />
+                <FormError>{errors.situacao?.message}</FormError>
+              </div>
               <div>
                 <TextInput
                   w={180}
-                  title="Pendências SERJ"
+                  title="Pendências SAERJ"
                   {...register('pendencias_SAERJ')}
                 />
               </div>
@@ -914,36 +922,33 @@ export default function AssociadosCadastro({
                   {...register('sigla_regional')}
                 />
               </div>
-
-              <div>
-                <SelectOptions
-                  w={200}
-                  description="Situação"
-                  data={dataSituacao}
-                  {...register('situacao')}
-                />
-                <FormError>{errors.situacao?.message}</FormError>
-              </div>
             </Box>
 
             <Box>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Checkbox
-                  title="Declaro Verdadeiras"
+                  title="Declaro para os devidos fins que as informações contidas neste formulário de cadastro são verdadeiras e autênticas"
                   {...register('declaro_verdadeiras')}
                   required
                 />
                 <p style={{ color: ' rgba(0, 0, 0, 0.6)' }}>
-                  Declaro Verdadeiras
+                  Declaro para os devidos fins que as informações contidas neste
+                  formulário de cadastro são verdadeiras e autênticas
                 </p>
-                <Checkbox
-                  title="Declaro Quite SAERJ"
-                  {...register('declaro_quite_SAERJ')}
-                  required
-                />
-                <p style={{ color: ' rgba(0, 0, 0, 0.6)' }}>
-                  Declaro Quite SAERJ
-                </p>
+                {checkCategoria === 'Aspirantes' ? (
+                  <>
+                    <Checkbox
+                      title="Declaro para os devidos fins que proponente à médico em especialização está quite com o pagamento da anuidade regional"
+                      {...register('declaro_quite_SAERJ')}
+                      required
+                    />
+                    <p style={{ color: ' rgba(0, 0, 0, 0.6)' }}>
+                      Declaro para os devidos fins que proponente à médico em
+                      especialização está quite com o pagamento da anuidade
+                      regional
+                    </p>
+                  </>
+                ) : null}
               </div>
             </Box>
           </Fieldset>

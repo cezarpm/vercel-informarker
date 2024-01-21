@@ -55,7 +55,7 @@ export default function Modal({
         title={title}
         onClick={() => {
           if (data.length === 0) {
-            toast.warn('Selecione um item para deletar')
+            toast.warn('Selecione um item para Excluir')
           } else {
             handleOpen()
           }
