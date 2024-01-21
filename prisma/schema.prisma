@@ -120,7 +120,7 @@ model Associados {
 }
 
 model Adicionais_SAERJ {
-  id              Int    @id @default(autoincrement())
+  id              Int       @id @default(autoincrement())
   matricula_saerj String?
   admissao_saerj  DateTime?
   categoria_saerj String?
@@ -142,18 +142,18 @@ model Adicionais_SAERJ {
 }
 
 model Pagamentos {
-  id                    Int    @id @default(autoincrement())
+  id                    Int       @id @default(autoincrement())
   matricula_saerj       String
   tipo_pagamento        String
-  ano_anuidade          String
-  data_pagto_unica      String
-  valor_pagto_unica     String
-  data_pagto_parcela_1  String
-  valor_pagto_parcela_1 String
-  data_pagto_parcela_2  String
-  valor_pagto_parcela_2 String
-  data_pagto_parcela_3  String
-  valor_pagto_parcela_3 String
+  ano_anuidade          String?
+  data_pagto_unica      DateTime?
+  valor_pagto_unica     Decimal?  @db.Decimal(10, 2)
+  data_pagto_parcela_1  DateTime?
+  valor_pagto_parcela_1 Decimal?  @db.Decimal(10, 2)
+  data_pagto_parcela_2  DateTime?
+  valor_pagto_parcela_2 Decimal?  @db.Decimal(10, 2)
+  data_pagto_parcela_3  DateTime?
+  valor_pagto_parcela_3 Decimal?  @db.Decimal(10, 2)
 }
 
 model Protocolos {

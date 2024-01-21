@@ -63,22 +63,25 @@ export function TemporaryDrawer() {
     } else if (text === 'Votação') {
       router.push('/eleicao')
     }
+    // else if (text === 'Pagamentos') {
+    //   router.push('/pagamentos')
+    // }
   }
 
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
-      (event: React.KeyboardEvent | React.MouseEvent) => {
-        if (
-          event.type === 'keydown' &&
-          ((event as React.KeyboardEvent).key === 'Tab' ||
-            (event as React.KeyboardEvent).key === 'Shift')
-        ) {
-          return
-        }
-
-        setState({ ...state, [anchor]: open })
-        setOpen(open)
+    (event: React.KeyboardEvent | React.MouseEvent) => {
+      if (
+        event.type === 'keydown' &&
+        ((event as React.KeyboardEvent).key === 'Tab' ||
+          (event as React.KeyboardEvent).key === 'Shift')
+      ) {
+        return
       }
+
+      setState({ ...state, [anchor]: open })
+      setOpen(open)
+    }
 
   const arrayIcons = [
     <>
@@ -87,6 +90,9 @@ export function TemporaryDrawer() {
     <>
       <UsersFour size={30} color="#fff" />
     </>,
+    // <>
+    //   <ArchiveTray size={30} color="#fff" />
+    // </>,
     <>
       <ArchiveTray size={30} color="#fff" />
     </>,
@@ -150,6 +156,7 @@ export function TemporaryDrawer() {
         {[
           'Empresas',
           'Associados',
+          // 'Pagamentos',
           'Aniversariantes',
           'Protocolos',
           'Chapas',

@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Button } from '@/components/Button'
 import { Container, Box } from './styled'
 import { useRouter } from 'next/router'
@@ -27,10 +28,9 @@ const shemaFilter = z.object({
 
 type SchemaFilter = z.infer<typeof shemaFilter>
 
-export default function Empresas({ data, dataTipoEmpresa }: any) {
-  const { selectedRowIds } = useContextCustom()
-  console.log(selectedRowIds)
+export default function EmpresaList({ data, dataTipoEmpresa }: any) {
   const router = useRouter()
+  const { selectedRowIds } = useContextCustom()
   const [list, setList] = useState(data)
 
   const { register, watch, setValue } = useForm<SchemaFilter>()
@@ -185,6 +185,7 @@ export default function Empresas({ data, dataTipoEmpresa }: any) {
       ocorrencia_tabela: 'não',
     },
   ]
+
   useEffect(() => {
     setValue('tipo_empresa_filter', 'Todos')
     setValue('uf_filter', 'Todos')
@@ -192,15 +193,10 @@ export default function Empresas({ data, dataTipoEmpresa }: any) {
     setValue('patrocinarora_filter', 'Todos')
     setValue('faculdade_anestesiologia_filter', 'Todos')
   }, [])
-
-  useEffect(() => {
-    setList(data)
-  }, [data])
-
   return (
     <Container>
       <BackPage backRoute="/" discartPageBack />
-      <p>Empresas</p>
+      <p>Pagamentos</p>
       <div>
         <Box
           style={{
@@ -280,7 +276,7 @@ export default function Empresas({ data, dataTipoEmpresa }: any) {
             } else if (selectedRowIds.length >= 2) {
               toast.warn('selecione 1 empresa para visualizar')
             } else {
-              router.push(`/empresas/visualizar/${selectedRowIds}`)
+              router.push(`/pagamentos/visualizar/${selectedRowIds}`)
             }
           }}
         />
@@ -294,7 +290,7 @@ export default function Empresas({ data, dataTipoEmpresa }: any) {
             } else if (selectedRowIds.length >= 2) {
               toast.warn('selecione 1 empresa para atualizar')
             } else {
-              router.push(`/empresas/atualizar/${selectedRowIds}`)
+              router.push(`/pagamentos/atualizar/${selectedRowIds}`)
             }
           }}
         />
@@ -303,7 +299,7 @@ export default function Empresas({ data, dataTipoEmpresa }: any) {
           title="Incluir"
           style={{ backgroundColor: '#ED7D31' }}
           onClick={() => {
-            router.push('/empresas/cadastro')
+            router.push('/pagamentos/cadastro')
           }}
         />
 
@@ -312,7 +308,7 @@ export default function Empresas({ data, dataTipoEmpresa }: any) {
           bgColor="#BE0000"
           routeDelete="/empresa/delete/"
           data={selectedRowIds}
-          redirectRouter="empresas"
+          redirectRouter="/pagamentos"
         />
 
         {/* <Button
@@ -378,7 +374,5 @@ export const getServerSideProps: GetServerSideProps = async () => {
         dataTipoEmpresa: [],
       },
     }
-  } finally {
-    prisma.$disconnect()
   }
 }

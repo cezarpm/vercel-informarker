@@ -4,7 +4,7 @@ import { DataGrid } from '@mui/x-data-grid'
 import { useContextCustom } from '@/context'
 
 import { Container } from './styled'
-import { SetStateAction, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { api } from '@/lib/axios'
 import CircularProgress from '@mui/material/CircularProgress'
 
@@ -45,10 +45,9 @@ export default function DataGridDemo({ rows, columns, w }: any) {
     } else {
       setSelection([])
     }
+    // console.log('renderizou')
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [rows])
-
-  console.log(voltarPagina, pageCache)
 
   return (
     <Container>
