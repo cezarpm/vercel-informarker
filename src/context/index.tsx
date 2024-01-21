@@ -22,6 +22,7 @@ export const SelecaoProvider: React.FC<schemaProvider> = ({ children }) => {
   const [selectedRowIds, setSelectedRowIds] = React.useState<number[]>([])
   const [updateListAll, setUpdateListAll] = React.useState<boolean>(false)
   const [voltarPagina, setVoltarPagina] = React.useState(0)
+
   const setSelection = (newSelection: number[]) => {
     setSelectedRowIds(newSelection)
   }

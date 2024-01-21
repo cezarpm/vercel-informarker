@@ -18,7 +18,10 @@ export function BackPage({
       <Box>
         <Link
           href={`/${backRoute}`}
-          onClick={discartPageBack ? setVoltarPagina(0) : null}
+          onClick={() => {
+            // eslint-disable-next-line no-unused-expressions
+            discartPageBack ? setVoltarPagina(0) : null
+          }}
           style={{
             textDecoration: 'none',
             fontFamily: 'Roboto',
