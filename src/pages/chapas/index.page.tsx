@@ -2,7 +2,7 @@ import { Button } from '@/components/Button'
 import { Container, Box } from './styled'
 import { useRouter } from 'next/router'
 import DataGridDemo from '@/components/TableList'
-import { useId } from '@/context'
+import { useContextCustom } from '@/context'
 import { GridColDef } from '@mui/x-data-grid'
 import { toast } from 'react-toastify'
 import Modal from '@/components/Modal'
@@ -12,7 +12,7 @@ import { prisma } from '@/lib/prisma'
 
 export default function ChapasList({ data }: any) {
   const router = useRouter()
-  const { selectedRowIds } = useId()
+  const { selectedRowIds } = useContextCustom()
 
   const columns: GridColDef[] = [
     {

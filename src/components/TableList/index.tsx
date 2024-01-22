@@ -1,7 +1,7 @@
 /* eslint-disable eqeqeq */
 import Box from '@mui/material/Box'
 import { DataGrid } from '@mui/x-data-grid'
-import { useId } from '@/context'
+import { useContextCustom } from '@/context'
 
 import { Container } from './styled'
 import { useEffect, useState } from 'react'
@@ -9,21 +9,18 @@ import { api } from '@/lib/axios'
 import CircularProgress from '@mui/material/CircularProgress'
 
 export default function DataGridDemo({ rows, columns, w }: any) {
-  const { setSelection, selectedRowIds } = useId()
-
-  useEffect(() => {
-    if (rows.length == 1) {
-      setSelection([rows[0].id])
-    } else {
-      setSelection([])
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [rows])
+  const { setSelection, selectedRowIds, setVoltarPagina, voltarPagina } =
+    useContextCustom()
+  const [pageCache, setPageCache] = useState(0)
+  const [linhas, setLinhas] = useState([])
 
   const handleSelectionModelChange = (newSelectionModel: any) => {
     setSelection(newSelectionModel)
+
+    if (newSelectionModel) {
+      setVoltarPagina(pageCache)
+    }
   }
-  const [linhas, setLinhas] = useState([])
 
   useEffect(() => {
     async function GetParams() {
@@ -42,6 +39,16 @@ export default function DataGridDemo({ rows, columns, w }: any) {
     GetParams()
   }, [])
 
+  useEffect(() => {
+    if (rows.length == 1) {
+      setSelection([rows[0].id])
+    } else {
+      setSelection([])
+    }
+    // console.log('renderizou')
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [rows])
+
   return (
     <Container>
       <Box
@@ -59,6 +66,8 @@ export default function DataGridDemo({ rows, columns, w }: any) {
             initialState={{
               pagination: {
                 paginationModel: {
+                  // setar valor da paginacao
+                  page: voltarPagina,
                   pageSize: linhas[0] !== undefined ? linhas[0] : 10,
                 },
               },
@@ -68,6 +77,8 @@ export default function DataGridDemo({ rows, columns, w }: any) {
             disableRowSelectionOnClick
             rowSelectionModel={selectedRowIds}
             onRowSelectionModelChange={handleSelectionModelChange}
+            // buscar pagina atual
+            onPaginationModelChange={(params) => setPageCache(params.page)}
           />
         ) : (
           <Box

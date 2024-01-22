@@ -1,5 +1,5 @@
 import { Box, Container, Text } from './styled'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { Button } from '@/components/Button'
@@ -13,7 +13,7 @@ import { toast } from 'react-toastify'
 import { useRouter } from 'next/router'
 import { useArrayDate } from '@/utils/useArrayDate'
 import { BackPage } from '@/components/BackPage'
-
+import { EyeSlash, Eye } from 'phosphor-react'
 interface schemaCategorias {
   label: string
 }
@@ -80,6 +80,7 @@ export default function Parametros({
   dataParametros,
 }: schemaParametrosProps) {
   const router = useRouter()
+  const [viewRandom, setViewRandom] = useState<boolean>(false)
   const {
     register,
     handleSubmit,
@@ -117,7 +118,6 @@ export default function Parametros({
       })
       if (response.status === 200) {
         toast.success('Alterado com sucesso!')
-        router.push('/')
       } else {
         toast.error('Algo deu errado')
       }
@@ -166,13 +166,41 @@ export default function Parametros({
           </legend>
 
           <Box>
-            <div>
+            <div
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
               <TextInput
+                type={viewRandom === false ? 'password' : 'text'}
                 title="Random"
                 w={100}
                 disabled
                 defaultValue={dataParametros.random}
               />
+              {viewRandom === false ? (
+                <EyeSlash
+                  style={{
+                    cursor: 'pointer',
+                  }}
+                  size={21}
+                  onClick={() => {
+                    setViewRandom(true)
+                  }}
+                />
+              ) : (
+                <Eye
+                  size={21}
+                  style={{
+                    cursor: 'pointer',
+                  }}
+                  onClick={() => {
+                    setViewRandom(false)
+                  }}
+                />
+              )}
             </div>
             <div style={{ flex: 0.8 }}>
               <SwitchInput
@@ -351,16 +379,17 @@ export default function Parametros({
                 defaultValue={dataParametros.quantidade_linhas_listas}
               />
             </div>
-            <div style={{ flex: 1 }}>
+          </Box>
+
+          <Box>
+            <div>
               <SwitchInput
                 title="Acesso externo ao sistema autorizado?"
                 {...register('acesso_externo_sis')}
                 defaultChecked={dataParametros.acesso_externo_sis}
               />
             </div>
-          </Box>
 
-          <Box>
             <div>
               <TextInput
                 title="Endereco IP primario"

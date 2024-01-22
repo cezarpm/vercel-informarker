@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import DataGridDemo from '@/components/TableList'
 import { prisma } from '@/lib/prisma'
 import { GetServerSideProps } from 'next'
-import { useId } from '@/context'
+import { useContextCustom } from '@/context'
 import { GridColDef } from '@mui/x-data-grid'
 import { toast } from 'react-toastify'
 import Modal from '@/components/Modal'
@@ -14,8 +14,7 @@ import { ArrowBendDownLeft } from 'phosphor-react'
 
 export default function ProtocoloList({ data }: any) {
   const router = useRouter()
-  const { selectedRowIds } = useId()
-  
+  const { selectedRowIds } = useContextCustom()
 
   // console.log(selectedRowIds)
   const columns: GridColDef[] = [
@@ -59,28 +58,26 @@ export default function ProtocoloList({ data }: any) {
     },
   ]
 
-  // PRECISO ATUALIZAR A LISTA PRO USUARIO VER O ITEM QUE FOI DELETADO SUMIR
-  // SE EXISTIR O ID=4 E O ID=4 FOR DELETADO, AO DELETAR ATUALIZAR A LISTA PARA NÃO MOSTRAR ELE!
   return (
     <Container>
-        <Box style={{ justifyContent: 'space-between', alignItems: 'center' }}>
-          <p>Protocolos</p>
-          <Link
-            href="/"
-            style={{
-              textDecoration: 'none',
-              fontFamily: 'Roboto',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              color: '#000',
-            }}
-          >
-            <ArrowBendDownLeft size={32} />
-            Retornar
-          </Link>
-        </Box>
-      
+      <Box style={{ justifyContent: 'space-between', alignItems: 'center' }}>
+        <p>Protocolos</p>
+        <Link
+          href="/"
+          style={{
+            textDecoration: 'none',
+            fontFamily: 'Roboto',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            color: '#000',
+          }}
+        >
+          <ArrowBendDownLeft size={32} />
+          Retornar
+        </Link>
+      </Box>
+
       <DataGridDemo columns={columns} rows={data} w="100%" />
       <Box>
         <Button

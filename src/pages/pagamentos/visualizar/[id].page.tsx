@@ -8,7 +8,6 @@ import { SwitchInput } from '@/components/SwitchInput'
 import { ArrowBendDownLeft, CaretRight } from 'phosphor-react'
 import Link from 'next/link'
 import { TextAreaInput } from '../atualizar/styled'
-import { BackPage } from '@/components/BackPage'
 
 const schemaEmpresaForm = z.object({
   id: z.number(),
@@ -52,10 +51,27 @@ interface schemaEmpresasProps {
   data: SchemaEmpresaForm
 }
 export default function Vizualizar({ data }: schemaEmpresasProps) {
+  console.log(data)
   return (
     <Container>
       <form>
-        <BackPage backRoute="empresas" />
+        <Box style={{ justifyContent: 'end' }}>
+          <Link
+            href="/empresas"
+            style={{
+              textDecoration: 'none',
+              fontFamily: 'Roboto',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              marginBottom: '1rem',
+              color: '#000',
+            }}
+          >
+            <ArrowBendDownLeft size={32} />
+            Retornar
+          </Link>
+        </Box>
         <fieldset>
           <legend>
             <span>

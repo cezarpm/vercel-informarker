@@ -8,12 +8,12 @@ import Modal from '@/components/Modal'
 import { toast } from 'react-toastify'
 
 import { useRouter } from 'next/router'
-import { useId } from '@/context'
+import { useContextCustom } from '@/context'
 import { GetServerSideProps } from 'next'
 import { prisma } from '@/lib/prisma'
 
 export default function DiretoriasList({ data }: any) {
-  const { selectedRowIds } = useId()
+  const { selectedRowIds } = useContextCustom()
   const router = useRouter()
   const columns: GridColDef[] = [
     { field: 'numero_eleicao', headerName: 'Numero Eleição', flex: 1 },
@@ -84,7 +84,7 @@ export default function DiretoriasList({ data }: any) {
 
 
         <Modal
-          title="Deletar"
+          title="Excluir"
           bgColor="#ff0000"
           routeDelete="/diretorias/delete"
           data={selectedRowIds}

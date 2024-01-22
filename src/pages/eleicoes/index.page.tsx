@@ -7,13 +7,13 @@ import Modal from '@/components/Modal'
 import { toast } from 'react-toastify'
 
 import { useRouter } from 'next/router'
-import { useId } from '@/context'
+import { useContextCustom } from '@/context'
 import { prisma } from '@/lib/prisma'
 import { GetServerSideProps } from 'next'
 import { format } from 'date-fns'
 
 export default function EleicoesList({ data }: any) {
-  const { selectedRowIds } = useId()
+  const { selectedRowIds } = useContextCustom()
 
   const router = useRouter()
   const columns: GridColDef[] = [
@@ -97,7 +97,7 @@ export default function EleicoesList({ data }: any) {
         />
 
         <Modal
-          title="Deletar"
+          title="Excluir"
           bgColor="#ff0000"
           routeDelete="/eleicoes/delete"
           data={selectedRowIds}
