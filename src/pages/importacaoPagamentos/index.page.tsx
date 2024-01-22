@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import Papa from 'papaparse';
 import { Button } from '@/components/Button';
 import { Container, Box } from './styled';
+import { toast } from 'react-toastify';
 
 export default function CsvUpload() {
     const [file, setFile] = useState(null);
@@ -22,10 +22,10 @@ export default function CsvUpload() {
                       'Content-Type': 'multipart/form-data'
                   }
               });
-              alert('Dados enviados com sucesso!');
+              toast.success('Dados importados com sucesso!');
           } catch (error) {
               console.error('Erro ao enviar dados:', error);
-              alert('Erro ao enviar dados.');
+              toast.error('Erro ao enviar dados! Envie um arquivo CSV válido.');
           }
       }
   };
@@ -39,6 +39,7 @@ export default function CsvUpload() {
         <Button
           style={{ backgroundColor: '#4471C6' }}
           title="Importar dados"
+          disabled={!file}
           onClick={() => {
             handleUpload();
           }
