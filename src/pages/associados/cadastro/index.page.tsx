@@ -27,86 +27,39 @@ import Checkbox from '@mui/material/Checkbox'
 import SelectNoComplete from '@/components/SelectNoComplete'
 import { useArrayUfBrasil } from '@/utils/useArrayUfBrasil'
 import { BackPage } from '@/components/BackPage'
+import { schemaCadastro } from './schemaCadastro'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { SwitchInput } from '@/components/SwitchInput'
 
-const schemaParams = z.object({
-  numero_proposta_SBA: z.number(),
-  matricula_SAERJ: z.number().min(1, { message: 'Campo obrigatório' }),
-  matricula_SBA: z.number(),
-  situacao: z.string(),
-  uf_crm: z.string(),
-  crm: z.string(),
-  nome_completo: z.string(),
-  cpf: z.string(),
-  sexo: z.string(),
-  nome_profissional: z.string(),
-  categoria: z.string(),
-  cep: z.string(),
-  logradouro: z.string(),
-  numero: z.number(),
-  complemento: z.string(),
-  bairro: z.string(),
-  cidade: z.string(),
-  uf: z.string(),
-  pais: z.string(),
-  telefone_celular: z.string(),
-  telefone_residencial: z.string(),
-  email: z.string(),
-  nome_instituicao_ensino_graduacao: z.string(),
-  ano_conclusao_graduacao: z.string(),
-  residencia_mec_cnrm: z.string(),
-  nivel_residencia: z.string(),
-  nome_hospital_mec: z.string(),
-  uf_prm: z.string(),
-  comprovante_endereco: z.any(),
-  carta_indicacao_2_membros: z.any(),
-  declaracao_hospital: z.any(),
-  diploma_medicina: z.any(),
-  certidao_quitacao_crm: z.any(),
-  certificado_conclusao_especializacao: z.any(),
-  declaro_verdadeiras: z.string(),
-  declaro_quite_SAERJ: z.string(),
-  pendencias_SAERJ: z.string(),
-  nome_presidente_regional: z.string(),
-  sigla_regional: z.string(),
-  comprovante_cpf: z.any(),
-  yearNasc: z.string(),
-  monthNasc: z.string(),
-  dayNasc: z.string(),
-  dayInicioEspec: z.string(),
-  monthInicioEspec: z.string(),
-  yearInicioEspec: z.string(),
-  dayPrevConcl: z.string(),
-  monthPrevConcl: z.string(),
-  yearPrevConcl: z.string(),
-  confirmarEmail: z.string(),
-})
-
-type SchemaParametros = z.infer<typeof schemaParams>
+type SchemaCadastro = z.infer<typeof schemaCadastro>
 
 interface schemaParametrosProps {
-  data: any
   dataCategoria: any
   dataSituacao: any
   dataPais: any
+  dataNivelResidencia: any
 }
 
 export default function AssociadosCadastro({
-  data,
   dataCategoria,
   dataSituacao,
   dataPais,
+  dataNivelResidencia,
 }: schemaParametrosProps) {
+  const [cepInvalido, setCepInvalido] = useState()
+  const [disableCamposCepInvalido, setDisableCamposCepInvalido] =
+    useState(false)
+  const router = useRouter()
+
   const {
     register,
     handleSubmit,
     setValue,
     watch,
-    formState: { isSubmitting },
-  } = useForm<SchemaParametros>()
-  const [cepInvalido, setCepInvalido] = useState()
-  const [disableCamposCepInvalido, setDisableCamposCepInvalido] =
-    useState(false)
-  const router = useRouter()
+    formState: { errors, isSubmitting },
+  } = useForm<SchemaCadastro>({
+    resolver: zodResolver(schemaCadastro),
+  })
 
   const dataDays = useArrayDate.Dia()
   const dataMonths = useArrayDate.Mes()
@@ -166,7 +119,8 @@ export default function AssociadosCadastro({
     }
   }
 
-  async function OnSubmit(data: SchemaParametros) {
+  async function handleOnSubmit(data: SchemaCadastro) {
+    console.log(data)
     try {
       let dataNascimento
       let dataInicioEspecializacao
@@ -254,6 +208,7 @@ export default function AssociadosCadastro({
 
       await api.post('/associados/cadastro', {
         ...newData,
+        residencia_mec_cnrm: String(data.residencia_mec_cnrm),
         declaro_quite_SAERJ: String(data.declaro_quite_SAERJ),
         declaro_verdadeiras: String(data.declaro_verdadeiras),
         comprovante_cpf: await response.data.names_arquivos[0],
@@ -276,15 +231,34 @@ export default function AssociadosCadastro({
     }
   }
 
+  function valuesInitial() {
+    setValue('numero', 0)
+    setValue('numero_proposta_SBA', 0)
+    setValue('matricula_SAERJ', 0)
+    setValue('matricula_SBA', 0)
+    setValue('cpf', '')
+  }
+
+  const arraySexo = [
+    {
+      label: 'Masculino',
+    },
+    {
+      label: 'Feminino',
+    },
+  ]
+
   useEffect(() => {
     setDisableCamposCepInvalido(false)
     handleGetAllParams()
+    valuesInitial()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
     <Container>
-      <form onSubmit={handleSubmit(OnSubmit)}>
-        <BackPage backRoute="/associados" />
+      <form onSubmit={handleSubmit(handleOnSubmit)}>
+        <BackPage backRoute="associados" />
         <fieldset>
           <legend>
             <Link href="/associados">Associados</Link>
@@ -305,25 +279,45 @@ export default function AssociadosCadastro({
                   data={useArrayUfBrasil}
                   {...register('uf_crm')}
                 />
+                <FormError>{errors.uf_crm?.message}</FormError>
               </div>
               <div>
-                <TextInput w={180} title="CRM" {...register('crm')} />
+                <TextInput
+                  w={180}
+                  title="CRM"
+                  {...register('crm')}
+                  helperText={errors?.crm?.message}
+                  error={!!errors?.crm?.message}
+                />
               </div>
 
-              <TextInput title="Nome Completo" {...register('nome_completo')} />
+              <TextInput
+                title="Nome Completo"
+                {...register('nome_completo')}
+                helperText={errors.nome_completo?.message}
+                error={!!errors.nome_completo?.message}
+              />
               <div>
                 <TextInput
                   w={140}
                   title="CPF"
                   mask={'999.999.999-99'}
                   {...register('cpf')}
+                  helperText={errors.cpf?.message}
+                  error={!!errors.cpf?.message}
                 />
               </div>
             </Box>
 
             <Box>
               <div>
-                <TextInput w={100} title="Sexo" {...register('sexo')} />
+                <SelectOptions
+                  w={170}
+                  data={arraySexo}
+                  description="Sexo"
+                  {...register('sexo')}
+                />
+                <FormError>{errors?.sexo?.message}</FormError>
               </div>
               <div>
                 <TextInput
@@ -348,7 +342,6 @@ export default function AssociadosCadastro({
                     {...register('dayNasc')}
                     // defaultValue={{ label: newDateAnuidade.dia }}
                   />
-
                   <SelectOptions
                     data={dataMonths}
                     description="Mês"
@@ -356,7 +349,6 @@ export default function AssociadosCadastro({
                     {...register('monthNasc')}
                     // defaultValue={{ label: newDateAnuidade.mes }}
                   />
-
                   <SelectOptions
                     w={120}
                     description="Ano"
@@ -365,21 +357,40 @@ export default function AssociadosCadastro({
                     // defaultValue={{ label: newDateAnuidade.ano }}
                   />
                 </div>
+                <span
+                  style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                  }}
+                >
+                  <FormError>
+                    {errors.dayNasc?.message ||
+                    errors.dayNasc?.message ||
+                    errors.yearNasc?.message
+                      ? 'Data de nascimento:'
+                      : null}
+                  </FormError>
+                  <FormError>{errors.yearNasc?.message}</FormError>
+                  <FormError>{errors.monthNasc?.message}</FormError>
+                  <FormError>{errors.dayNasc?.message}</FormError>
+                </span>
               </div>
-              <div
-                style={{
-                  width: '20%',
-                  fontSize: '14px',
-                  border: 'solid 1px',
-                  borderColor:
-                    'transparent transparent rgb(169, 169, 178) transparent',
-                }}
-              >
-                <SelectNoComplete
-                  data={dataCategoria}
-                  title="Categoria"
-                  {...register('categoria')}
-                />
+              <div style={{ width: '20%' }}>
+                <div
+                  style={{
+                    fontSize: '14px',
+                    border: 'solid 1px',
+                    borderColor:
+                      'transparent transparent rgb(169, 169, 178) transparent',
+                  }}
+                >
+                  <SelectNoComplete
+                    data={dataCategoria}
+                    title="Categoria"
+                    {...register('categoria')}
+                  />
+                </div>
+                <FormError>{errors?.categoria?.message}</FormError>
               </div>
             </Box>
           </Fieldset>
@@ -402,6 +413,8 @@ export default function AssociadosCadastro({
                     title="Cep *"
                     {...register('cep')}
                     mask="99999-999"
+                    helperText={errors?.cep?.message}
+                    error={!!errors?.cep?.message}
                   />
 
                   <Button
@@ -422,6 +435,7 @@ export default function AssociadosCadastro({
                   description="País onde reside *"
                   {...register('pais')}
                 />
+                <FormError>{errors?.pais?.message}</FormError>
               </div>
               <div>
                 <TextInput
@@ -429,23 +443,29 @@ export default function AssociadosCadastro({
                   w={100}
                   title="UF *"
                   {...register('uf')}
+                  error={!!errors?.uf?.message}
+                  helperText={errors?.uf?.message}
                 />
               </div>
               <div>
                 <TextInput
                   disabled={disableCamposCepInvalido}
-                  w={400}
+                  w={350}
                   title="Cidade *"
                   {...register('cidade')}
+                  error={!!errors?.cidade?.message}
+                  helperText={errors?.cidade?.message}
                 />
               </div>
 
               <div>
                 <TextInput
-                  w={300}
+                  w={200}
                   disabled={disableCamposCepInvalido}
                   title="Bairro *"
                   {...register('bairro')}
+                  error={!!errors?.bairro?.message}
+                  helperText={errors?.bairro?.message}
                 />
               </div>
             </Box>
@@ -456,6 +476,8 @@ export default function AssociadosCadastro({
                   disabled={disableCamposCepInvalido}
                   title="Logradouro *"
                   {...register('logradouro')}
+                  error={!!errors?.logradouro?.message}
+                  helperText={errors?.logradouro?.message}
                 />
               </div>
 
@@ -467,6 +489,8 @@ export default function AssociadosCadastro({
                   {...register('numero', {
                     valueAsNumber: true,
                   })}
+                  error={!!errors?.numero?.message}
+                  helperText={errors?.numero?.message}
                 />
               </div>
 
@@ -493,6 +517,8 @@ export default function AssociadosCadastro({
                   title="Telefone Celular"
                   mask={'(99) 9.9999-9999'}
                   {...register('telefone_celular')}
+                  error={!!errors?.telefone_celular?.message}
+                  helperText={errors?.telefone_celular?.message}
                 />
               </div>
               <div>
@@ -503,7 +529,13 @@ export default function AssociadosCadastro({
                   {...register('telefone_residencial')}
                 />
               </div>
-              <TextInput type="email" title="Email" {...register('email')} />
+              <TextInput
+                type="email"
+                title="Email"
+                {...register('email')}
+                error={!!errors?.email?.message}
+                helperText={errors?.email?.message}
+              />
               {checkEmail === checkEmailValidade ? (
                 <>
                   <TextInput
@@ -526,19 +558,28 @@ export default function AssociadosCadastro({
             <legend>
               <h2>Dados referente a formação acadêmica</h2>
             </legend>
-            {checkCategoria === 'Adjuntos' ? (
-              <Box>
+            <Box>
+              <div>
                 <TextInput
+                  w={400}
                   title="Nome Instituição de Ensino Graduação"
                   {...register('nome_instituicao_ensino_graduacao')}
+                  error={!!errors?.nome_instituicao_ensino_graduacao?.message}
+                  helperText={
+                    errors?.nome_instituicao_ensino_graduacao?.message
+                  }
                 />
-                <div>
-                  <TextInput
-                    w={180}
-                    title="Ano de Conclusão Graduação"
-                    {...register('ano_conclusao_graduacao')}
-                  />
-                </div>
+              </div>
+              <div>
+                <TextInput
+                  w={180}
+                  title="Ano de Conclusão Graduação"
+                  {...register('ano_conclusao_graduacao')}
+                  error={!!errors?.ano_conclusao_graduacao?.message}
+                  helperText={errors?.ano_conclusao_graduacao?.message}
+                />
+              </div>
+              {checkCategoria === 'Adjuntos' ? (
                 <div>
                   <SelectOptions
                     w={120}
@@ -546,26 +587,10 @@ export default function AssociadosCadastro({
                     data={useArrayUfBrasil}
                     {...register('uf_prm')}
                   />
+                  <FormError>{errors?.uf_prm?.message}</FormError>
                 </div>
-              </Box>
-            ) : (
-              <>
-                <Box>
-                  <div>
-                    <TextInput
-                      w={400}
-                      title="Nome Instituição de Ensino Graduação"
-                      {...register('nome_instituicao_ensino_graduacao')}
-                    />
-                  </div>
-                  <div>
-                    <TextInput
-                      w={180}
-                      title="Ano de Conclusão Graduação"
-                      {...register('ano_conclusao_graduacao')}
-                    />
-                  </div>
-
+              ) : (
+                <>
                   <div
                     style={{
                       display: 'flex',
@@ -633,15 +658,14 @@ export default function AssociadosCadastro({
                     />
                   </div>
                   <div>
-                    <TextInput
-                      w={130}
+                    <SwitchInput
                       title="Residencia MEC-CNRM"
                       {...register('residencia_mec_cnrm')}
                     />
                   </div>
-                </Box>
-              </>
-            )}
+                </>
+              )}
+            </Box>
           </Fieldset>
 
           {checkCategoria === 'Adjuntos' ? null : (
@@ -651,11 +675,22 @@ export default function AssociadosCadastro({
               </legend>
 
               <Box>
+                <div>
+                  <SelectOptions
+                    w={210}
+                    description="Nível Residencia"
+                    {...register('nivel_residencia')}
+                    data={dataNivelResidencia}
+                  />
+                  <FormError>{errors?.nivel_residencia?.message}</FormError>
+                </div>
+
                 <TextInput
-                  title="Nível Residencia"
-                  {...register('nivel_residencia')}
+                  title="UF PRM"
+                  {...register('uf_prm')}
+                  error={!!errors?.uf_prm?.message}
+                  helperText={errors?.uf_prm?.message}
                 />
-                <TextInput title="UF PRM" {...register('uf_prm')} />
                 <TextInput
                   title="Nome Hospital MEC"
                   {...register('nome_hospital_mec')}
@@ -844,6 +879,8 @@ export default function AssociadosCadastro({
                   {...register('matricula_SAERJ', {
                     valueAsNumber: true,
                   })}
+                  helperText={errors.matricula_SAERJ?.message}
+                  error={!!errors.matricula_SAERJ?.message}
                 />
               </div>
               <div>
@@ -855,11 +892,22 @@ export default function AssociadosCadastro({
                   })}
                 />
               </div>
-
-              <TextInput
-                title="Pendências SERJ"
-                {...register('pendencias_SAERJ')}
-              />
+              <div>
+                <SelectOptions
+                  w={200}
+                  description="Situação"
+                  data={dataSituacao}
+                  {...register('situacao')}
+                />
+                <FormError>{errors.situacao?.message}</FormError>
+              </div>
+              <div>
+                <TextInput
+                  w={180}
+                  title="Pendências SAERJ"
+                  {...register('pendencias_SAERJ')}
+                />
+              </div>
               <div>
                 <TextInput
                   w={180}
@@ -874,33 +922,33 @@ export default function AssociadosCadastro({
                   {...register('sigla_regional')}
                 />
               </div>
-
-              <div>
-                <SelectOptions
-                  w={200}
-                  description="Situação"
-                  data={dataSituacao}
-                  {...register('situacao')}
-                />
-              </div>
             </Box>
 
             <Box>
               <div style={{ display: 'flex', alignItems: 'center' }}>
                 <Checkbox
-                  title="Declaro Verdadeiras"
+                  title="Declaro para os devidos fins que as informações contidas neste formulário de cadastro são verdadeiras e autênticas"
                   {...register('declaro_verdadeiras')}
+                  required
                 />
                 <p style={{ color: ' rgba(0, 0, 0, 0.6)' }}>
-                  Declaro Verdadeiras
+                  Declaro para os devidos fins que as informações contidas neste
+                  formulário de cadastro são verdadeiras e autênticas
                 </p>
-                <Checkbox
-                  title="Declaro Quite SAERJ"
-                  {...register('declaro_quite_SAERJ')}
-                />
-                <p style={{ color: ' rgba(0, 0, 0, 0.6)' }}>
-                  Declaro Quite SAERJ
-                </p>
+                {checkCategoria === 'Aspirantes' ? (
+                  <>
+                    <Checkbox
+                      title="Declaro para os devidos fins que proponente à médico em especialização está quite com o pagamento da anuidade regional"
+                      {...register('declaro_quite_SAERJ')}
+                      required
+                    />
+                    <p style={{ color: ' rgba(0, 0, 0, 0.6)' }}>
+                      Declaro para os devidos fins que proponente à médico em
+                      especialização está quite com o pagamento da anuidade
+                      regional
+                    </p>
+                  </>
+                ) : null}
               </div>
             </Box>
           </Fieldset>
@@ -947,20 +995,33 @@ export const getServerSideProps: GetServerSideProps = async () => {
       }
     })
 
+    const nivelResidencia = await prisma.tabelas.findMany({
+      where: {
+        codigo_tabela: 'Nivel_Residencia',
+      },
+    })
+    const dataNivelResidencia = nivelResidencia.map((item) => {
+      return {
+        label: item.ocorrencia_tabela,
+      }
+    })
+
     return {
       props: {
-        data: [],
         dataCategoria,
         dataSituacao,
         dataPais,
+        dataNivelResidencia,
       },
     }
   } catch (error) {
     console.error('Erro ao obter dados de tipo de empresa:', error)
     return {
       props: {
-        data: [],
-        newDataCategory: [],
+        dataCategoria: [],
+        dataSituacao: [],
+        dataPais: [],
+        dataNivelResidencia: [],
       },
     }
   } finally {

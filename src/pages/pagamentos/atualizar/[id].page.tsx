@@ -14,7 +14,6 @@ import { api } from '@/lib/axios'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/router'
 import axios from 'axios'
-import { BackPage } from '@/components/BackPage'
 
 const schemaEmpresaForm = z.object({
   id: z.number(),
@@ -215,7 +214,23 @@ export default function Vizualizar({
   return (
     <Container>
       <form onSubmit={handleSubmit(OnSubmit)}>
-        <BackPage backRoute="empresas" />
+        <Box style={{ justifyContent: 'end' }}>
+          <Link
+            href="/empresas"
+            style={{
+              textDecoration: 'none',
+              fontFamily: 'Roboto',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.5rem',
+              marginBottom: '1rem',
+              color: '#000',
+            }}
+          >
+            <ArrowBendDownLeft size={32} />
+            Retornar
+          </Link>
+        </Box>
         <fieldset>
           <legend>
             {/* <input type="hidden" {...register('id')} value={Number(data.id)} /> */}

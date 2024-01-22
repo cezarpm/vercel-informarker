@@ -22,8 +22,7 @@ import {
   Article,
   UserFocus,
   User,
-  ArchiveBox
-
+  ArchiveBox,
 } from 'phosphor-react'
 import { useRouter } from 'next/navigation'
 import { Twirl as Hamburger } from 'hamburger-react'
@@ -38,7 +37,7 @@ export function TemporaryDrawer() {
 
   const router = useRouter()
 
-  // const { Logs } = useId()
+  // const { Logs } = useContextCustom()
 
   function handleNextPage(text: string): void {
     if (text === 'Parametros') {
@@ -66,6 +65,9 @@ export function TemporaryDrawer() {
     } else if (text === 'Importação anuidades') {
       router.push('/importacaoPagamentos')
     }
+    // else if (text === 'Pagamentos') {
+    //   router.push('/pagamentos')
+    // }
   }
 
   const toggleDrawer =
@@ -86,11 +88,13 @@ export function TemporaryDrawer() {
   const arrayIcons = [
     <>
       <Buildings size={30} color="#fff" />
-
     </>,
     <>
       <UsersFour size={30} color="#fff" />
     </>,
+    // <>
+    //   <ArchiveTray size={30} color="#fff" />
+    // </>,
     <>
       <ArchiveTray size={30} color="#fff" />
     </>,
@@ -154,7 +158,7 @@ export function TemporaryDrawer() {
         {[
           'Empresas',
           'Associados',
-          'Importação anuidades',
+          // 'Pagamentos',
           'Aniversariantes',
           'Protocolos',
           'Chapas',

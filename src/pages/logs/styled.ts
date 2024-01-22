@@ -16,7 +16,7 @@ export const Box = styled('div', {
   justifyContent: 'center',
   gap: '2rem',
   width: '100%',
-  button: {
-    padding: '1rem 2rem',
-  },
+  // button: {
+  //   padding: '1rem 2rem',
+  // },
 })
