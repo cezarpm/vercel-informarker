@@ -2,7 +2,7 @@ import { Button } from '@/components/Button'
 import { Container, Box } from './styled'
 import { useRouter } from 'next/router'
 import DataGridDemo from '@/components/TableList'
-import { useId } from '@/context'
+import { useContextCustom } from '@/context'
 import { GridColDef } from '@mui/x-data-grid'
 import { toast } from 'react-toastify'
 import Modal from '@/components/Modal'
@@ -13,7 +13,7 @@ import dayjs from 'dayjs'
 
 export default function EleicaoList({ data }: any) {
   const router = useRouter()
-  const { selectedRowIds } = useId()
+  const { selectedRowIds } = useContextCustom()
 
   const columns: GridColDef[] = [
     {

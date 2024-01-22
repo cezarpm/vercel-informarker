@@ -41,8 +41,7 @@ export default function Modal({
     try {
       await api.delete(`${routeDelete}`, { data })
       setOpen(false)
-      toast.success('Deletado com sucesso!')
-      // router.push(`/`)
+      toast.success('Excluído com sucesso!')
       router.push(`${redirectRouter}`)
     } catch (error) {
       console.log(error)
@@ -56,7 +55,7 @@ export default function Modal({
         title={title}
         onClick={() => {
           if (data.length === 0) {
-            toast.warn('Selecione um item para deletar')
+            toast.warn('Selecione um item para Excluir')
           } else {
             handleOpen()
           }

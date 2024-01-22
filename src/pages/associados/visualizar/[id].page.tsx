@@ -452,7 +452,7 @@ export default function AssociadosCadastro({
             </h3>
 
             <Box>
-              <TextInput title="Comprovante CFF" value={data.comprovante_cpf} />
+              <TextInput title="Comprovante CPF" value={data.comprovante_cpf} />
             </Box>
 
             <Box>
@@ -523,8 +523,17 @@ export default function AssociadosCadastro({
                 />
               </div>
 
+              <div>
+                <SelectOptions
+                  w={200}
+                  description="Situação"
+                  data={dataSituacao}
+                  defaultValue={{ label: data.situacao }}
+                />
+              </div>
+
               <TextInput
-                title="Pendências SERJ"
+                title="Pendências SAERJ"
                 value={data.pendencias_SAERJ}
               />
               <div>
@@ -539,15 +548,6 @@ export default function AssociadosCadastro({
                   w={100}
                   title="Sigla Regional"
                   value={data.sigla_regional}
-                />
-              </div>
-
-              <div>
-                <SelectOptions
-                  w={200}
-                  description="Situação"
-                  data={dataSituacao}
-                  defaultValue={{ label: data.situacao }}
                 />
               </div>
             </Box>

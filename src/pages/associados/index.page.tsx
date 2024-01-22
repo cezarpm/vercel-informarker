@@ -4,16 +4,17 @@ import { useRouter } from 'next/router'
 import DataGridDemo from '@/components/TableList'
 import { prisma } from '@/lib/prisma'
 import { GetServerSideProps } from 'next'
-import { useId } from '@/context'
+import { useContextCustom } from '@/context'
 import { GridColDef } from '@mui/x-data-grid'
 import { toast } from 'react-toastify'
 import Modal from '@/components/Modal'
 import SelectNoComplete from '@/components/SelectNoComplete'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import { Suspense, useState } from 'react'
-import { Loading } from './loading'
+import { useEffect, useState } from 'react'
 import { BackPage } from '@/components/BackPage'
+import CircularProgress from '@mui/material/CircularProgress'
+import { Loading } from '@/components/Loading'
 
 const shemaFilter = z.object({
   categoria_filter: z.string(),
@@ -29,7 +30,7 @@ export default function AssociadoList({
   categoriaAssociado,
 }: any) {
   const router = useRouter()
-  const { selectedRowIds } = useId()
+  const { selectedRowIds } = useContextCustom()
   const [List, setList] = useState(data)
 
   const columns: GridColDef[] = [
@@ -69,7 +70,7 @@ export default function AssociadoList({
     },
   ]
 
-  const { register, watch } = useForm<SchemaFilter>()
+  const { register, watch, setValue } = useForm<SchemaFilter>()
 
   const dataSimNao = [
     {
@@ -118,106 +119,109 @@ export default function AssociadoList({
     console.log(filteredList)
   }
 
+  function valuesDefaultFilter() {
+    setValue('categoria_filter', 'Todos')
+    setValue('pendenciaAssociado_filter', 'Todos')
+    setValue('situacao_filter', 'Todos')
+  }
+
+  useEffect(() => {
+    setList(data)
+    valuesDefaultFilter()
+  }, [data])
+
   return (
-    <Suspense fallback={<Loading />}>
-      <Container>
-        <BackPage backRoute="/" />
-        <p>Associados</p>
-        <ContainerFormFilter>
-          <Box style={{ justifyContent: 'start', alignItems: 'end' }}>
-            <div
-              style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
-            >
-              <SelectNoComplete
-                p="0px 0px 0px 0.5rem"
-                value="Todos"
-                title="Situação"
-                data={situacaoAssociado}
-                {...register('situacao_filter')}
-              />
-              <SelectNoComplete
-                p="0px 0px 0px 0.5rem"
-                value="Todos"
-                title="Categoria"
-                {...register('categoria_filter')}
-                data={categoriaAssociado}
-              />
-              <SelectNoComplete
-                p="0px 0px 0px 0.5rem"
-                value="Todos"
-                title="Pendência Associado"
-                {...register('pendenciaAssociado_filter')}
-                data={dataSimNao}
-              />
-            </div>
-
-            <Button
-              style={{
-                margin: '0px',
-                fontSize: '12px',
-                width: '5rem',
-                border: 'solid 1px',
-                padding: '0.5rem',
-              }}
-              title="Buscar"
-              onClick={BuscarFiltro}
+    <Container>
+      <BackPage backRoute="/" discartPageBack />
+      <p>Associados</p>
+      <ContainerFormFilter>
+        <Box style={{ justifyContent: 'start', alignItems: 'end' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <SelectNoComplete
+              p="0px 0px 0px 0.5rem"
+              value="Todos"
+              title="Situação"
+              data={situacaoAssociado}
+              {...register('situacao_filter')}
             />
-          </Box>
-        </ContainerFormFilter>
-
-        <DataGridDemo columns={columns} rows={List} w="100%" />
-
-        <Box>
-          <Button
-            style={{ backgroundColor: '#4471C6' }}
-            title="Visualizar"
-            onClick={() => {
-              if (selectedRowIds.length === 0) {
-                toast.warn(
-                  'Você não selecionou nenhum associado para visualizar',
-                )
-              } else if (selectedRowIds.length >= 2) {
-                toast.warn('Selecione apenas 1 associado para visualizar')
-              } else {
-                router.push(`/associados/visualizar/${selectedRowIds}`)
-              }
-            }}
-          />
+            <SelectNoComplete
+              p="0px 0px 0px 0.5rem"
+              value="Todos"
+              title="Categoria"
+              {...register('categoria_filter')}
+              data={categoriaAssociado}
+            />
+            <SelectNoComplete
+              p="0px 0px 0px 0.5rem"
+              value="Todos"
+              title="Pendência Associado"
+              {...register('pendenciaAssociado_filter')}
+              data={dataSimNao}
+            />
+          </div>
 
           <Button
-            title="Atualizar"
-            style={{ backgroundColor: '#528035' }}
-            onClick={() => {
-              if (selectedRowIds.length === 0) {
-                toast.warn(
-                  'Você não selecionou nenhum associado para atualizar',
-                )
-              } else if (selectedRowIds.length >= 2) {
-                toast.warn('Selecione 1 associados para atualizar')
-              } else {
-                router.push(`/associados/atualizar/${selectedRowIds}`)
-              }
+            style={{
+              margin: '0px',
+              fontSize: '12px',
+              width: '5rem',
+              border: 'solid 1px',
+              padding: '0.5rem',
             }}
-          />
-
-          <Button
-            title="Incluir"
-            style={{ backgroundColor: '#ED7D31' }}
-            onClick={() => {
-              router.push('/associados/cadastro')
-            }}
-          />
-
-          <Modal
-            title="Excluir"
-            bgColor="#BE0000"
-            routeDelete="/associados/delete/"
-            data={selectedRowIds}
-            redirectRouter="/associados"
+            title="Buscar"
+            onClick={BuscarFiltro}
           />
         </Box>
-      </Container>
-    </Suspense>
+      </ContainerFormFilter>
+
+      <DataGridDemo columns={columns} rows={List} w="100%" />
+
+      <Box>
+        <Button
+          style={{ backgroundColor: '#4471C6' }}
+          title="Visualizar"
+          onClick={() => {
+            if (selectedRowIds.length === 0) {
+              toast.warn('Você não selecionou nenhum associado para visualizar')
+            } else if (selectedRowIds.length >= 2) {
+              toast.warn('Selecione apenas 1 associado para visualizar')
+            } else {
+              router.push(`/associados/visualizar/${selectedRowIds}`)
+            }
+          }}
+        />
+
+        <Button
+          title="Atualizar"
+          style={{ backgroundColor: '#528035' }}
+          onClick={() => {
+            if (selectedRowIds.length === 0) {
+              toast.warn('Você não selecionou nenhum associado para atualizar')
+            } else if (selectedRowIds.length >= 2) {
+              toast.warn('Selecione 1 associado para atualizar')
+            } else {
+              router.push(`/associados/atualizar/${selectedRowIds}`)
+            }
+          }}
+        />
+
+        <Button
+          title="Incluir"
+          style={{ backgroundColor: '#ED7D31' }}
+          onClick={() => {
+            router.push('/associados/cadastro')
+          }}
+        />
+
+        <Modal
+          title="Excluir"
+          bgColor="#BE0000"
+          routeDelete="/associados/delete/"
+          data={selectedRowIds}
+          redirectRouter="/associados"
+        />
+      </Box>
+    </Container>
   )
 }
 

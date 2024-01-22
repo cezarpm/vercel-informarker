@@ -46,9 +46,6 @@ class ArrayDate {
   }
 
   MontarDate(year: any, month: any, day: any) {
-    // const date = `${year}-${month}-${day} 00:00:00`
-    // const resultDate: Date = new Date(date)
-    // return resultDate
     if (year.toString().length < 4) {
       // Obtém o ano atual com quatro dígitos
       const currentYear = new Date().getFullYear()
