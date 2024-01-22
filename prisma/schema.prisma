@@ -41,7 +41,7 @@ model Empresa {
   nome_fantasia                 String?
   cep                           String?
   logradouro                    String?
-  numero                        Int?
+  numero                        String?
   complemento                   String?
   cidade                        String?
   uf                            String?

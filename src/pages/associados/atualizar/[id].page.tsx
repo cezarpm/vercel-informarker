@@ -21,7 +21,7 @@ import { toast } from 'react-toastify'
 import { useRouter } from 'next/router'
 import Link from 'next/link'
 import { useArrayDate } from '@/utils/useArrayDate'
-import axios from 'axios'
+import axios, { AxiosResponse } from 'axios'
 import { format } from 'date-fns'
 import SelectNoComplete from '@/components/SelectNoComplete'
 import { useArrayUfBrasil } from '@/utils/useArrayUfBrasil'
@@ -152,8 +152,9 @@ export default function AssociadosCadastro({
   const [cepInvalido, setCepInvalido] = useState()
   const [disableCamposCepInvalido, setDisableCamposCepInvalido] =
     useState(false)
+
   const router = useRouter()
-  console.log(data)
+
   const dataDays = useArrayDate.Dia()
   const dataMonths = useArrayDate.Mes()
   const dataYears = useArrayDate.AnoAtualMenor()
@@ -285,11 +286,10 @@ export default function AssociadosCadastro({
   // }
 
   async function OnSubmit(data: SchemaAssociados) {
-    try {
-      let dataNascimento
-      let dataInicioEspecializacao
-      let dataPrevisaoConclusao
-
+    let dataNascimento
+    let dataInicioEspecializacao
+    let dataPrevisaoConclusao
+    const FormatDates = (data: SchemaAssociados) => {
       if (data.yearNasc && data.monthNasc && data.dayNasc) {
         dataNascimento = useArrayDate.MontarDate(
           data.yearNasc,
@@ -317,7 +317,8 @@ export default function AssociadosCadastro({
           data.dayPrevConcl,
         )
       }
-
+    }
+    const removeCaracteres = (data: SchemaAssociados) => {
       data.cpf = data.cpf.replace(/[^\d]/g, '')
       data.cep = data.cep.replace(/[^\d]/g, '')
 
@@ -326,6 +327,42 @@ export default function AssociadosCadastro({
         '',
       )
       data.telefone_celular = data.telefone_celular.replace(/[^\d]/g, '')
+    }
+
+    const formData = new FormData()
+    const FormDataArquivosUpload = async (formData: any) => {
+      try {
+        formData.append('comprovante_cpf', data.comprovante_cpf[0])
+        formData.append('comprovante_endereco', data.comprovante_endereco[0])
+        formData.append(
+          'carta_indicacao_2_membros',
+          data.carta_indicacao_2_membros[0],
+        )
+        formData.append('certidao_quitacao_crm', data.certidao_quitacao_crm[0])
+        formData.append(
+          'certificado_conclusao_especializacao',
+          data.certificado_conclusao_especializacao[0],
+        )
+
+        formData.append('declaracao_hospital', data.declaracao_hospital[0])
+        formData.append('diploma_medicina', data.diploma_medicina[0])
+
+        const response = await axios.post('/api/upload', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        })
+        return response
+      } catch (error) {
+        console.log(error)
+      }
+    }
+
+    try {
+      FormatDates(data)
+      removeCaracteres(data)
+      const namesArquivos = await FormDataArquivosUpload(formData)
+      console.log(namesArquivos.data.names_arquivos)
 
       const {
         dayNasc,
@@ -340,66 +377,35 @@ export default function AssociadosCadastro({
         confirmarEmail,
         ...newData
       } = data
-      // CODIGO ABAIXO REFERE-SE AO UPLOAD DAS IMAGENS
-      const formData = new FormData()
-      formData.append('comprovante_cpf', data.comprovante_cpf[0])
-      formData.append('comprovante_endereco', data.comprovante_endereco[0])
-      formData.append(
-        'carta_indicacao_2_membros',
-        data.carta_indicacao_2_membros[0],
-      )
-      formData.append('certidao_quitacao_crm', data.certidao_quitacao_crm[0])
-      formData.append(
-        'certificado_conclusao_especializacao',
-        data.certificado_conclusao_especializacao[0],
-      )
+console.log(newData)
+      // await api.put('/associados/update', {
+      //   ...newData,
+      //   declaro_quite_SAERJ: String(data.declaro_quite_SAERJ),
+      //   declaro_verdadeiras: String(data.declaro_verdadeiras),
+      //   data_nascimento: dataNascimento,
+      //   data_inicio_especializacao: dataInicioEspecializacao,
+      //   data_previsao_conclusao: dataPrevisaoConclusao,
+      //   residencia_mec_cnrm: String(data.residencia_mec_cnrm),
 
-      formData.append('declaracao_hospital', data.declaracao_hospital[0])
-      formData.append('diploma_medicina', data.diploma_medicina[0])
-
-      const response = await axios.post('/api/upload', formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data',
-        },
-      })
-      console.log(
-        newData,
-        dataNascimento,
-        dataInicioEspecializacao,
-        dataPrevisaoConclusao,
-        response.data.names_arquivos,
-      )
-
-      await api.put('/associados/update', {
-        ...newData,
-        declaro_quite_SAERJ: String(data.declaro_quite_SAERJ),
-        declaro_verdadeiras: String(data.declaro_verdadeiras),
-        data_nascimento: dataNascimento,
-        data_inicio_especializacao: dataInicioEspecializacao,
-        data_previsao_conclusao: dataPrevisaoConclusao,
-        residencia_mec_cnrm: String(data.residencia_mec_cnrm),
-
-        //   // // CODIGO A BAIXO REFERE-SE AO SALVAMENTO DOS NOMES DOS ARQUIVOS => PRECISA AJUSTAR A LOGICA
-        //    comprovante_cpf: await response.data.names_arquivos[0],
-        //    comprovante_endereco: await response.data.names_arquivos[1],
-        //    carta_indicacao_2_membros: await response.data.names_arquivos[2],
-        //    certidao_quitacao_crm: await response.data.names_arquivos[3],
-        //    certificado_conclusao_especializacao:
-        //      await response.data.names_arquivos[4],
-        //    declaracao_hospital: await response.data.names_arquivos[5],
-        //    diploma_medicina: await response.data.names_arquivos[6],
-      })
+      //   //   // // CODIGO A BAIXO REFERE-SE AO SALVAMENTO DOS NOMES DOS ARQUIVOS => PRECISA AJUSTAR A LOGICA
+      //   //    comprovante_cpf: await response.data.names_arquivos[0],
+      //   //    comprovante_endereco: await response.data.names_arquivos[1],
+      //   //    carta_indicacao_2_membros: await response.data.names_arquivos[2],
+      //   //    certidao_quitacao_crm: await response.data.names_arquivos[3],
+      //   //    certificado_conclusao_especializacao:
+      //   //      await response.data.names_arquivos[4],
+      //   //    declaracao_hospital: await response.data.names_arquivos[5],
+      //   //    diploma_medicina: await response.data.names_arquivos[6],
+      // })
       toast.success('Associado cadastrado')
-      router.push('/associados')
+      // router.push('/associados')
     } catch (error) {
       console.log(error)
       toast.error('Oops algo deu errado...')
     }
   }
 
-  useEffect(() => {
-    setDisableCamposCepInvalido(false)
-    handleGetAllParams()
+  function valuesInitial() {
     setValue('id', data.id)
     setValue('cep', data.cep ? data.cep : '')
     setValue('cpf', data.cpf ? data.cpf : '')
@@ -469,7 +475,12 @@ export default function AssociadosCadastro({
     setValue('pendencias_SAERJ', data.pendencias_SAERJ)
     setValue('nome_presidente_regional', data.nome_presidente_regional)
     setValue('sigla_regional', data.sigla_regional)
+  }
 
+  useEffect(() => {
+    setDisableCamposCepInvalido(false)
+    handleGetAllParams()
+    valuesInitial()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
