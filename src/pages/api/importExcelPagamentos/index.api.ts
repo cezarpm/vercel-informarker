@@ -35,8 +35,8 @@ export default async function handler(
 
     const file = files.file[0] as formidable.File;
 
-    if (!file.originalFilename || !file.originalFilename.endsWith('.csv')) {
-      res.status(400).json({ message: 'Por favor, envie um arquivo .csv.' });
+    if (!file.originalFilename || !file.originalFilename.endsWith(".csv")) {
+      res.status(400).json({ message: "Por favor, envie um arquivo .csv." });
       return;
     }
 
@@ -48,44 +48,96 @@ export default async function handler(
       skipEmptyLines: true,
     }).data;
 
+    let linhasModificadas = 0;
+    let linhasDuplicadas = 0;
+    let linhasNaoEncontradas = 0;
+    let linhasNaoPagas = 0;
+
     for (const record of records as any[]) {
       if (record.status && record.status.toLowerCase() === "paid") {
+        if (
+          record.customer_note &&
+          record.customer_note.startsWith("CPF TITULAR: ")
+        ) {
+          let cpf = record.customer_note
+            .substring("CPF TITULAR: ".length)
+            .trim();
 
-        if (record.customer_note && record.customer_note.startsWith("CPF TITULAR: ")) {
-          const cpf = record.customer_note.substring("CPF TITULAR: ".length).trim();
+          cpf = cpf.replace(/\D/g, "");
 
           const associado = await prisma.associados.findFirst({
             where: {
               cpf: cpf,
             },
           });
-    
+
           if (associado?.matricula_SAERJ) {
-            await prisma.pagamentos.create({
-              data: {
-                matricula_saerj: typeof Number(associado.matricula_SAERJ) ?? 0,
-                tipo_pagamento: record.payment_method ?? "",
-                ano_anuidade: new Date(record.order_date).getFullYear().toString(),
-                data_pagto_unica: record.order_date ? new Date(record.order_date).toISOString().split('T')[0] : '',
-                valor_pagto_unica: record.order_total ? record.order_total.toString() : '',
-                data_pagto_parcela_1: "",
-                valor_pagto_parcela_1: "",
-                data_pagto_parcela_2: "",
-                valor_pagto_parcela_2: "",
-                data_pagto_parcela_3: "",
-                valor_pagto_parcela_3: "",
+            const anoAnuidade = new Date(record.order_date)
+              .getFullYear()
+              .toString();
+            const dataPagtoUnica = record.order_date
+              ? new Date(record.order_date).toISOString().split("T")[0]
+              : "";
+
+            const pagamentoExistente = await prisma.pagamentos.findFirst({
+              where: {
+                matricula_saerj: typeof Number(associado.matricula_SAERJ),
+                tipo_pagamento: record.payment_method,
+                ano_anuidade: anoAnuidade,
+                data_pagto_unica: dataPagtoUnica,
               },
             });
+
+            if (!pagamentoExistente) {
+              await prisma.pagamentos.create({
+                data: {
+                  matricula_saerj:
+                    typeof Number(associado.matricula_SAERJ) ?? 0,
+                  tipo_pagamento: record.payment_method ?? "",
+                  ano_anuidade: new Date(record.order_date)
+                    .getFullYear()
+                    .toString(),
+                  data_pagto_unica: record.order_date
+                    ? new Date(record.order_date).toISOString().split("T")[0]
+                    : "",
+                  valor_pagto_unica: record.order_total
+                    ? record.order_total.toString()
+                    : "",
+                  data_pagto_parcela_1: "",
+                  valor_pagto_parcela_1: "",
+                  data_pagto_parcela_2: "",
+                  valor_pagto_parcela_2: "",
+                  data_pagto_parcela_3: "",
+                  valor_pagto_parcela_3: "",
+                },
+              });
+              linhasModificadas++;
+            } else {
+              Logs({
+                modulo: "Pagamentos",
+                descriptionLog: `Pagamento já existente para o CPF ${cpf}.`,
+              });
+              linhasDuplicadas++;
+            }
           } else {
             Logs({
-                modulo: "Pagamentos",
-                descriptionLog: `CPF ${cpf} não encontrado na base de associados.`,
-              })
+              modulo: "Pagamentos",
+              descriptionLog: `CPF ${cpf} não encontrado na base de associados.`,
+            });
+            linhasNaoEncontradas++;
           }
         }
+      } else {
+        linhasNaoPagas++;
       }
     }
 
-    res.status(200).json({ message: "Dados do CSV importados com sucesso!" });
+    res.status(200).json({
+      message: "Dados do CSV importados com sucesso!",
+      linhasModificadas: linhasModificadas,
+      linhasDuplicadas: linhasDuplicadas,
+      linhasNaoEncontradas: linhasNaoEncontradas,
+      linhasNaoPagas: linhasNaoPagas
+    });
   });
 }
