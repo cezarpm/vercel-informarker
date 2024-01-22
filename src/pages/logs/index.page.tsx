@@ -3,7 +3,7 @@ import { Box, Container } from './styled'
 import { GetStaticProps } from 'next'
 import { prisma } from '@/lib/prisma'
 import { GridColDef } from '@mui/x-data-grid'
-import { useId } from '@/context'
+import { useContextCustom } from '@/context'
 import { Button } from '@/components/Button'
 import { toast } from 'react-toastify'
 import { useRouter } from 'next/router'
@@ -11,7 +11,7 @@ import { BackPage } from '@/components/BackPage'
 
 export default function Logs({ data }: any) {
   console.log(data)
-  const { selectedRowIds } = useId()
+  const { selectedRowIds } = useContextCustom()
   const router = useRouter()
 
   const columns: GridColDef[] = [

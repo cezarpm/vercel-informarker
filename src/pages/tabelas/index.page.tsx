@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 import DataGridDemo from '@/components/TableList'
 import { prisma } from '@/lib/prisma'
 import { GetServerSideProps } from 'next'
-import { useId } from '@/context'
+import { useContextCustom } from '@/context'
 import { GridColDef } from '@mui/x-data-grid'
 import { toast } from 'react-toastify'
 import Modal from '@/components/Modal'
@@ -12,6 +12,7 @@ import SelectNoComplete from '@/components/SelectNoComplete'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
 import { BackPage } from '@/components/BackPage'
+import { useEffect, useState } from 'react'
 
 const shemaFilter = z.object({
   codigo_tabela: z.string(),
@@ -19,10 +20,11 @@ const shemaFilter = z.object({
 
 type SchemaFilter = z.infer<typeof shemaFilter>
 export default function EmpresaList({ data }: any) {
-  const { selectedRowIds } = useId()
+  const { selectedRowIds } = useContextCustom()
+  const [list, setList] = useState(data)
   const router = useRouter()
   const { register, watch } = useForm<SchemaFilter>()
-  // console.log(selectedRowIds)
+  console.log(selectedRowIds)
 
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'ID' },
@@ -68,23 +70,42 @@ export default function EmpresaList({ data }: any) {
     }
   })
 
-  // console.log(newDescriptionKeys, rowList)
+  function BuscarFiltro() {
+    // Inicialize a lista com os dados originais
+    let filteredList = data
+    const CodigoPesquisado = watch('codigo_tabela')
 
-  const CodigoPesquisado = watch('codigo_tabela')
+    console.log(CodigoPesquisado)
 
-  const filteredData = data.filter((item: any) => {
-    const filtroCodigo =
-      CodigoPesquisado === undefined ||
-      CodigoPesquisado === 'Todos' ||
-      item.codigo_tabela === CodigoPesquisado
-    return filtroCodigo
-  })
+    // Realize a filtragem com base nos valores selecionados
+    if (CodigoPesquisado !== 'Todos') {
+      filteredList = filteredList.filter((item: any) => {
+        const situacaoMatch =
+          CodigoPesquisado === 'Todos' ||
+          item.codigo_tabela === CodigoPesquisado
+        return situacaoMatch
+      })
+    }
+    console.log(filteredList)
+    // Atualize o estado com os dados filtrados
+    setList(filteredList)
+  }
 
+  useEffect(() => {
+    setList(data)
+  }, [data])
   return (
     <Container>
-      <BackPage backRoute="/" />
+      <BackPage backRoute="/" discartPageBack />
       <p>Tabelas</p>
-      <form style={{ width: '10%' }}>
+      <Box
+        style={{
+          marginTop: '0.5rem',
+          justifyContent: 'flex-start',
+          alignItems: 'end',
+          width: '20%',
+        }}
+      >
         <SelectNoComplete
           p="0px 0px 0px 5px"
           title="Código Tabela"
@@ -92,8 +113,19 @@ export default function EmpresaList({ data }: any) {
           {...register('codigo_tabela')}
           data={newDescriptionKeys}
         />
-      </form>
-      <DataGridDemo columns={columns} rows={filteredData} w="100%" />
+        <Button
+          style={{
+            margin: '0px',
+            fontSize: '12px',
+            width: '5rem',
+            border: 'solid 1px',
+            padding: '0.5rem',
+          }}
+          title="Buscar"
+          onClick={BuscarFiltro}
+        />
+      </Box>
+      <DataGridDemo columns={columns} rows={list} w="100%" />
       <Box>
         <Button
           style={{ backgroundColor: '#4471C6' }}
@@ -136,7 +168,7 @@ export default function EmpresaList({ data }: any) {
           bgColor="#BE0002"
           routeDelete="/tabelas/delete/"
           data={selectedRowIds}
-          redirectRouter="/tabelas"
+          redirectRouter="tabelas"
         />
       </Box>
     </Container>

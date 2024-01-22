@@ -27,6 +27,7 @@ import SelectNoComplete from '@/components/SelectNoComplete'
 import { useArrayUfBrasil } from '@/utils/useArrayUfBrasil'
 import Checkbox from '@mui/material/Checkbox'
 import { BackPage } from '@/components/BackPage'
+import { SwitchInput } from '@/components/SwitchInput'
 
 const schemaAssociados = z.object({
   id: z.number(),
@@ -64,8 +65,8 @@ const schemaAssociados = z.object({
   diploma_medicina: z.any(),
   certidao_quitacao_crm: z.any(),
   certificado_conclusao_especializacao: z.any(),
-  declaro_verdadeiras: z.any(),
-  declaro_quite_SAERJ: z.any(),
+  declaro_verdadeiras: z.boolean(),
+  declaro_quite_SAERJ: z.boolean(),
   pendencias_SAERJ: z.string(),
   nome_presidente_regional: z.string(),
   sigla_regional: z.string(),
@@ -82,6 +83,8 @@ const schemaAssociados = z.object({
   dayPrevConcl: z.string(),
   monthPrevConcl: z.string(),
   yearPrevConcl: z.string(),
+
+  confirmarEmail: z.string(),
 })
 
 type SchemaAssociados = z.infer<typeof schemaAssociados>
@@ -136,6 +139,7 @@ interface schemaAssociados {
   dataCategoria: any
   dataSituacao: any
   dataPais: any
+  dataNivelResidencia: any
 }
 
 export default function AssociadosCadastro({
@@ -143,12 +147,13 @@ export default function AssociadosCadastro({
   dataCategoria,
   dataSituacao,
   dataPais,
+  dataNivelResidencia,
 }: schemaAssociados) {
   const [cepInvalido, setCepInvalido] = useState()
   const [disableCamposCepInvalido, setDisableCamposCepInvalido] =
     useState(false)
   const router = useRouter()
-
+  console.log(data)
   const dataDays = useArrayDate.Dia()
   const dataMonths = useArrayDate.Mes()
   const dataYears = useArrayDate.AnoAtualMenor()
@@ -178,6 +183,7 @@ export default function AssociadosCadastro({
   const dataPrevisao = useArrayDate.DesestruturarDate(
     data.data_previsao_conclusao,
   )
+
   async function handleCheckCep(cep: string) {
     try {
       const response = await axios.get(`https://viacep.com.br/ws/${cep}/json/`)
@@ -214,7 +220,14 @@ export default function AssociadosCadastro({
       setValue('logradouro', dataViaCep.logradouro)
     }
   }
-
+  const arraySexo = [
+    {
+      label: 'Masculino',
+    },
+    {
+      label: 'Feminino',
+    },
+  ]
   // async function handleOnSubmit(data: SchemaAssociados) {
   //   try {
   //     console.log(data)
@@ -324,6 +337,7 @@ export default function AssociadosCadastro({
         dayPrevConcl,
         monthPrevConcl,
         yearPrevConcl,
+        confirmarEmail,
         ...newData
       } = data
       // CODIGO ABAIXO REFERE-SE AO UPLOAD DAS IMAGENS
@@ -356,25 +370,26 @@ export default function AssociadosCadastro({
         response.data.names_arquivos,
       )
 
-      // await api.put('/associados/update', {
-      //   ...newData,
-      //   declaro_quite_SAERJ: String(data.declaro_quite_SAERJ),
-      //   declaro_verdadeiras: String(data.declaro_verdadeiras),
-      //   data_nascimento: dataNascimento,
-      //   data_inicio_especializacao: dataInicioEspecializacao,
-      //   data_previsao_conclusao: dataPrevisaoConclusao,
+      await api.put('/associados/update', {
+        ...newData,
+        declaro_quite_SAERJ: String(data.declaro_quite_SAERJ),
+        declaro_verdadeiras: String(data.declaro_verdadeiras),
+        data_nascimento: dataNascimento,
+        data_inicio_especializacao: dataInicioEspecializacao,
+        data_previsao_conclusao: dataPrevisaoConclusao,
+        residencia_mec_cnrm: String(data.residencia_mec_cnrm),
 
-      //   // // CODIGO A BAIXO REFERE-SE AO SALVAMENTO DOS NOMES DOS ARQUIVOS => PRECISA AJUSTAR A LOGICA
-      //    comprovante_cpf: await response.data.names_arquivos[0],
-      //    comprovante_endereco: await response.data.names_arquivos[1],
-      //    carta_indicacao_2_membros: await response.data.names_arquivos[2],
-      //    certidao_quitacao_crm: await response.data.names_arquivos[3],
-      //    certificado_conclusao_especializacao:
-      //      await response.data.names_arquivos[4],
-      //    declaracao_hospital: await response.data.names_arquivos[5],
-      //    diploma_medicina: await response.data.names_arquivos[6],
-      // })
-      // toast.success('Associado cadastrado')
+        //   // // CODIGO A BAIXO REFERE-SE AO SALVAMENTO DOS NOMES DOS ARQUIVOS => PRECISA AJUSTAR A LOGICA
+        //    comprovante_cpf: await response.data.names_arquivos[0],
+        //    comprovante_endereco: await response.data.names_arquivos[1],
+        //    carta_indicacao_2_membros: await response.data.names_arquivos[2],
+        //    certidao_quitacao_crm: await response.data.names_arquivos[3],
+        //    certificado_conclusao_especializacao:
+        //      await response.data.names_arquivos[4],
+        //    declaracao_hospital: await response.data.names_arquivos[5],
+        //    diploma_medicina: await response.data.names_arquivos[6],
+      })
+      toast.success('Associado cadastrado')
       router.push('/associados')
     } catch (error) {
       console.log(error)
@@ -437,16 +452,16 @@ export default function AssociadosCadastro({
     setValue('uf_prm', data.uf_prm)
     setValue('nome_hospital_mec', data.nome_hospital_mec)
 
-    setValue('comprovante_cpf', data.comprovante_cpf)
-    setValue('carta_indicacao_2_membros', data.carta_indicacao_2_membros)
-    setValue('certidao_quitacao_crm', data.certidao_quitacao_crm)
+    setValue('comprovante_cpf', data.comprovante_cpf || '')
+    setValue('carta_indicacao_2_membros', data.carta_indicacao_2_membros || '')
+    setValue('certidao_quitacao_crm', data.certidao_quitacao_crm || '')
     setValue(
       'certificado_conclusao_especializacao',
-      data.certificado_conclusao_especializacao,
+      data.certificado_conclusao_especializacao || '',
     )
-    setValue('declaracao_hospital', data.declaracao_hospital)
-    setValue('diploma_medicina', data.diploma_medicina)
-    setValue('comprovante_endereco', data.comprovante_endereco)
+    setValue('declaracao_hospital', data.declaracao_hospital || '')
+    setValue('diploma_medicina', data.diploma_medicina || '')
+    setValue('comprovante_endereco', data.comprovante_endereco || '')
 
     setValue('numero_proposta_SBA', data.numero_proposta_SBA)
     setValue('matricula_SAERJ', data.matricula_SAERJ)
@@ -502,7 +517,13 @@ export default function AssociadosCadastro({
 
             <Box>
               <div>
-                <TextInput w={100} title="Sexo" {...register('sexo')} />
+                <SelectOptions
+                  w={170}
+                  data={arraySexo}
+                  description="Sexo"
+                  defaultValue={data.sexo}
+                  {...register('sexo')}
+                />
               </div>
               <div>
                 <TextInput
@@ -569,15 +590,6 @@ export default function AssociadosCadastro({
             </legend>
             <Box>
               <div>
-                <SelectOptions
-                  data={dataPais}
-                  defaultValue={{ label: data.pais }}
-                  w={260}
-                  description="País onde reside *"
-                  {...register('pais')}
-                />
-              </div>
-              <div>
                 <div
                   style={{
                     display: 'flex',
@@ -605,6 +617,40 @@ export default function AssociadosCadastro({
                 </div>
               </div>
               <div>
+                <SelectOptions
+                  data={dataPais}
+                  defaultValue={{ label: data.pais }}
+                  w={260}
+                  description="País onde reside *"
+                  {...register('pais')}
+                />
+              </div>
+              <div>
+                <TextInput
+                  disabled={disableCamposCepInvalido}
+                  w={100}
+                  title="UF *"
+                  {...register('uf')}
+                />
+              </div>
+
+              <div>
+                <TextInput
+                  disabled={disableCamposCepInvalido}
+                  w={400}
+                  title="Cidade *"
+                  {...register('cidade')}
+                />
+              </div>
+              <div>
+                <TextInput
+                  w={300}
+                  disabled={disableCamposCepInvalido}
+                  title="Bairro *"
+                  {...register('bairro')}
+                />
+              </div>
+              <div>
                 <TextInput
                   disabled={disableCamposCepInvalido}
                   title="Logradouro *"
@@ -628,31 +674,6 @@ export default function AssociadosCadastro({
                   title="Complemento"
                   w={200}
                   {...register('complemento')}
-                />
-              </div>
-              <div>
-                <TextInput
-                  w={300}
-                  disabled={disableCamposCepInvalido}
-                  title="Bairro *"
-                  {...register('bairro')}
-                />
-              </div>
-
-              <div>
-                <TextInput
-                  disabled={disableCamposCepInvalido}
-                  w={400}
-                  title="Cidade *"
-                  {...register('cidade')}
-                />
-              </div>
-              <div>
-                <TextInput
-                  disabled={disableCamposCepInvalido}
-                  w={100}
-                  title="UF *"
-                  {...register('uf')}
                 />
               </div>
             </Box>
@@ -684,7 +705,10 @@ export default function AssociadosCadastro({
               </div>
               <TextInput title="Email" {...register('email')} />
 
-              <TextInput title="Confirmação email" />
+              <TextInput
+                title="Confirmação email"
+                {...register('confirmarEmail')}
+              />
             </Box>
           </Fieldset>
 
@@ -798,13 +822,22 @@ export default function AssociadosCadastro({
                     defaultValue={{ label: dataPrevisao.ano }}
                   />
                 </div>
+
                 <div>
+                  <SwitchInput
+                    title="Residencia MEC-CNRM"
+                    defaultChecked={data.residencia_mec_cnrm}
+                    {...register('residencia_mec_cnrm')}
+                  />
+                </div>
+                {/* <div>
+
                   <TextInput
                     w={130}
                     title="Residencia MEC-CNRM"
                     {...register('residencia_mec_cnrm')}
                   />
-                </div>
+                </div> */}
               </Box>
             </>
             {/* )} */}
@@ -817,11 +850,16 @@ export default function AssociadosCadastro({
             </legend>
 
             <Box>
-              <TextInput
-                title="Nível Residencia"
+              <SelectOptions
+                w={210}
+                description="Nível Residencia"
+                data={dataNivelResidencia}
+                defaultValue={{ label: data.nivel_residencia }}
                 {...register('nivel_residencia')}
               />
+
               <TextInput title="UF PRM" {...register('uf_prm')} />
+
               <TextInput
                 title="Nome Hospital MEC"
                 {...register('nome_hospital_mec')}
@@ -1026,9 +1064,17 @@ export default function AssociadosCadastro({
                   })}
                 />
               </div>
-
+              <div>
+                <SelectOptions
+                  w={200}
+                  description="Situação"
+                  data={dataSituacao}
+                  defaultValue={{ label: data.situacao }}
+                  {...register('situacao')}
+                />
+              </div>
               <TextInput
-                title="Pendências SERJ"
+                title="Pendências SAERJ"
                 {...register('pendencias_SAERJ')}
               />
               <div>
@@ -1043,16 +1089,6 @@ export default function AssociadosCadastro({
                   w={100}
                   title="Sigla Regional"
                   {...register('sigla_regional')}
-                />
-              </div>
-
-              <div>
-                <SelectOptions
-                  w={200}
-                  description="Situação"
-                  data={dataSituacao}
-                  defaultValue={{ label: data.situacao }}
-                  {...register('situacao')}
                 />
               </div>
             </Box>
@@ -1144,12 +1180,24 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
       }
     })
 
+    const nivelResidencia = await prisma.tabelas.findMany({
+      where: {
+        codigo_tabela: 'Nivel_Residencia',
+      },
+    })
+    const dataNivelResidencia = nivelResidencia.map((item) => {
+      return {
+        label: item.ocorrencia_tabela,
+      }
+    })
+
     return {
       props: {
         data: convertBigIntToString(data),
         dataCategoria,
         dataSituacao,
         dataPais,
+        dataNivelResidencia,
       },
     }
   } catch (error) {
@@ -1160,6 +1208,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         dataCategoria: [],
         dataSituacao: [],
         dataPais: [],
+        dataNivelResidencia: [],
       },
     }
   }

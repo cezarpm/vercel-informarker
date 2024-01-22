@@ -49,7 +49,7 @@ export const Box = styled('div', {
   alignItems: 'end',
 })
 
-export const Fieldset = styled('fieldset', {
+export const Fieldset = styled('div', {
   border: 'solid 1px',
   marginTop: '1rem',
   borderRadius: '8px',
@@ -125,5 +125,14 @@ export const ContentInputFile = styled('div', {
 
 export const FormError = styled('p', {
   color: '#d32f2f',
-  fontSize: '12px',
+  fontFamily: 'Roboto, Helvetica , Arial, sans-serif',
+  fontWeight: '400',
+  fontSize: '0.75rem',
+  lineHeight: '1.66',
+  letterSpacing: '0.03333em',
+  textAlign: 'left',
+  marginTop: '3px',
+  marginRight: '0',
+  marginBottom: ' 0',
+  marginLeft: '0',
 })

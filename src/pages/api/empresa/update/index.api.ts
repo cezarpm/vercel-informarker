@@ -12,12 +12,13 @@ export default async function handler(
     return res.status(405).json({ message: `${MessageErrorMethodInvalid}` })
   }
   const data = req.body
-  console.log(Number(data.cep))
+  console.log(Number(data.numero))
   try {
     await prisma.empresa.update({
       where: { id: Number(data.id) },
       data: {
         ...data,
+        numero: Number(data.numero),
       },
     })
 
