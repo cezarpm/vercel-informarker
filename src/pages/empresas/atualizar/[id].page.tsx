@@ -28,7 +28,7 @@ const schemaEmpresaForm = z.object({
   nome_fantasia: z.string(),
   cep: z.string(),
   logradouro: z.string(),
-  numero: z.number(),
+  numero: z.string(),
   complemento: z.string(),
   cidade: z.string(),
   pais: z.string(),
@@ -114,13 +114,13 @@ export default function Vizualizar({
     if (disabledButtonCep === true) {
       return toast.warn('Não é possivel atualizar com CEP inválido')
     }
-    try {
-      await api.put('/empresa/update', { ...data })
-      toast.success('Empresa atualizada!')
-      router.push('/empresas')
-    } catch (error) {
-      console.log(error)
-    }
+     try {
+       await api.put('/empresa/update', { ...data })
+       toast.success('Empresa atualizada!')
+       router.push('/empresas')
+     } catch (error) {
+       console.log(error)
+     }
   }
 
   // API VIA CEP
@@ -167,7 +167,7 @@ export default function Vizualizar({
   async function handleCheckCnpj(cnpj: any) {
     try {
       const response = await api.get(`/util/checkCnpj?cnpj=${cnpj}`)
-      console.log(response)
+      // console.log(response)
       if (response.data.message) {
         toast.warn('CNPJ Inválido')
       } else {
@@ -177,7 +177,7 @@ export default function Vizualizar({
       console.log(error)
     }
   }
-  console.log(data)
+
   useEffect(() => {
     setValue('id', data.id)
     setValue('cod_empresa', data.cod_empresa)

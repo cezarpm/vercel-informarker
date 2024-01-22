@@ -15,7 +15,7 @@ const schemaEmpresaForm = z.object({
   nome_fantasia: z.string(),
   cep: z.string(),
   logradouro: z.string(),
-  numero: z.number(),
+  numero: z.string(),
   complemento: z.string(),
   cidade: z.string(),
   pais: z.string(),
@@ -46,7 +46,7 @@ export default async function handler(
     await prisma.empresa.create({
       data: {
         ...data,
-        numero: Number(data.numero),
+        numero: data.numero,
       },
     })
     Logs({
