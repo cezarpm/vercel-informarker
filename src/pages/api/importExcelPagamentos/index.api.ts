@@ -44,7 +44,7 @@ export default async function handler(
     const csvData = fs.readFileSync(csvFilePath, "utf8");
     const records = Papa.parse(csvData, {
       header: true,
-      delimiter: ";",
+      delimiter: ",",
       skipEmptyLines: true,
     }).data;
 
@@ -54,7 +54,7 @@ export default async function handler(
     let linhasNaoPagas = 0;
 
     for (const record of records as any[]) {
-      if (record.status && record.status.toLowerCase() === "paid") {
+      if (record.status && record.status.toLowerCase() === "completed") {
         if (
           record.customer_note &&
           record.customer_note.startsWith("CPF TITULAR: ")
