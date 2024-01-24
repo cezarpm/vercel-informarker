@@ -3,6 +3,7 @@ import axios from 'axios';
 import { Button } from '@/components/Button';
 import { Container, Box } from './styled';
 import { toast } from 'react-toastify';
+import { BackPage } from '@/components/BackPage';
 
 export default function CsvUpload() {
   const [file, setFile] = useState(null);
@@ -46,6 +47,7 @@ export default function CsvUpload() {
   return (
     <Container>
       <p>Importação Pagamentos Anuidade</p>
+      <BackPage backRoute="/" discartPageBack />
       <Box>
         <div style={{ flexDirection: "row" }}>
           <input type="file" accept=".csv" onChange={handleFileChange} />

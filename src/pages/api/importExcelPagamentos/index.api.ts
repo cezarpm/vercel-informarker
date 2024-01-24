@@ -101,7 +101,7 @@ export default async function handler(
                     .toString(),
                   data_pagto_unica: record.order_date
                     ? new Date(record.order_date).toISOString().split("T")[0]
-                    : "",
+                    : "2024-01-01 00:00:00", // DateTime ISO sem Timezone
                   valor_pagto_unica: record.order_total
                     ? record.order_total.toString()
                     : "",
