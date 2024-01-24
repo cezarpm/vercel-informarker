@@ -18,7 +18,7 @@ export default async function handler(
       where: { id: Number(data.id) },
       data: {
         ...data,
-        numero: Number(data.numero),
+        numero: data.numero,
       },
     })
 

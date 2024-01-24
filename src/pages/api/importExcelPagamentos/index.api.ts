@@ -5,6 +5,7 @@ import Papa from "papaparse";
 import { prisma } from "@/lib/prisma"; // Ajuste o caminho conforme necessário
 import { Logs } from "@/utils/Logs";
 
+
 export const config = {
   api: {
     bodyParser: false,
@@ -17,6 +18,7 @@ export default async function handler(
 ) {
   if (req.method !== "POST") {
     res.status(405).json({ message: "Somente método POST permitido" });
+
     return;
   }
 
@@ -141,3 +143,4 @@ export default async function handler(
     });
   });
 }
+
