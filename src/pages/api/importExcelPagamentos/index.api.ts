@@ -2,7 +2,7 @@ import { NextApiRequest, NextApiResponse } from "next";
 import formidable, { File, IncomingForm } from "formidable";
 import fs from "fs";
 import Papa from "papaparse";
-import { prisma } from "@/lib/prisma"; // Ajuste o caminho conforme necessário
+import { prisma } from "@/lib/prisma";
 import { Logs } from "@/utils/Logs";
 
 
@@ -42,6 +42,7 @@ export default async function handler(
       return;
     }
 
+  try {
     const csvFilePath = file.filepath;
     const csvData = fs.readFileSync(csvFilePath, "utf8");
     const records = Papa.parse(csvData, {
@@ -77,16 +78,13 @@ export default async function handler(
             const anoAnuidade = new Date(record.order_date)
               .getFullYear()
               .toString();
-            const dataPagtoUnica = record.order_date
-              ? new Date(record.order_date).toISOString().split("T")[0]
-              : "";
 
             const pagamentoExistente = await prisma.pagamentos.findFirst({
               where: {
-                matricula_saerj: typeof Number(associado.matricula_SAERJ),
-                tipo_pagamento: record.payment_method,
-                ano_anuidade: anoAnuidade,
-                data_pagto_unica: dataPagtoUnica,
+                matricula_saerj: associado.matricula_SAERJ.toString() ?? "",
+                tipo_pagamento: record.payment_method ?? "",
+                ano_anuidade: anoAnuidade ?? "2024",
+                data_pagto_unica: record.order_date ? new Date(record.order_date).toISOString().split("T")[0] : "2024-01-01 00:00:00",
               },
             });
 
@@ -94,14 +92,14 @@ export default async function handler(
               await prisma.pagamentos.create({
                 data: {
                   matricula_saerj:
-                    typeof Number(associado.matricula_SAERJ) ?? 0,
+                    associado.matricula_SAERJ.toString() ?? "",
                   tipo_pagamento: record.payment_method ?? "",
                   ano_anuidade: new Date(record.order_date)
                     .getFullYear()
                     .toString(),
                   data_pagto_unica: record.order_date
                     ? new Date(record.order_date).toISOString().split("T")[0]
-                    : "",
+                    : "2024-01-01 00:00:00", // DateTime ISO sem Timezone
                   valor_pagto_unica: record.order_total
                     ? record.order_total.toString()
                     : "",
@@ -115,18 +113,18 @@ export default async function handler(
               });
               linhasModificadas++;
             } else {
+              linhasDuplicadas++;
               Logs({
                 modulo: "Pagamentos",
                 descriptionLog: `Pagamento já existente para o CPF ${cpf}.`,
               });
-              linhasDuplicadas++;
             }
           } else {
+            linhasNaoEncontradas++;
             Logs({
               modulo: "Pagamentos",
               descriptionLog: `CPF ${cpf} não encontrado na base de associados.`,
             });
-            linhasNaoEncontradas++;
           }
         }
       } else {
@@ -141,6 +139,9 @@ export default async function handler(
       linhasNaoEncontradas: linhasNaoEncontradas,
       linhasNaoPagas: linhasNaoPagas
     });
+  } catch (processError) {
+    res.status(500).json({ message: "Erro ao processar os dados", error: processError });
+  }
   });
 }
 
