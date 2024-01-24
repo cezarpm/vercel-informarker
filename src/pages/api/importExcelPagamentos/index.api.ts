@@ -4,6 +4,7 @@ import fs from 'fs';
 import Papa from 'papaparse';
 import { prisma } from '@/lib/prisma'; // Ajuste o caminho conforme necessário
 
+
 export const config = {
   api: {
     bodyParser: false,
@@ -13,6 +14,7 @@ export const config = {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
     res.status(405).json({ message: 'Somente método POST permitido' });
+
     return;
   }
 
@@ -35,6 +37,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const records = Papa.parse(csvData, {
       header: true,
       delimiter: ';',
+
       skipEmptyLines: true,
     }).data;
 
@@ -59,3 +62,4 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     res.status(200).json({ message: 'Dados do CSV importados com sucesso!' });
   });
 }
+
