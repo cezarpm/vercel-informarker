@@ -27,12 +27,18 @@ const shemaFilter = z.object({
 
 type SchemaFilter = z.infer<typeof shemaFilter>
 
+interface TypesFilter {
+  PatrocinadoraFilter: string
+  TipoEmpresaFilter: string
+  FaculdadeAnestesiologiaFilter: string
+  EmpresaAtivaFilter: string
+  UfBrasilFilter: string
+}
 export default function Empresas({ data, dataTipoEmpresa }: any) {
   const { selectedRowIds } = useContextCustom()
-  console.log(selectedRowIds)
   const router = useRouter()
   const [list, setList] = useState(data)
-
+  const [filterSelect, setFilterSelect] = useState<TypesFilter>()
   const { register, watch, setValue } = useForm<SchemaFilter>()
 
   const ufBrasil = useArrayUfBrasil.map((item) => {
@@ -52,13 +58,13 @@ export default function Empresas({ data, dataTipoEmpresa }: any) {
     const EmpresaAtivaFilter = watch('empresa_ativa_filter')
     const UfBrasilFilter = watch('uf_filter')
 
-    console.log(
+    const filterSelected = {
       PatrocinadoraFilter,
       TipoEmpresaFilter,
       FaculdadeAnestesiologiaFilter,
       EmpresaAtivaFilter,
       UfBrasilFilter,
-    )
+    }
 
     // Realize a filtragem com base nos valores selecionados
     if (TipoEmpresaFilter !== 'Todos') {
@@ -101,8 +107,9 @@ export default function Empresas({ data, dataTipoEmpresa }: any) {
         return item.uf === UfBrasilFilter
       })
     }
-    console.log(filteredList)
-    // Atualize o estado com os dados filtrados
+    // TRANSFORMANDO OBJETO EM STRING E SALVANDO NO LOCALSTORAGE
+    localStorage.setItem('@valuesSelected', JSON.stringify(filterSelected))
+    localStorage.setItem('@filtro', JSON.stringify(filteredList))
     setList(filteredList)
   }
 
@@ -185,17 +192,49 @@ export default function Empresas({ data, dataTipoEmpresa }: any) {
       ocorrencia_tabela: 'não',
     },
   ]
-  useEffect(() => {
+  function defaultFilters() {
     setValue('tipo_empresa_filter', 'Todos')
     setValue('uf_filter', 'Todos')
     setValue('empresa_ativa_filter', 'Todos')
     setValue('patrocinarora_filter', 'Todos')
     setValue('faculdade_anestesiologia_filter', 'Todos')
-  }, [])
+  }
 
   useEffect(() => {
-    setList(data)
+    // VERIFICANDO SE EXITE VALOR SALVO NO LOCALSTORAGE PARA APLICAR OS FILTROS (DATA) ANTERIOR
+    const getFilterList = localStorage.getItem('@filtro')
+    const getFilterSelected = localStorage.getItem('@valuesSelected')
+    // PAGINA ANTERIOR -> VERIFICAR SE É NECESSARIO
+    // const getPageSelected = localStorage.getItem('@paginationOld')
+
+    if (getFilterList !== null) {
+      setList(JSON.parse(getFilterList))
+    } else {
+      console.log('Nenhum valor encontrado no localStorage.')
+      setList(data)
+    }
+
+    if (getFilterSelected !== null) {
+      // console.log(JSON.parse(getFilterSelected))
+      const getItemsFilter = JSON.parse(getFilterSelected)
+      setFilterSelect(getItemsFilter)
+      setValue('empresa_ativa_filter', getItemsFilter.EmpresaAtivaFilter)
+      setValue(
+        'faculdade_anestesiologia_filter',
+        getItemsFilter.FaculdadeAnestesiologiaFilter,
+      )
+      setValue('patrocinarora_filter', getItemsFilter.PatrocinadoraFilter)
+      setValue('tipo_empresa_filter', getItemsFilter.TipoEmpresaFilter)
+      setValue('uf_filter', getItemsFilter.UfBrasilFilter)
+    } else {
+      defaultFilters()
+    }
   }, [data])
+  console.log(filterSelect?.TipoEmpresaFilter)
+
+  // OBS: O LOCALSTORAGE ESTÁ SENDO EXCLUIDO TODA VEZ QUE O USUARIO CLICA NO BOTÃO RETORNAR!!!! PRECISA EXCLUIR AS INFORMAÇÕES DO LOCALSTORAGE QUANDO O USUARIO CLICAR EM RETORNAR OU NO COMPONENTE DRAWER (MENU)
+
+  // OBS: OS "onChange" => são os {...register('nome do campo')} , para vc resgatar o valor deles, vc usa o !!const x = watch('nome do campo')!!
 
   return (
     <Container>
@@ -219,28 +258,28 @@ export default function Empresas({ data, dataTipoEmpresa }: any) {
             />
             <SelectNoComplete
               p="0px 0px 0px 0.5rem"
-              value="Todos"
+              value={filterSelect !== null ? 'Todos' : ''}
               title="Patrocinadora"
               {...register('patrocinarora_filter')}
               data={dataSimNao}
             />
             <SelectNoComplete
               p="0px 0px 0px 0.5rem"
-              value="Todos"
+              value={filterSelect !== null ? 'Todos' : filterSelect}
               title="Faculdade Anestesiologia"
               {...register('faculdade_anestesiologia_filter')}
               data={dataSimNao}
             />
             <SelectNoComplete
               p="0px 0px 0px 0.5rem"
-              value="Todos"
+              value={filterSelect !== null ? 'Todos' : filterSelect}
               title="Empresa Ativa"
               {...register('empresa_ativa_filter')}
               data={dataSimNao}
             />
             <SelectNoComplete
               p="0px 0px 0px 0.5rem"
-              value="Todos"
+              value={filterSelect !== null ? 'Todos' : filterSelect}
               title="UF"
               {...register('uf_filter')}
               data={ufBrasil}

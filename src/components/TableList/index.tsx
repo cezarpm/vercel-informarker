@@ -2,7 +2,6 @@
 import Box from '@mui/material/Box'
 import { DataGrid } from '@mui/x-data-grid'
 import { useContextCustom } from '@/context'
-
 import { Container } from './styled'
 import { useEffect, useState } from 'react'
 import { api } from '@/lib/axios'
@@ -16,8 +15,8 @@ export default function DataGridDemo({ rows, columns, w }: any) {
 
   const handleSelectionModelChange = (newSelectionModel: any) => {
     setSelection(newSelectionModel)
-
     if (newSelectionModel) {
+      localStorage.setItem('@paginationOld', JSON.stringify(pageCache))
       setVoltarPagina(pageCache)
     }
   }

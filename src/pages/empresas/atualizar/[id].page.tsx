@@ -114,13 +114,13 @@ export default function Vizualizar({
     if (disabledButtonCep === true) {
       return toast.warn('Não é possivel atualizar com CEP inválido')
     }
-     try {
-       await api.put('/empresa/update', { ...data })
-       toast.success('Empresa atualizada!')
-       router.push('/empresas')
-     } catch (error) {
-       console.log(error)
-     }
+    try {
+      await api.put('/empresa/update', { ...data })
+      toast.success('Empresa atualizada!')
+      router.push('/empresas')
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   // API VIA CEP
