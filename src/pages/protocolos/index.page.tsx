@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 import { Button } from '@/components/Button'
 import { Container, Box } from './styled'
 import { useRouter } from 'next/router'
@@ -82,7 +83,7 @@ export default function ProtocoloList({ data }: any) {
       <Box>
         <Button
           title="Visualizar"
-          style={{ backgroundColor: '#5484C4' }}
+          style={{ backgroundColor: '#4471C6' }}
           onClick={() => {
             if (selectedRowIds.length === 0) {
               toast.warn(
@@ -97,7 +98,7 @@ export default function ProtocoloList({ data }: any) {
         />
         <Button
           title="Atualizar"
-          style={{ backgroundColor: '#6f9622' }}
+          style={{ backgroundColor: '#528035' }}
           onClick={() => {
             if (selectedRowIds.length === 0) {
               toast.warn('Você não selecionou nenhum protocolo para atualizar!')
@@ -111,7 +112,7 @@ export default function ProtocoloList({ data }: any) {
 
         <Button
           title="Incluir"
-          style={{ backgroundColor: '#f67200' }}
+          style={{ backgroundColor: '#ED7D31' }}
           onClick={() => {
             router.push('/protocolos/incluir')
           }}
@@ -119,7 +120,7 @@ export default function ProtocoloList({ data }: any) {
 
         <Modal
           title="Excluir"
-          bgColor="#ff0000"
+          bgColor="#BE0000"
           routeDelete="/protocolos/excluir"
           data={selectedRowIds}
           redirectRouter="/protocolos"
@@ -133,46 +134,11 @@ export const getServerSideProps: GetServerSideProps = async () => {
     // ADEQUAR QUANDO DESENVOLVER FUNCIONALIDADES!
     const response = await prisma.protocolos.findMany()
     const data = response.map((item) => {
-      let data_recebimento
-      let data_envio
-      let data_encerramento_protocolo
-
-      if (
-        item.data_recebimento_ano &&
-        item.data_recebimento_mes &&
-        item.data_recebimento_dia
-      ) {
-        data_recebimento = new Date(
-          item.data_recebimento_ano,
-          item.data_recebimento_mes - 1,
-          item.data_recebimento_dia,
-        )
-      }
-
-      if (item.data_envio_ano && item.data_envio_mes && item.data_envio_dia) {
-        data_envio = new Date(
-          item.data_envio_ano,
-          item.data_envio_mes - 1,
-          item.data_envio_dia,
-        )
-      }
-
-      if (
-        item.data_encerramento_protocolo_ano &&
-        item.data_encerramento_protocolo_mes &&
-        item.data_encerramento_protocolo_dia
-      ) {
-        data_encerramento_protocolo = new Date(
-          item.data_encerramento_protocolo_ano,
-          item.data_encerramento_protocolo_mes - 1,
-          item.data_encerramento_protocolo_dia,
-        )
-      }
       return {
         ...item,
         data_recebimento:
-          data_recebimento != undefined
-            ? data_recebimento
+          item.data_recebimento != undefined
+            ? new Date(item.data_recebimento)
                 .toISOString()
                 .replace(/T.*/, '')
                 .split('-')
@@ -180,8 +146,8 @@ export const getServerSideProps: GetServerSideProps = async () => {
                 .join('/')
             : null,
         data_envio:
-          data_envio != undefined
-            ? data_envio
+          item.data_envio != undefined
+            ? new Date(item.data_envio)
                 .toISOString()
                 .replace(/T.*/, '')
                 .split('-')
@@ -189,8 +155,8 @@ export const getServerSideProps: GetServerSideProps = async () => {
                 .join('/')
             : null,
         data_encerramento_protocolo:
-          data_encerramento_protocolo != undefined
-            ? data_encerramento_protocolo
+          item.data_encerramento_protocolo != undefined
+            ? new Date(item.data_encerramento_protocolo)
                 .toISOString()
                 .replace(/T.*/, '')
                 .split('-')

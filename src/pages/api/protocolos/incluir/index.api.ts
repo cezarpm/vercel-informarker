@@ -7,9 +7,11 @@ const schemaProtocoloForm = z.object({
   num_protocolo: z.string(),
   assunto_protocolo: z.string(),
   tipo_protocolo: z.string(),
+  data_recebimento: z.string(),
   data_recebimento_dia: z.number(),
   data_recebimento_mes: z.number(),
   data_recebimento_ano: z.number(),
+  data_envio: z.string(),
   data_envio_dia: z.number(),
   data_envio_mes: z.number(),
   data_envio_ano: z.number(),
@@ -19,6 +21,7 @@ const schemaProtocoloForm = z.object({
   entregue_em_maos: z.boolean(),
   doc_entrada_requer_resposta: z.boolean(),
   anexos: z.string(), // ALTERAR PARA ANEXO DE ARQUIVO
+  data_encerramento_protocolo: z.string(),
   data_encerramento_protocolo_dia: z.number(),
   data_encerramento_protocolo_mes: z.number(),
   data_encerramento_protocolo_ano: z.number(),
@@ -37,9 +40,6 @@ export default async function handler(
     await prisma.protocolos.create({
       data: {
         ...data,
-        data_envio_dia: Number(data.data_envio_dia),
-        data_envio_mes: Number(data.data_envio_mes),
-        data_envio_ano: Number(data.data_envio_ano),
       },
     })
     return res.status(201).end()

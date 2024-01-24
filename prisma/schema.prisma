@@ -157,27 +157,21 @@ model Pagamentos {
 }
 
 model Protocolos {
-  id                                   Int      @id @default(autoincrement())
+  id                                   Int       @id @default(autoincrement())
   num_protocolo                        String?
   assunto_protocolo                    String?
   tipo_protocolo                       String?
   remetente                            String?
   destinatario                         String?
-  data_recebimento_dia                 Int?
-  data_recebimento_mes                 Int?
-  data_recebimento_ano                 Int?
-  data_envio_dia                       Int?
-  data_envio_mes                       Int?
-  data_envio_ano                       Int?
+  data_recebimento                     DateTime?
+  data_envio                           DateTime?
   meio_recebimento                     String?
   meio_envio                           String?
   quem_redigiu_documento_a_ser_enviado String?
   entregue_em_maos                     Boolean?
   doc_entrada_requer_resposta          Boolean?
   anexos                               String?
-  data_encerramento_protocolo_dia      Int?
-  data_encerramento_protocolo_mes      Int?
-  data_encerramento_protocolo_ano      Int?
+  data_encerramento_protocolo          DateTime?
   usuario_encerramento_protocolo       String?
 }
 
