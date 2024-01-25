@@ -20,7 +20,13 @@ export function BackPage({
           href={`/${backRoute}`}
           onClick={() => {
             // eslint-disable-next-line no-unused-expressions
-            discartPageBack ? setVoltarPagina(0) : null
+            discartPageBack
+              ? (setVoltarPagina(0),
+                localStorage.removeItem('@paginationOld'),
+                localStorage.removeItem('@filtro'),
+                localStorage.removeItem('@valuesSelected'),
+                localStorage.removeItem('@pageCache'))
+              : null
           }}
           style={{
             textDecoration: 'none',

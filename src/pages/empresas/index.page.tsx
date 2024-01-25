@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Button } from '@/components/Button'
 import { Container, Box } from './styled'
 import { useRouter } from 'next/router'
@@ -27,12 +28,24 @@ const shemaFilter = z.object({
 
 type SchemaFilter = z.infer<typeof shemaFilter>
 
+interface TypesFilter {
+  PatrocinadoraFilter: string
+  TipoEmpresaFilter: string
+  FaculdadeAnestesiologiaFilter: string
+  EmpresaAtivaFilter: string
+  UfBrasilFilter: string
+}
 export default function Empresas({ data, dataTipoEmpresa }: any) {
   const { selectedRowIds } = useContextCustom()
-  console.log(selectedRowIds)
   const router = useRouter()
   const [list, setList] = useState(data)
-
+  const [filterSelect, setFilterSelect] = useState({
+    tipo_empresa: 'Todos',
+    patrocinadora: 'Todos',
+    faculdade: 'Todos',
+    empresa_ativa: 'Todos',
+    uf_brasil: 'Todos',
+  })
   const { register, watch, setValue } = useForm<SchemaFilter>()
 
   const ufBrasil = useArrayUfBrasil.map((item) => {
@@ -51,14 +64,13 @@ export default function Empresas({ data, dataTipoEmpresa }: any) {
     )
     const EmpresaAtivaFilter = watch('empresa_ativa_filter')
     const UfBrasilFilter = watch('uf_filter')
-
-    console.log(
-      PatrocinadoraFilter,
-      TipoEmpresaFilter,
-      FaculdadeAnestesiologiaFilter,
-      EmpresaAtivaFilter,
-      UfBrasilFilter,
-    )
+    const filterSelected = {
+      patrocinadora: PatrocinadoraFilter,
+      tipo_empresa: TipoEmpresaFilter,
+      faculdade: FaculdadeAnestesiologiaFilter,
+      empresa_ativa: EmpresaAtivaFilter,
+      uf_brasil: UfBrasilFilter,
+    }
 
     // Realize a filtragem com base nos valores selecionados
     if (TipoEmpresaFilter !== 'Todos') {
@@ -101,9 +113,11 @@ export default function Empresas({ data, dataTipoEmpresa }: any) {
         return item.uf === UfBrasilFilter
       })
     }
-    console.log(filteredList)
-    // Atualize o estado com os dados filtrados
+    // TRANSFORMANDO OBJETO EM STRING E SALVANDO NO LOCALSTORAGE
+    localStorage.setItem('@valuesSelected', JSON.stringify(filterSelected))
+    localStorage.setItem('@filtro', JSON.stringify(filteredList))
     setList(filteredList)
+    // useEffect(() => {}, [filterSelect])
   }
 
   const columns: GridColDef[] = [
@@ -116,62 +130,75 @@ export default function Empresas({ data, dataTipoEmpresa }: any) {
       field: 'cod_empresa',
       headerName: 'Cod',
       width: 130,
+      disableColumnMenu: true,
+      // sortable: false,
     },
     {
       field: 'tipo_empresa',
       headerName: 'Tipo Empresa',
       width: 190,
+      disableColumnMenu: true,
     },
     {
       field: 'patrocinadora',
       headerName: 'Patr.',
-      width: 140,
+      width: 80,
+      disableColumnMenu: true,
     },
     {
       field: 'faculdade_anestesiologia',
       headerName: 'Fac. Anest.',
-      width: 170,
+      width: 120,
+      disableColumnMenu: true,
     },
     {
       field: 'empresa_ativa',
       headerName: 'Ativa',
-      width: 130,
+      width: 85,
+      disableColumnMenu: true,
     },
     {
       field: 'razao_social',
       headerName: 'Razão Social',
       width: 400,
+      disableColumnMenu: true,
     },
-    {
-      field: 'nome_fantasia',
-      headerName: 'Nome Fantasia',
-      width: 200,
-    },
+    // {
+    //   field: 'nome_fantasia',
+    //   headerName: 'Nome Fantasia',
+    //   width: 200,
+    //   disableColumnMenu: true,
+    // },
     {
       field: 'cnpj',
       headerName: 'CNPJ',
       width: 150,
+      disableColumnMenu: true,
     },
     {
       field: 'cidade',
       headerName: 'Cidade',
       width: 150,
+      disableColumnMenu: true,
     },
     {
       field: 'uf',
       headerName: 'Uf',
-      width: 120,
+      width: 70,
+      disableColumnMenu: true,
     },
 
     {
       field: 'nome_contato_primario',
       headerName: 'Contato Primário',
-      width: 210,
+      width: 230,
+      disableColumnMenu: true,
     },
     {
       field: 'email_contato_primario',
       headerName: 'Email Contato Primário',
       width: 250,
+      disableColumnMenu: true,
     },
   ]
 
@@ -185,23 +212,75 @@ export default function Empresas({ data, dataTipoEmpresa }: any) {
       ocorrencia_tabela: 'não',
     },
   ]
-  useEffect(() => {
+  function defaultFilters() {
     setValue('tipo_empresa_filter', 'Todos')
     setValue('uf_filter', 'Todos')
     setValue('empresa_ativa_filter', 'Todos')
     setValue('patrocinarora_filter', 'Todos')
     setValue('faculdade_anestesiologia_filter', 'Todos')
-  }, [])
+  }
 
   useEffect(() => {
-    setList(data)
+    const getFilterList = localStorage.getItem('@filtro')
+
+    if (getFilterList !== null) {
+      setList(JSON.parse(getFilterList))
+    } else {
+      setList(data)
+    }
+    const getFilterSelected = localStorage.getItem('@valuesSelected')
+    if (getFilterSelected !== null) {
+      const getItemsFilter = JSON.parse(getFilterSelected)
+      setFilterSelect(getItemsFilter)
+    }
+
+    defaultFilters()
   }, [data])
+
+  const isdataTipoEmpresa = dataTipoEmpresa?.map((item: any) => {
+    return {
+      ...item,
+    }
+  })
+
+  const objTodos = {
+    id: 0,
+    codigo_tabela: 'Tipo_Empresa',
+    ocorrencia_tabela: 'Todos',
+    complemento_ocorrencia_selecao: 'Novo Complemento',
+    ocorrencia_ativa: true,
+  }
+  isdataTipoEmpresa.unshift(objTodos)
+  const objUfTodos = {
+    id: 0,
+    ocorrencia_tabela: 'Todos',
+  }
+
+  const isUfBrasil = ufBrasil?.map((item) => {
+    return {
+      ...item,
+    }
+  })
+  isUfBrasil.unshift(objUfTodos)
+
+  const objDataSimNaoTodos = {
+    id: 0,
+    ocorrencia_tabela: 'Todos',
+  }
+
+  const isDataSimNao = dataSimNao?.map((item: any) => {
+    return {
+      ...item,
+    }
+  })
+  isDataSimNao.unshift(objDataSimNaoTodos)
 
   return (
     <Container>
       <BackPage backRoute="/" discartPageBack />
-      <p>Empresas</p>
-      <div>
+
+      <div style={{ paddingBottom: '3rem' }}>
+        <p>Empresas</p>
         <Box
           style={{
             marginTop: '0.5rem',
@@ -210,41 +289,111 @@ export default function Empresas({ data, dataTipoEmpresa }: any) {
           }}
         >
           <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <SelectNoComplete
-              p="0px 0px 0px 0.5rem"
-              value="Todos"
-              title="Tipo Empresa"
-              data={dataTipoEmpresa}
-              {...register('tipo_empresa_filter')}
-            />
-            <SelectNoComplete
-              p="0px 0px 0px 0.5rem"
-              value="Todos"
-              title="Patrocinadora"
-              {...register('patrocinarora_filter')}
-              data={dataSimNao}
-            />
-            <SelectNoComplete
-              p="0px 0px 0px 0.5rem"
-              value="Todos"
-              title="Faculdade Anestesiologia"
-              {...register('faculdade_anestesiologia_filter')}
-              data={dataSimNao}
-            />
-            <SelectNoComplete
-              p="0px 0px 0px 0.5rem"
-              value="Todos"
-              title="Empresa Ativa"
-              {...register('empresa_ativa_filter')}
-              data={dataSimNao}
-            />
-            <SelectNoComplete
-              p="0px 0px 0px 0.5rem"
-              value="Todos"
-              title="UF"
-              {...register('uf_filter')}
-              data={ufBrasil}
-            />
+            {filterSelect.tipo_empresa &&
+            filterSelect.tipo_empresa !== 'Todos' ? (
+              <SelectNoComplete
+                p="0px 0px 0px 0.5rem"
+                value={`${filterSelect.tipo_empresa}`}
+                title="Tipo Empresa"
+                data={isdataTipoEmpresa}
+                {...register('tipo_empresa_filter')}
+              />
+            ) : null}
+
+            {filterSelect.tipo_empresa &&
+            filterSelect.tipo_empresa === 'Todos' ? (
+              <SelectNoComplete
+                p="0px 0px 0px 0.5rem"
+                value={`Todos`}
+                title="Tipo Empresa"
+                data={dataTipoEmpresa}
+                {...register('tipo_empresa_filter')}
+              />
+            ) : null}
+
+            {filterSelect.patrocinadora &&
+            filterSelect.patrocinadora !== 'Todos' ? (
+              <SelectNoComplete
+                p="0px 0px 0px 0.5rem"
+                value={`${filterSelect.patrocinadora}`}
+                title="Patrocinadora"
+                {...register('patrocinarora_filter')}
+                data={isDataSimNao}
+              />
+            ) : null}
+
+            {filterSelect.patrocinadora &&
+            filterSelect.patrocinadora === 'Todos' ? (
+              <SelectNoComplete
+                p="0px 0px 0px 0.5rem"
+                value={`Todos`}
+                title="Patrocinadora"
+                {...register('patrocinarora_filter')}
+                data={dataSimNao}
+              />
+            ) : null}
+
+            {filterSelect.faculdade && filterSelect.faculdade !== 'Todos' ? (
+              <SelectNoComplete
+                p="0px 0px 0px 0.5rem"
+                value={`${filterSelect.faculdade}`}
+                title="Faculdade Anestesiologia"
+                {...register('faculdade_anestesiologia_filter')}
+                data={isDataSimNao}
+              />
+            ) : null}
+
+            {filterSelect.faculdade && filterSelect.faculdade === 'Todos' ? (
+              <SelectNoComplete
+                p="0px 0px 0px 0.5rem"
+                value={`Todos`}
+                title="Faculdade Anestesiologia"
+                {...register('faculdade_anestesiologia_filter')}
+                data={dataSimNao}
+              />
+            ) : null}
+
+            {filterSelect.empresa_ativa &&
+            filterSelect.empresa_ativa !== 'Todos' ? (
+              <SelectNoComplete
+                p="0px 0px 0px 0.5rem"
+                value={`${filterSelect.empresa_ativa}`}
+                title="Empresa Ativa"
+                {...register('empresa_ativa_filter')}
+                data={isDataSimNao}
+              />
+            ) : null}
+
+            {filterSelect.empresa_ativa &&
+            filterSelect.empresa_ativa === 'Todos' ? (
+              <SelectNoComplete
+                p="0px 0px 0px 0.5rem"
+                value={`Todos`}
+                title="Empresa Ativa"
+                {...register('empresa_ativa_filter')}
+                data={dataSimNao}
+              />
+            ) : null}
+
+            {filterSelect.uf_brasil && filterSelect.uf_brasil !== 'Todos' ? (
+              <SelectNoComplete
+                p="0px 0px 0px 0.5rem"
+                value={`${filterSelect.uf_brasil}`}
+                title="UF"
+                {...register('uf_filter')}
+                data={isUfBrasil}
+              />
+            ) : null}
+
+            {filterSelect.uf_brasil && filterSelect.uf_brasil === 'Todos' ? (
+              <SelectNoComplete
+                p="0px 0px 0px 0.5rem"
+                value={`Todos`}
+                title="UF"
+                {...register('uf_filter')}
+                data={ufBrasil}
+              />
+            ) : null}
           </div>
           <Button
             style={{
@@ -269,7 +418,6 @@ export default function Empresas({ data, dataTipoEmpresa }: any) {
       </div>
 
       {list && <DataGridDemo columns={columns} rows={list} w="100%" />}
-
       <Box>
         <Button
           style={{ backgroundColor: '#4471C6' }}
