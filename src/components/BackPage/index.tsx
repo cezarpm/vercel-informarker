@@ -25,7 +25,7 @@ export function BackPage({
                 localStorage.removeItem('@paginationOld'),
                 localStorage.removeItem('@filtro'),
                 localStorage.removeItem('@valuesSelected'),
-                localStorage.removeItem('@paginationOld'))
+                localStorage.removeItem('@pageCache'))
               : null
           }}
           style={{

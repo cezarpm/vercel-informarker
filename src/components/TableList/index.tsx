@@ -10,14 +10,23 @@ import CircularProgress from '@mui/material/CircularProgress'
 export default function DataGridDemo({ rows, columns, w }: any) {
   const { setSelection, selectedRowIds, setVoltarPagina, voltarPagina } =
     useContextCustom()
+
   const [pageCache, setPageCache] = useState(0)
+
   const [linhas, setLinhas] = useState([])
 
   const handleSelectionModelChange = (newSelectionModel: any) => {
     setSelection(newSelectionModel)
     if (newSelectionModel) {
-      localStorage.setItem('@paginationOld', JSON.stringify(pageCache))
+      localStorage.setItem('@pageCache', JSON.stringify(pageCache))
       setVoltarPagina(pageCache)
+    }
+  }
+
+  function handleSetLocalStorage() {
+    const cacheLocalStorage = localStorage.getItem('@pageCache')
+    if (cacheLocalStorage !== null) {
+      setVoltarPagina(cacheLocalStorage)
     }
   }
 
@@ -36,6 +45,7 @@ export default function DataGridDemo({ rows, columns, w }: any) {
       }
     }
     GetParams()
+    handleSetLocalStorage()
   }, [])
 
   useEffect(() => {
