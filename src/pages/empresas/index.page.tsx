@@ -212,6 +212,7 @@ export default function Empresas({ data, dataTipoEmpresa }: any) {
       ocorrencia_tabela: 'não',
     },
   ]
+
   function defaultFilters() {
     setValue('tipo_empresa_filter', 'Todos')
     setValue('uf_filter', 'Todos')
@@ -232,9 +233,14 @@ export default function Empresas({ data, dataTipoEmpresa }: any) {
     if (getFilterSelected !== null) {
       const getItemsFilter = JSON.parse(getFilterSelected)
       setFilterSelect(getItemsFilter)
+      setValue('tipo_empresa_filter', getItemsFilter.tipo_empresa)
+      setValue('uf_filter', getItemsFilter.uf_brasil)
+      setValue('empresa_ativa_filter', getItemsFilter.empresa_ativa)
+      setValue('patrocinarora_filter', getItemsFilter.patrocinadora)
+      setValue('faculdade_anestesiologia_filter', getItemsFilter.faculdade)
+    } else {
+      defaultFilters()
     }
-
-    defaultFilters()
   }, [data])
 
   const isdataTipoEmpresa = dataTipoEmpresa?.map((item: any) => {
@@ -277,143 +283,145 @@ export default function Empresas({ data, dataTipoEmpresa }: any) {
 
   return (
     <Container>
-      <BackPage backRoute="/" discartPageBack />
-
       <div style={{ paddingBottom: '3rem' }}>
         <p>Empresas</p>
         <Box
           style={{
             marginTop: '0.5rem',
-            justifyContent: 'flex-start',
+            justifyContent: 'space-between',
             alignItems: 'end',
           }}
         >
-          <div style={{ display: 'flex', gap: '0.5rem' }}>
-            {filterSelect.tipo_empresa &&
-            filterSelect.tipo_empresa !== 'Todos' ? (
-              <SelectNoComplete
-                p="0px 0px 0px 0.5rem"
-                value={`${filterSelect.tipo_empresa}`}
-                title="Tipo Empresa"
-                data={isdataTipoEmpresa}
-                {...register('tipo_empresa_filter')}
-              />
-            ) : null}
+          <div>
+            <div style={{ display: 'flex', gap: '0.5rem', }}>
+              {filterSelect.tipo_empresa &&
+              filterSelect.tipo_empresa !== 'Todos' ? (
+                <SelectNoComplete
+                  p="0px 0px 0px 0.5rem"
+                  value={`${filterSelect.tipo_empresa}`}
+                  title="Tipo Empresa"
+                  data={isdataTipoEmpresa}
+                  {...register('tipo_empresa_filter')}
+                />
+              ) : null}
 
-            {filterSelect.tipo_empresa &&
-            filterSelect.tipo_empresa === 'Todos' ? (
-              <SelectNoComplete
-                p="0px 0px 0px 0.5rem"
-                value={`Todos`}
-                title="Tipo Empresa"
-                data={dataTipoEmpresa}
-                {...register('tipo_empresa_filter')}
-              />
-            ) : null}
+              {filterSelect.tipo_empresa &&
+              filterSelect.tipo_empresa === 'Todos' ? (
+                <SelectNoComplete
+                  p="0px 0px 0px 0.5rem"
+                  value={`Todos`}
+                  title="Tipo Empresa"
+                  data={dataTipoEmpresa}
+                  {...register('tipo_empresa_filter')}
+                />
+              ) : null}
 
-            {filterSelect.patrocinadora &&
-            filterSelect.patrocinadora !== 'Todos' ? (
-              <SelectNoComplete
-                p="0px 0px 0px 0.5rem"
-                value={`${filterSelect.patrocinadora}`}
-                title="Patrocinadora"
-                {...register('patrocinarora_filter')}
-                data={isDataSimNao}
-              />
-            ) : null}
+              {filterSelect.patrocinadora &&
+              filterSelect.patrocinadora !== 'Todos' ? (
+                <SelectNoComplete
+                  p="0px 0px 0px 0.5rem"
+                  value={`${filterSelect.patrocinadora}`}
+                  title="Patrocinadora"
+                  {...register('patrocinarora_filter')}
+                  data={isDataSimNao}
+                />
+              ) : null}
 
-            {filterSelect.patrocinadora &&
-            filterSelect.patrocinadora === 'Todos' ? (
-              <SelectNoComplete
-                p="0px 0px 0px 0.5rem"
-                value={`Todos`}
-                title="Patrocinadora"
-                {...register('patrocinarora_filter')}
-                data={dataSimNao}
-              />
-            ) : null}
+              {filterSelect.patrocinadora &&
+              filterSelect.patrocinadora === 'Todos' ? (
+                <SelectNoComplete
+                  p="0px 0px 0px 0.5rem"
+                  value={`Todos`}
+                  title="Patrocinadora"
+                  {...register('patrocinarora_filter')}
+                  data={dataSimNao}
+                />
+              ) : null}
 
-            {filterSelect.faculdade && filterSelect.faculdade !== 'Todos' ? (
-              <SelectNoComplete
-                p="0px 0px 0px 0.5rem"
-                value={`${filterSelect.faculdade}`}
-                title="Faculdade Anestesiologia"
-                {...register('faculdade_anestesiologia_filter')}
-                data={isDataSimNao}
-              />
-            ) : null}
+              {filterSelect.faculdade && filterSelect.faculdade !== 'Todos' ? (
+                <SelectNoComplete
+                  p="0px 0px 0px 0.5rem"
+                  value={`${filterSelect.faculdade}`}
+                  title="Faculdade Anestesiologia"
+                  {...register('faculdade_anestesiologia_filter')}
+                  data={isDataSimNao}
+                />
+              ) : null}
 
-            {filterSelect.faculdade && filterSelect.faculdade === 'Todos' ? (
-              <SelectNoComplete
-                p="0px 0px 0px 0.5rem"
-                value={`Todos`}
-                title="Faculdade Anestesiologia"
-                {...register('faculdade_anestesiologia_filter')}
-                data={dataSimNao}
-              />
-            ) : null}
+              {filterSelect.faculdade && filterSelect.faculdade === 'Todos' ? (
+                <SelectNoComplete
+                  p="0px 0px 0px 0.5rem"
+                  value={`Todos`}
+                  title="Faculdade Anestesiologia"
+                  {...register('faculdade_anestesiologia_filter')}
+                  data={dataSimNao}
+                />
+              ) : null}
 
-            {filterSelect.empresa_ativa &&
-            filterSelect.empresa_ativa !== 'Todos' ? (
-              <SelectNoComplete
-                p="0px 0px 0px 0.5rem"
-                value={`${filterSelect.empresa_ativa}`}
-                title="Empresa Ativa"
-                {...register('empresa_ativa_filter')}
-                data={isDataSimNao}
-              />
-            ) : null}
+              {filterSelect.empresa_ativa &&
+              filterSelect.empresa_ativa !== 'Todos' ? (
+                <SelectNoComplete
+                  p="0px 0px 0px 0.5rem"
+                  value={`${filterSelect.empresa_ativa}`}
+                  title="Empresa Ativa"
+                  {...register('empresa_ativa_filter')}
+                  data={isDataSimNao}
+                />
+              ) : null}
 
-            {filterSelect.empresa_ativa &&
-            filterSelect.empresa_ativa === 'Todos' ? (
-              <SelectNoComplete
-                p="0px 0px 0px 0.5rem"
-                value={`Todos`}
-                title="Empresa Ativa"
-                {...register('empresa_ativa_filter')}
-                data={dataSimNao}
-              />
-            ) : null}
+              {filterSelect.empresa_ativa &&
+              filterSelect.empresa_ativa === 'Todos' ? (
+                <SelectNoComplete
+                  p="0px 0px 0px 0.5rem"
+                  value={`Todos`}
+                  title="Empresa Ativa"
+                  {...register('empresa_ativa_filter')}
+                  data={dataSimNao}
+                />
+              ) : null}
 
-            {filterSelect.uf_brasil && filterSelect.uf_brasil !== 'Todos' ? (
-              <SelectNoComplete
-                p="0px 0px 0px 0.5rem"
-                value={`${filterSelect.uf_brasil}`}
-                title="UF"
-                {...register('uf_filter')}
-                data={isUfBrasil}
-              />
-            ) : null}
+              {filterSelect.uf_brasil && filterSelect.uf_brasil !== 'Todos' ? (
+                <SelectNoComplete
+                  p="0px 0px 0px 0.5rem"
+                  value={`${filterSelect.uf_brasil}`}
+                  title="UF"
+                  {...register('uf_filter')}
+                  data={isUfBrasil}
+                />
+              ) : null}
 
-            {filterSelect.uf_brasil && filterSelect.uf_brasil === 'Todos' ? (
-              <SelectNoComplete
-                p="0px 0px 0px 0.5rem"
-                value={`Todos`}
-                title="UF"
-                {...register('uf_filter')}
-                data={ufBrasil}
+              {filterSelect.uf_brasil && filterSelect.uf_brasil === 'Todos' ? (
+                <SelectNoComplete
+                  p="0px 0px 0px 0.5rem"
+                  value={`Todos`}
+                  title="UF"
+                  {...register('uf_filter')}
+                  data={ufBrasil}
+                />
+              ) : null}
+
+              <Button
+                style={{
+                  margin: '0px',
+                  fontSize: '12px',
+                  width: '5rem',
+                  border: 'solid 1px',
+                  padding: '0.5rem',
+                }}
+                title="Buscar"
+                onClick={BuscarFiltro}
               />
-            ) : null}
+
+              {selectedRowIds.length > 0 && (
+                <ModalTickets
+                  title="Gerar Etiqueta"
+                  bgColor="#0da9a4"
+                  data={selectedRowIds}
+                />
+              )}
+            </div>
           </div>
-          <Button
-            style={{
-              margin: '0px',
-              fontSize: '12px',
-              width: '5rem',
-              border: 'solid 1px',
-              padding: '0.5rem',
-            }}
-            title="Buscar"
-            onClick={BuscarFiltro}
-          />
-
-          {selectedRowIds.length > 0 && (
-            <ModalTickets
-              title="Gerar Etiqueta"
-              bgColor="#0da9a4"
-              data={selectedRowIds}
-            />
-          )}
+        <BackPage backRoute="/" discartPageBack />
         </Box>
       </div>
 
