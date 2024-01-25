@@ -26,6 +26,7 @@ export default function CsvUpload() {
           } catch (error) {
               console.error('Erro ao enviar dados:', error);
               alert('Erro ao enviar dados.');
+
           }
       }
   };

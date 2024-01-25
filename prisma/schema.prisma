@@ -202,10 +202,10 @@ model Chapas_Eleicoes {
 
 model Chapas {
   id              Int      @id @default(autoincrement())
-  titulo_chapa    String
-  nome_presidente String
-  data_formacao   DateTime
-  pessoas_compoe  String
+  titulo_chapa    String?
+  nome_presidente String?
+  data_formacao   DateTime?
+  pessoas_compoe  String?
 }
 
 model Diretorias {
