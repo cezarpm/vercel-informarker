@@ -212,6 +212,7 @@ export default function Empresas({ data, dataTipoEmpresa }: any) {
       ocorrencia_tabela: 'não',
     },
   ]
+
   function defaultFilters() {
     setValue('tipo_empresa_filter', 'Todos')
     setValue('uf_filter', 'Todos')
@@ -232,9 +233,14 @@ export default function Empresas({ data, dataTipoEmpresa }: any) {
     if (getFilterSelected !== null) {
       const getItemsFilter = JSON.parse(getFilterSelected)
       setFilterSelect(getItemsFilter)
+      setValue('tipo_empresa_filter', getItemsFilter.tipo_empresa)
+      setValue('uf_filter', getItemsFilter.uf_brasil)
+      setValue('empresa_ativa_filter', getItemsFilter.empresa_ativa)
+      setValue('patrocinarora_filter', getItemsFilter.patrocinadora)
+      setValue('faculdade_anestesiologia_filter', getItemsFilter.faculdade)
+    } else {
+      defaultFilters()
     }
-
-    defaultFilters()
   }, [data])
 
   const isdataTipoEmpresa = dataTipoEmpresa?.map((item: any) => {
