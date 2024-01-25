@@ -1,3 +1,4 @@
+/* eslint-disable eqeqeq */
 /* eslint-disable camelcase */
 import { Box, Container } from './styled'
 import { prisma } from '@/lib/prisma'
@@ -7,13 +8,27 @@ import TableBirthdays from '@/components/TableBirthdays'
 import { ArrowBendDownLeft } from 'phosphor-react'
 import Link from 'next/link'
 
-export default function Aniversariantes({ data }: any) {
+export default function Aniversariantes({
+  data,
+  situacaoAssociado,
+  categoriaAssociado,
+}: any) {
   const columnsBirthdays: GridColDef[] = [
     {
       field: 'id',
       headerName: 'id',
       disableColumnMenu: true,
       width: 80,
+    },
+    {
+      field: 'categoria',
+      headerName: 'Categoria',
+      width: 150,
+    },
+    {
+      field: 'situacao',
+      headerName: 'Situação',
+      width: 150,
     },
     {
       field: 'tratamento',
@@ -57,7 +72,13 @@ export default function Aniversariantes({ data }: any) {
         </Link>
       </Box>
 
-      <TableBirthdays columns={columnsBirthdays} rows={data} w="100%" />
+      <TableBirthdays
+        columns={columnsBirthdays}
+        rows={data}
+        w="100%"
+        situacaoAssociado={situacaoAssociado}
+        categoriaAssociado={categoriaAssociado}
+      />
     </Container>
   )
 }
@@ -82,6 +103,28 @@ export const getServerSideProps: GetServerSideProps = async () => {
             },
           })
           tratamento = response_saerj?.tratamento ?? ''
+        }
+
+        let categoria = ''
+        if (item.categoria != null) {
+          const response_categoria = await prisma.tabelas.findUnique({
+            where: {
+              id: Number(item.categoria),
+              ocorrencia_ativa: true,
+            },
+          })
+          categoria = response_categoria?.ocorrencia_tabela ?? ''
+        }
+
+        let situacao = ''
+        if (item.situacao != null) {
+          const response_situacao = await prisma.tabelas.findUnique({
+            where: {
+              id: Number(item.situacao),
+              ocorrencia_ativa: true,
+            },
+          })
+          situacao = response_situacao?.ocorrencia_tabela ?? ''
         }
 
         return {
@@ -118,14 +161,32 @@ export const getServerSideProps: GetServerSideProps = async () => {
                   .join('/')
               : null,
           tratamento,
+          situacao,
+          categoria,
         }
       }),
     )
 
-    console.log('AQUI', data)
+    const situacaoAssociado = await prisma.tabelas.findMany({
+      where: {
+        codigo_tabela: 'Situação_Associado',
+        ocorrencia_tabela: {
+          not: 'Falecido',
+        },
+      },
+    })
+
+    const categoriaAssociado = await prisma.tabelas.findMany({
+      where: {
+        codigo_tabela: 'Categoria_Associado',
+      },
+    })
+
     return {
       props: {
         data,
+        situacaoAssociado,
+        categoriaAssociado,
       },
     }
   } catch (error) {

@@ -7,8 +7,9 @@ export const HeaderBirthdays = styled('div', {
 })
 
 export const ContainerFilters = styled('div', {
-  marginTop: '1rem',
-  width: '50%',
+  display: 'flex',
+  alignItems: 'center',
+  width: '65%',
 })
 
 export const TextNoFilter = styled('p', {
