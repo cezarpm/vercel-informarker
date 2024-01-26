@@ -1,3 +1,5 @@
+import { SelectOptions } from '@/components/SelectOptions'
+import { TextInput } from '@/components/TextInput'
 import { styled } from '@ignite-ui/react'
 
 export const Container = styled('main', {
@@ -30,6 +32,43 @@ export const Box = styled('div', {
   gap: '2rem',
 })
 
-export const FormErrorMessage = styled('p', {
-  color: 'red',
+export const Text = styled('p', {
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'start',
+  border: 'solid 1px',
+  borderLeftColor: 'transparent',
+  borderRightColor: 'transparent',
+  borderTopColor: 'transparent',
+  borderBottomColor: '#A9A9B2',
+  fontFamily: 'Roboto, Helvetica, Arial, sans-serif',
+  fontWeight: '400',
+  lineHeight: '1.4375em',
+  letterSpacing: '0.00938em',
+  color: 'rgba(0, 0, 0, 0.6)',
+  flex: 1,
+  padding: '4px 0px 5px',
+  fontSize: '13px',
+})
+
+export const ContentDate = styled('div', {
+  display: 'flex',
+  alignItems: 'end',
+  width: '26rem',
+  fieldset: {
+    border: 'none',
+  },
+})
+export const FormError = styled('p', {
+  color: '#d32f2f',
+  fontFamily: 'Roboto, Helvetica , Arial, sans-serif',
+  fontWeight: '400',
+  fontSize: '0.75rem',
+  lineHeight: '1.66',
+  letterSpacing: '0.03333em',
+  textAlign: 'left',
+  marginTop: '3px',
+  marginRight: '0',
+  marginBottom: ' 0',
+  marginLeft: '0',
 })

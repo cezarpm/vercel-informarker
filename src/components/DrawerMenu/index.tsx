@@ -23,6 +23,7 @@ import {
   UserFocus,
   User,
   ArchiveBox,
+  Money,
 } from 'phosphor-react'
 import { useRouter } from 'next/navigation'
 import { Twirl as Hamburger } from 'hamburger-react'
@@ -64,10 +65,9 @@ export function TemporaryDrawer() {
       router.push('/eleicao')
     } else if (text === 'Importação anuidades') {
       router.push('/importacaoPagamentos')
+    } else if (text === 'Pagamentos') {
+      router.push('/pagamentos')
     }
-    // else if (text === 'Pagamentos') {
-    //   router.push('/pagamentos')
-    // }
   }
 
   const toggleDrawer =
@@ -92,9 +92,9 @@ export function TemporaryDrawer() {
     <>
       <UsersFour size={30} color="#fff" />
     </>,
-    // <>
-    //   <ArchiveTray size={30} color="#fff" />
-    // </>,
+    <>
+      <Money size={30} color="#fff" />
+    </>,
     <>
       <ArchiveTray size={30} color="#fff" />
     </>,
@@ -158,7 +158,7 @@ export function TemporaryDrawer() {
         {[
           'Empresas',
           'Associados',
-          'Importação anuidades',
+          'Pagamentos',
           'Aniversariantes',
           'Protocolos',
           'Chapas',
