@@ -41,7 +41,7 @@ export default function Modal({
     try {
       await api.delete(`${routeDelete}`, { data })
       setOpen(false)
-      toast.success('Excluído com sucesso!')
+      toast.success('Operação concluída com sucesso')
       router.push(`${redirectRouter}`)
     } catch (error) {
       console.log(error)

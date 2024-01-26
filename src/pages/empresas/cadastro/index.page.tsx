@@ -56,9 +56,7 @@ interface schemaEmpresasProps {
 }
 
 const schemaEmpresaForm = z.object({
-  cod_empresa: z
-    .string()
-    .min(5, { message: 'campo precisa conter min 5 caracteres' }),
+  cod_empresa: z.string().min(1, { message: 'Campo obrigatório' }),
   tipo_empresa: z.string(),
   patrocinadora: z.boolean(),
   faculdade_anestesiologia: z.boolean(),
@@ -156,8 +154,9 @@ export default function Empresas({
     try {
       // console.log(data)
       // const cnpjClear = data.cnpj.replace(/[^\d]/g, '')
-      data.cnpj = data.cnpj.replace(/[^\d]/g, '')
-      data.cep = data.cep.replace(/[^\d]/g, '')
+      const checkTamanhoCnpj = data.cnpj.replace(/[^\d]/g, '')
+      const checkTamanhoCep = data.cep.replace(/[^\d]/g, '')
+
       data.telefone_comercial = data.telefone_comercial.replace(/[^\d]/g, '')
       data.telefone_contato_primario = data.telefone_contato_primario.replace(
         /[^\d]/g,
@@ -166,9 +165,29 @@ export default function Empresas({
       data.telefone_contato_secundario =
         data.telefone_contato_secundario.replace(/[^\d]/g, '')
 
-      await api.post('/empresa/cadastro', { ...data })
-      router.push('/empresas')
-      return toast.success('Empresa cadastrada!')
+      // await api.post('/empresa/cadastro', { ...data })
+
+      if (checkTamanhoCnpj.length === 14 && checkTamanhoCep.length === 8) {
+        await api.post('/empresa/cadastro', {
+          ...data,
+          cnpj: checkTamanhoCnpj,
+          cep: checkTamanhoCep,
+        })
+      } else {
+        const ErrorCnpj =
+          checkTamanhoCnpj.length !== 14
+            ? toast.error('CNPJ precisa ser válido')
+            : null
+        const ErrorCep =
+          checkTamanhoCep.length !== 8
+            ? toast.error('CEP precisa ser válido')
+            : null
+        return ErrorCep || ErrorCnpj
+      }
+
+      toast.success('Operação concluída com sucesso')
+
+      return router.push('/empresas')
     } catch (error) {
       console.log(error)
       return toast.error('Ops algo deu errado...')
@@ -257,6 +276,7 @@ export default function Empresas({
           <Box>
             <TextInput
               title="Codigo Empresa *"
+              quantidadeCaracteres={20}
               {...register('cod_empresa')}
               helperText={errors.cod_empresa?.message}
               error={!!errors.cod_empresa?.message}
@@ -311,12 +331,14 @@ export default function Empresas({
               {...register('razao_social')}
               helperText={errors.razao_social?.message}
               error={!!errors.razao_social?.message}
+              quantidadeCaracteres={150}
             />
             <TextInput
               title="Nome Fantasia *"
               {...register('nome_fantasia')}
               helperText={errors.nome_fantasia?.message}
               error={!!errors.nome_fantasia?.message}
+              quantidadeCaracteres={150}
             />
             <div>
               <TextInput
@@ -360,6 +382,7 @@ export default function Empresas({
               title="Logradouro *"
               {...register('logradouro')}
               disabled={disableCamposCepInvalido}
+              quantidadeCaracteres={50}
               // value={logradouro || watch('logradouro')}
               helperText={errors.logradouro?.message}
               error={!!errors.logradouro?.message}
@@ -378,6 +401,7 @@ export default function Empresas({
               title="Complemento"
               {...register('complemento')}
               disabled={disableCamposCepInvalido}
+              quantidadeCaracteres={50}
             />
           </Box>
 
@@ -386,6 +410,7 @@ export default function Empresas({
               w={450}
               title="Bairro *"
               {...register('bairro')}
+              quantidadeCaracteres={50}
               // value={bairro || watch('bairro')}
               disabled={disableCamposCepInvalido}
               helperText={errors.bairro?.message}
@@ -395,6 +420,7 @@ export default function Empresas({
             <TextInput
               title="Cidade *"
               {...register('cidade')}
+              quantidadeCaracteres={50}
               // value={cidade || watch('cidade')}
               disabled={disableCamposCepInvalido}
               helperText={errors.cidade?.message}
@@ -421,6 +447,7 @@ export default function Empresas({
               disabled={disableCamposCepInvalido}
               // helperText={errors.pais?.message}
               error={!!errors.pais?.message}
+              quantidadeCaracteres={150}
             />
 
             <TextInput
@@ -429,6 +456,7 @@ export default function Empresas({
               title="Telefone Comercial"
               mask="(99) 9999-9999"
               {...register('telefone_comercial')}
+              quantidadeCaracteres={150}
             />
           </Box>
 
@@ -439,6 +467,7 @@ export default function Empresas({
               {...register('nome_contato_primario')}
               helperText={errors.nome_contato_primario?.message}
               error={!!errors.nome_contato_primario?.message}
+              quantidadeCaracteres={150}
             />
 
             <SelectOptions
@@ -446,12 +475,14 @@ export default function Empresas({
               data={newDataTratamento}
               w={300}
               {...register('tratamento_contato_primario')}
+              quantidadeCaracteres={150}
             />
             <SelectOptions
               description="Cargo"
               data={newDataCargo}
               w={180}
               {...register('cargo_contato_primario')}
+              quantidadeCaracteres={150}
             />
           </Box>
 
@@ -470,6 +501,7 @@ export default function Empresas({
               type="email"
               title="Email"
               {...register('email_contato_primario')}
+              quantidadeCaracteres={150}
             />
           </Box>
 
@@ -478,6 +510,7 @@ export default function Empresas({
               type="text"
               title="Nome do Contato Secundario"
               {...register('nome_contato_secundario')}
+              quantidadeCaracteres={150}
             />
 
             <SelectOptions
@@ -509,10 +542,15 @@ export default function Empresas({
               type="email"
               title="Email"
               {...register('email_contato_secundario')}
+              quantidadeCaracteres={150}
             />
           </Box>
 
-          <TextInput title="Home Page" {...register('home_page')} />
+          <TextInput
+            title="Home Page"
+            {...register('home_page')}
+            quantidadeCaracteres={225}
+          />
 
           <Box>
             <label

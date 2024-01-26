@@ -238,6 +238,7 @@ export default function Empresas({ data, dataTipoEmpresa }: any) {
       setValue('empresa_ativa_filter', getItemsFilter.empresa_ativa)
       setValue('patrocinarora_filter', getItemsFilter.patrocinadora)
       setValue('faculdade_anestesiologia_filter', getItemsFilter.faculdade)
+      BuscarFiltro()
     } else {
       defaultFilters()
     }
@@ -293,7 +294,7 @@ export default function Empresas({ data, dataTipoEmpresa }: any) {
           }}
         >
           <div>
-            <div style={{ display: 'flex', gap: '0.5rem', }}>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
               {filterSelect.tipo_empresa &&
               filterSelect.tipo_empresa !== 'Todos' ? (
                 <SelectNoComplete
@@ -421,7 +422,7 @@ export default function Empresas({ data, dataTipoEmpresa }: any) {
               )}
             </div>
           </div>
-        <BackPage backRoute="/" discartPageBack />
+          <BackPage backRoute="/" discartPageBack />
         </Box>
       </div>
 

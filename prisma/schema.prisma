@@ -158,7 +158,7 @@ model Pagamentos {
 
 model Protocolos {
   id                     Int       @id @default(autoincrement())
-  assunto_protocolo      String? @db.VarChar(255)
+  assunto_protocolo      String?   @db.VarChar(255)
   tipo_protocolo         String?
   remetente              String?
   destinatario           String?
