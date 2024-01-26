@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable eqeqeq */
 /* eslint-disable camelcase */
 import React, { useEffect, useState } from 'react'
@@ -30,6 +31,11 @@ const TableBirthdays = ({
   categoriaAssociado,
 }: any) => {
   const { setSelection, selectedRowIds } = useContextCustom()
+  const [filterSelect, setFilterSelect] = useState({
+    data_filter: 'Selecione',
+    situacao_filter: 'Todos',
+    categoria_filter: 'Todos',
+  })
 
   const [quantidadeLinhas, setQuantidadeLinhas] = useState(10)
 
@@ -73,36 +79,46 @@ const TableBirthdays = ({
     const categoriaFilter = watch('categoria_filter')
     const dataFilter = watch('data_filter')
 
+    const filterSelected = {
+      data_filter: dataFilter,
+      situacao_filter: situacaoFilter,
+      categoria_filter: categoriaFilter,
+    }
+
     // Inicialize a lista com os dados originais
     let filteredList = rows
 
     if (dataFilter) {
       filteredList = filteredList.filter((item: any) => {
-        if (item.data_nascimento != null) {
-          const data_nasc = item.data_nascimento.split('/')
+        if(item.situacao != "Falecido"){
+          if (item.data_nascimento != null) {
+            const data_nasc = item.data_nascimento.split('/')
 
-          if (dataFilter === 'Mês') {
-            const filterMonth = data_nasc[1] === mes
+            if (dataFilter === 'Mês') {
+              const filterMonth = data_nasc[1] === mes
 
-            return filterMonth
+              return filterMonth
+            }
+
+            if (dataFilter === 'Semana') {
+              const filterWeek =
+                semana.indexOf(parseInt(data_nasc[0], 10)) > -1 &&
+                data_nasc[1] === mes
+
+              return filterWeek
+            }
+
+            if (dataFilter === 'Dia') {
+              const filterDay =
+                parseInt(data_nasc[0], 10) === dia && data_nasc[1] === mes
+
+              return filterDay
+            }
+
+            return true // Caso não seja nenhum dos filtros, incluir na lista
+          } else {
+            return false
           }
-
-          if (dataFilter === 'Semana') {
-            const filterWeek =
-              semana.indexOf(parseInt(data_nasc[0], 10)) > -1 &&
-              data_nasc[1] === mes
-
-            return filterWeek
-          }
-
-          if (dataFilter === 'Dia') {
-            const filterDay =
-              parseInt(data_nasc[0], 10) === dia && data_nasc[1] === mes
-
-            return filterDay
-          }
-
-          return true // Caso não seja nenhum dos filtros, incluir na lista
         } else {
           return false
         }
@@ -156,7 +172,7 @@ const TableBirthdays = ({
   }
 
   function valuesDefaultFilter() {
-    setValue('data_filter', '')
+    setValue('data_filter', 'month')
     setValue('situacao_filter', '')
     setValue('categoria_filter', '')
   }
@@ -252,21 +268,21 @@ const TableBirthdays = ({
           >
             <SelectNoComplete
               p="0px 0px 0px 0.5rem"
-              value=""
+              value={`${filterSelect.data_filter}`}
               title="Período *"
               data={filtroData}
               {...register('data_filter')}
             />
             <SelectNoComplete
               p="0px 0px 0px 0.5rem"
-              value=""
+              value={`${filterSelect.situacao_filter}`}
               title="Situação"
               {...register('situacao_filter')}
               data={situacaoAssociado}
             />
             <SelectNoComplete
               p="0px 0px 0px 0.5rem"
-              value=""
+              value={`${filterSelect.categoria_filter}`}
               title="Categoria"
               {...register('categoria_filter')}
               data={categoriaAssociado}
