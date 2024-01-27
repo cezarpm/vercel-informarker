@@ -18,6 +18,7 @@ import { toast } from 'react-toastify'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/router'
 import { useArrayDate } from '../../../utils/useArrayDate'
+import { BackPage } from '../../../components/BackPage'
 
 // import 'react-date-picker/dist/DatePicker.css';
 // import 'react-calendar/dist/Calendar.css';
@@ -341,21 +342,7 @@ export default function ProtocolosAtualizar({ data }: schemaProtocoloProps) {
     <Container>
       <form onSubmit={handleSubmit(OnSubmit)}>
         <Box style={{ justifyContent: 'end' }}>
-          <Link
-            href="/protocolos"
-            style={{
-              textDecoration: 'none',
-              fontFamily: 'Roboto',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              marginBottom: '1rem',
-              color: '#000',
-            }}
-          >
-            <ArrowBendDownLeft size={32} />
-            Retornar
-          </Link>
+          <BackPage backRoute="/protocolos" discartPageBack />
         </Box>
         <fieldset>
           <legend>

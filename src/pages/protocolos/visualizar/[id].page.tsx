@@ -11,6 +11,7 @@ import { ArrowBendDownLeft, CaretRight } from 'phosphor-react'
 import Link from 'next/link'
 import { TextAreaInput } from '../atualizar/styled'
 import { SelectOptions } from '@/components/SelectOptions'
+import { BackPage } from '../../../components/BackPage'
 
 const schemaEmpresaForm = z.object({
   num_protocolo: z.string(),
@@ -50,21 +51,7 @@ export default function Vizualizar({ data }: schemaEmpresasProps) {
     <Container>
       <form>
         <Box style={{ justifyContent: 'end' }}>
-          <Link
-            href="/protocolos"
-            style={{
-              textDecoration: 'none',
-              fontFamily: 'Roboto',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              marginBottom: '1rem',
-              color: '#000',
-            }}
-          >
-            <ArrowBendDownLeft size={32} />
-            Retornar
-          </Link>
+          <BackPage backRoute="/protocolos" discartPageBack />
         </Box>
         <fieldset>
           <legend>
