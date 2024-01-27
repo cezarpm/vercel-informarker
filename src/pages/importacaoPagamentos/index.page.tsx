@@ -17,6 +17,7 @@ export default function CsvUpload() {
       const formData = new FormData();
       formData.append('file', file);
 
+
       try {
         const response = await axios.post('/api/importExcelPagamentos', formData, {
           headers: {
