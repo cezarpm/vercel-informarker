@@ -6,6 +6,7 @@ import { prisma } from "@/lib/prisma";
 import { Logs } from "@/utils/Logs";
 
 
+
 export const config = {
   api: {
     bodyParser: false,
@@ -18,7 +19,6 @@ export default async function handler(
 ) {
   if (req.method !== "POST") {
     res.status(405).json({ message: "Somente método POST permitido" });
-
     return;
   }
 
