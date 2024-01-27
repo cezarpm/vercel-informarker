@@ -41,10 +41,11 @@ interface EtiquetaProps {
 
 export const EtiquetaPDFCompany = async (linhas: number[], exibirContatoPrimario: boolean) => {
   var doc = new jsPDF({
-
     unit: 'mm',
     format: 'a4',
-  })
+  });
+
+  const verticalSpacing = 40; // Aumentei o espaçamento vertical para 40 unidades
 
   for (let index = 0; index < linhas.length; index++) {
     try {
@@ -65,28 +66,36 @@ export const EtiquetaPDFCompany = async (linhas: number[], exibirContatoPrimario
         nome_contato_secundario,
         tratamento_contato_secundario
       } = data;
-  
+
       const contato = exibirContatoPrimario ? nome_contato_primario : nome_contato_secundario;
       const tratamento = exibirContatoPrimario ? tratamento_contato_primario : tratamento_contato_secundario;
-  
+
+      // Calculate the space required for the current label
+      const spaceRequired = verticalSpacing;
+
+      // Check if there is enough space on the current page
+      if (spaceRequired > doc.internal.pageSize.height - (index * verticalSpacing)) {
+        // If not enough space, start a new page
+        doc.addPage();
+      }
+
       const startX = 10;
-      const startY = index * 40;  // Aumentei o espaçamento vertical para 40 unidades
-  
-  
+      const startY = index * verticalSpacing;
+
       doc.setFontSize(12);
       const splitNome = doc.splitTextToSize(`${cod_empresa}`, 80);
       doc.text(splitNome, startX + 4, 12 + startY);
-  
+
       doc.setFontSize(10);
       const splitEndereco = doc.splitTextToSize(`${logradouro} , ${numero} ${complemento}`, 80);
       doc.text(splitEndereco, startX + 4, 17 + startY);
-  
+
       const splitBairro = doc.splitTextToSize(`${bairro}`, 80);
       doc.text(splitBairro, startX + 4, 22 + startY);
-  
+
       const splitCidade = doc.splitTextToSize(`${cep} - ${cidade} / ${uf}`, 80);
       doc.text(splitCidade, startX + 4, 27 + startY);
-  
+
       const splitContato = doc.splitTextToSize(`${tratamento} ${contato}`, 80);
       doc.text(splitContato, startX + 4, 32 + startY);
 
@@ -98,4 +107,3 @@ export const EtiquetaPDFCompany = async (linhas: number[], exibirContatoPrimario
 
   doc.save('etiquetas.pdf');
 };
-

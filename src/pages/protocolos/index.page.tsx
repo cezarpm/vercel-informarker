@@ -22,7 +22,7 @@ export default function ProtocoloList({ data }: any) {
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'ID', width: 50 },
     { field: 'num_protocolo', headerName: 'Número' },
-    { field: 'assunto_protocolo', headerName: 'Assunto', width: 180 },
+    { field: 'assunto_protocolo', headerName: 'Assunto', width: 300 },
     { field: 'tipo_protocolo', headerName: 'Tipo', width: 150 },
     {
       field: 'data_recebimento',
