@@ -92,7 +92,14 @@ export default function ModalTickets({
   }
 
   return (
-    <div>
+    <div
+      style={{
+        textWrap: 'nowrap',
+        display: 'flex',
+        alignItems: 'end',
+        justifyContent: 'center',
+      }}
+    >
       <Button
         style={{
           backgroundColor: `${bgColor}`,

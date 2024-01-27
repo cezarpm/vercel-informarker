@@ -15,28 +15,30 @@ import { toast } from 'react-toastify'
 import { useRouter } from 'next/router'
 import axios from 'axios'
 import { BackPage } from '@/components/BackPage'
+import { zodResolver } from '@hookform/resolvers/zod'
+import { FormError } from '@/pages/pagamentos/cadastro/styled'
 
 const schemaEmpresaForm = z.object({
   id: z.number(),
-  cod_empresa: z.string(),
+  cod_empresa: z.string().min(1, { message: 'Campo Obrigatório' }),
   tipo_empresa: z.string(),
   patrocinadora: z.boolean(),
   faculdade_anestesiologia: z.boolean(),
   empresa_ativa: z.boolean(),
-  cnpj: z.string(),
-  razao_social: z.string(),
-  nome_fantasia: z.string(),
-  cep: z.string(),
-  logradouro: z.string(),
-  numero: z.string(),
+  cnpj: z.string().min(14, { message: 'CNPJ inválido' }),
+  razao_social: z.string().min(1, { message: 'Campo Obrigatório' }),
+  nome_fantasia: z.string().min(1, { message: 'Campo Obrigatório' }),
+  cep: z.string().min(1, { message: 'Campo Obrigatório' }),
+  logradouro: z.string().min(1, { message: 'Campo Obrigatório' }),
+  numero: z.string().min(1, { message: 'Campo Obrigatório' }),
   complemento: z.string(),
-  cidade: z.string(),
-  pais: z.string(),
-  bairro: z.string(),
-  uf: z.string(),
+  cidade: z.string().min(1, { message: 'Campo Obrigatório' }),
+  pais: z.string().min(1, { message: 'Campo Obrigatório' }),
+  bairro: z.string().min(1, { message: 'Campo Obrigatório' }),
+  uf: z.string().min(1, { message: 'Campo Obrigatório' }),
   telefone_comercial: z.string(),
   tratamento_contato_primario: z.string(),
-  nome_contato_primario: z.string(),
+  nome_contato_primario: z.string().min(1, { message: 'Campo Obrigatório' }),
   cargo_contato_primario: z.string(),
   email_contato_primario: z.string(),
   telefone_contato_primario: z.string(),
@@ -107,20 +109,37 @@ export default function Vizualizar({
     handleSubmit,
     setValue,
     watch,
-    formState: { isSubmitting },
-  } = useForm<SchemaEmpresaForm>()
+    formState: { isSubmitting, errors },
+  } = useForm<SchemaEmpresaForm>({
+    resolver: zodResolver(schemaEmpresaForm),
+  })
+  // console.log(errors)
 
   async function OnSubmit(data: any) {
+    const checkTamanhoCnpj = data.cnpj.replace(/[^\d]/g, '')
+    const checkTamanhoCep = data.cep.replace(/[^\d]/g, '')
     if (disabledButtonCep === true) {
       return toast.warn('Não é possivel atualizar com CEP inválido')
     }
-     try {
-       await api.put('/empresa/update', { ...data })
-       toast.success('Empresa atualizada!')
-       router.push('/empresas')
-     } catch (error) {
-       console.log(error)
-     }
+    try {
+      if (checkTamanhoCnpj.length === 14 && checkTamanhoCep.length === 8) {
+        await api.put('/empresa/update', { cnpj: checkTamanhoCnpj, ...data })
+      } else {
+        const ErrorCnpj =
+          checkTamanhoCnpj.length !== 14
+            ? toast.error('CNPJ precisa ser válido')
+            : null
+        const ErrorCep =
+          checkTamanhoCep.length !== 8
+            ? toast.error('CEP precisa ser válido')
+            : null
+        return ErrorCep || ErrorCnpj
+      }
+      toast.success('Operação concluída com sucesso')
+      return router.push('/empresas')
+    } catch (error) {
+      console.log(error)
+    }
   }
 
   // API VIA CEP
@@ -177,38 +196,45 @@ export default function Vizualizar({
       console.log(error)
     }
   }
-
-  useEffect(() => {
+  function setInitialValues() {
     setValue('id', data.id)
-    setValue('cod_empresa', data.cod_empresa)
-    setValue('nome_fantasia', data.nome_fantasia)
+    setValue('cod_empresa', data.cod_empresa || '')
+    setValue('nome_fantasia', data.nome_fantasia || '')
     setValue('cnpj', data.cnpj || '')
     setValue('telefone_comercial', data.telefone_comercial || '')
-    setValue('razao_social', data.razao_social)
-    setValue('tipo_empresa', data.tipo_empresa)
+    setValue('razao_social', data.razao_social || '')
+    setValue('tipo_empresa', data.tipo_empresa || '')
     setValue('cep', data.cep || '')
-    setValue('logradouro', data.logradouro)
-    setValue('complemento', data.complemento)
-    setValue('numero', data.numero)
-    setValue('bairro', data.bairro)
-    setValue('cidade', data.cidade)
-    setValue('uf', data.uf)
-    setValue('nome_contato_primario', data.nome_contato_primario)
-    setValue('tratamento_contato_primario', data.tratamento_contato_primario)
-    setValue('cargo_contato_primario', data.cargo_contato_primario)
-    setValue('email_contato_primario', data.email_contato_primario)
+    setValue('logradouro', data.logradouro || '')
+    setValue('complemento', data.complemento || '')
+    setValue('numero', data.numero || '')
+    setValue('bairro', data.bairro || '')
+    setValue('cidade', data.cidade || '')
+    setValue('pais', data.cidade || 'Brasil')
+    setValue('uf', data.uf || '')
+    setValue('nome_contato_primario', data.nome_contato_primario || '')
+    setValue(
+      'tratamento_contato_primario',
+      data.tratamento_contato_primario || '',
+    )
+    setValue('cargo_contato_primario', data.cargo_contato_primario || '')
+    setValue('email_contato_primario', data.email_contato_primario || '')
     setValue('telefone_contato_primario', data.telefone_contato_primario || '')
-    setValue('nome_contato_secundario', data.nome_contato_secundario)
+    setValue('nome_contato_secundario', data.nome_contato_secundario || '')
     setValue(
       'tratamento_contato_secundario',
-      data.tratamento_contato_secundario,
+      data.tratamento_contato_secundario || '',
     )
-    setValue('cargo_contato_secundario', data.cargo_contato_secundario)
-    setValue('email_contato_secundario', data.email_contato_secundario)
+    setValue('cargo_contato_secundario', data.cargo_contato_secundario || '')
+    setValue('email_contato_secundario', data.email_contato_secundario || '')
     setValue(
       'telefone_contato_secundario',
       data.telefone_contato_secundario || '',
     )
+  }
+
+  useEffect(() => {
+    setInitialValues()
     handleGetAllParams()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
@@ -226,13 +252,23 @@ export default function Vizualizar({
             <span>Atualizar</span>
           </legend>
           <Box>
+            <div>
+              <TextInput w={60} title="ID" {...register('id')} disabled />
+            </div>
             <div style={{ width: '10%' }}>
-              <TextInput title="Codigo Empresa" {...register('cod_empresa')} />
+              <TextInput
+                title="Codigo Empresa *"
+                {...register('cod_empresa')}
+                quantidadeCaracteres={20}
+                error={!!errors?.cod_empresa?.message}
+                helperText={errors?.cod_empresa?.message}
+              />
             </div>
 
             <SelectOptions
               description="Tipo Empresa"
               data={newDataTipoEmpresa}
+              quantidadeCaracteres={150}
               w={280}
               {...register('tipo_empresa')}
               defaultValue={{ label: data.tipo_empresa }}
@@ -247,7 +283,7 @@ export default function Vizualizar({
             <SwitchInput
               title="Faculdade Anestesiologia?"
               {...register('faculdade_anestesiologia')}
-              defaultChecked={data.faculdade_anestesiologia}
+              defaultChecked={data.faculdade_anestesioggia}
             />
             <SwitchInput
               title="Empresa Ativa?"
@@ -264,6 +300,8 @@ export default function Vizualizar({
                 title="CNPJ *"
                 {...register('cnpj')}
                 mask="99.999.999/9999-99"
+                error={!!errors?.cnpj?.message}
+                helperText={errors?.cnpj?.message}
               />
               <Button
                 type="button"
@@ -274,9 +312,19 @@ export default function Vizualizar({
                 style={{ margin: '0px', width: '100%', fontSize: '12px' }}
               />
             </div>
-            <TextInput title="Nome Fantasia" {...register('nome_fantasia')} />
+            <TextInput
+              title="Nome Fantasia *"
+              {...register('nome_fantasia')}
+              error={!!errors?.nome_fantasia?.message}
+              helperText={errors?.nome_fantasia?.message}
+            />
 
-            <TextInput title="Razao Social" {...register('razao_social')} />
+            <TextInput
+              title="Razao Social *"
+              {...register('razao_social')}
+              error={!!errors?.razao_social?.message}
+              helperText={errors?.razao_social?.message}
+            />
             {/* <TextInput title="CNPJ" {...register('cnpj')} /> */}
           </Box>
 
@@ -285,12 +333,14 @@ export default function Vizualizar({
               title="Inscrição Estadual"
               {...register('inscricao_estadual')}
               defaultValue={data.inscricao_estadual}
+              quantidadeCaracteres={20}
             />
 
             <TextInput
               title="Inscrição Municipal"
               {...register('inscricao_municipal')}
               defaultValue={data.inscricao_municipal}
+              quantidadeCaracteres={20}
             />
           </Box>
 
@@ -298,7 +348,14 @@ export default function Vizualizar({
             <div
               style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
             >
-              <TextInput title="Cep *" {...register('cep')} mask="99999-999" />
+              <TextInput
+                title="Cep *"
+                {...register('cep')}
+                mask="99999-999"
+                error={!!errors?.cep?.message}
+                helperText={errors?.cep?.message}
+              />
+
               <Button
                 type="button"
                 onClick={() => {
@@ -309,11 +366,27 @@ export default function Vizualizar({
               />
             </div>
 
-            <TextInput title="Logadouro" disabled {...register('logradouro')} />
+            <TextInput
+              title="Logadouro *"
+              disabled
+              {...register('logradouro')}
+              quantidadeCaracteres={50}
+              error={!!errors?.logradouro?.message}
+              helperText={errors?.logradouro?.message}
+            />
             <div style={{ width: '8%' }}>
-              <TextInput title="Numero" {...register('numero')} />
+              <TextInput
+                title="Numero *"
+                {...register('numero')}
+                error={!!errors?.numero?.message}
+                helperText={errors?.numero?.message}
+              />
             </div>
-            <TextInput title="Complemento" {...register('complemento')} />
+            <TextInput
+              title="Complemento"
+              {...register('complemento')}
+              quantidadeCaracteres={50}
+            />
           </Box>
 
           <Box>
@@ -321,25 +394,44 @@ export default function Vizualizar({
               <TextInput
                 disabled
                 w={450}
-                title="Bairro"
+                title="Bairro *"
                 {...register('bairro')}
+                quantidadeCaracteres={50}
+                error={!!errors?.bairro?.message}
+                helperText={errors?.bairro?.message}
               />
             </div>
 
-            <TextInput disabled title="Cidade" {...register('cidade')} />
+            <TextInput
+              disabled
+              title="Cidade *"
+              {...register('cidade')}
+              error={!!errors?.cidade?.message}
+              helperText={errors?.cidade?.message}
+              quantidadeCaracteres={50}
+            />
 
             <div>
-              <TextInput w={35} title="UF" disabled {...register('uf')} />
+              <TextInput
+                w={35}
+                title="UF *"
+                disabled
+                {...register('uf')}
+                quantidadeCaracteres={10}
+                error={!!errors?.uf?.message}
+                helperText={errors?.uf?.message}
+              />
             </div>
 
             <div>
               <SelectOptions
-                description="País"
+                description="País *"
                 w={140}
                 data={newDataPais}
                 {...register('pais')}
                 defaultValue={{ label: data.pais ? data.pais : 'Brasil' }}
               />
+              <FormError>{errors?.pais?.message}</FormError>
             </div>
             <div style={{ width: '15%' }}>
               <TextInput
@@ -353,8 +445,11 @@ export default function Vizualizar({
 
           <Box>
             <TextInput
-              title="Nome do Contato Primario"
+              title="Nome do Contato Primario *"
               {...register('nome_contato_primario')}
+              quantidadeCaracteres={150}
+              error={!!errors?.nome_contato_primario?.message}
+              helperText={errors?.nome_contato_primario?.message}
             />
             <SelectOptions
               description="Tratamento"
@@ -386,6 +481,7 @@ export default function Vizualizar({
                 type="email"
                 title="Email"
                 {...register('email_contato_primario')}
+                quantidadeCaracteres={150}
               />
             </div>
             <div>
@@ -394,6 +490,7 @@ export default function Vizualizar({
                 title="Telefone"
                 mask="(99) 9.9999-9999"
                 {...register('telefone_contato_primario')}
+                quantidadeCaracteres={150}
               />
             </div>
           </Box>
@@ -403,6 +500,7 @@ export default function Vizualizar({
               type="text"
               title="Nome do Contato Secundario"
               {...register('nome_contato_secundario')}
+              quantidadeCaracteres={150}
             />
 
             <SelectOptions
@@ -439,6 +537,7 @@ export default function Vizualizar({
                 type="email"
                 title="Email"
                 {...register('email_contato_secundario')}
+                quantidadeCaracteres={150}
               />
             </div>
             <div>
@@ -455,6 +554,7 @@ export default function Vizualizar({
             w="100%"
             {...register('home_page')}
             defaultValue={data.home_page}
+            quantidadeCaracteres={150}
           />
           <Box>
             <label
@@ -471,6 +571,7 @@ export default function Vizualizar({
               <TextAreaInput
                 {...register('observacoes')}
                 defaultValue={data.observacoes}
+                quantidadeCaracteres={150}
               />
             </label>
           </Box>

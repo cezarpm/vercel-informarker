@@ -20,6 +20,7 @@ interface schemaTextField {
   error?: any
   mask?: any
   style?: any
+  quantidadeCaracteres?: any
 }
 
 // eslint-disable-next-line react/display-name
@@ -36,6 +37,7 @@ export const TextInput = forwardRef<HTMLInputElement, schemaTextField>(
       error,
       mask,
       messageError,
+      quantidadeCaracteres,
       ...rest
     } = props
     return (
@@ -70,8 +72,15 @@ export const TextInput = forwardRef<HTMLInputElement, schemaTextField>(
             helperText={helperText}
             messageerror={messageError}
             {...rest}
+            InputProps={{
+              inputProps: {
+                maxLength: quantidadeCaracteres,
+              },
+            }}
             error={error}
-            InputLabelProps={{ shrink: true }}
+            InputLabelProps={{
+              shrink: true,
+            }}
           />
         )}
       </Container>

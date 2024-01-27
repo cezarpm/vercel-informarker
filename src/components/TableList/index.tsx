@@ -2,7 +2,6 @@
 import Box from '@mui/material/Box'
 import { DataGrid } from '@mui/x-data-grid'
 import { useContextCustom } from '@/context'
-
 import { Container } from './styled'
 import { useEffect, useState } from 'react'
 import { api } from '@/lib/axios'
@@ -11,14 +10,23 @@ import CircularProgress from '@mui/material/CircularProgress'
 export default function DataGridDemo({ rows, columns, w }: any) {
   const { setSelection, selectedRowIds, setVoltarPagina, voltarPagina } =
     useContextCustom()
+
   const [pageCache, setPageCache] = useState(0)
+
   const [linhas, setLinhas] = useState([])
 
   const handleSelectionModelChange = (newSelectionModel: any) => {
     setSelection(newSelectionModel)
-
     if (newSelectionModel) {
+      localStorage.setItem('@pageCache', JSON.stringify(pageCache))
       setVoltarPagina(pageCache)
+    }
+  }
+
+  function handleSetLocalStorage() {
+    const cacheLocalStorage = localStorage.getItem('@pageCache')
+    if (cacheLocalStorage !== null) {
+      setVoltarPagina(cacheLocalStorage)
     }
   }
 
@@ -37,6 +45,7 @@ export default function DataGridDemo({ rows, columns, w }: any) {
       }
     }
     GetParams()
+    handleSetLocalStorage()
   }, [])
 
   useEffect(() => {
