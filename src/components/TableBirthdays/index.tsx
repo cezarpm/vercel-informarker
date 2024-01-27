@@ -88,7 +88,7 @@ const TableBirthdays = ({
     // Inicialize a lista com os dados originais
     let filteredList = rows
 
-    if (dataFilter) {
+    if (dataFilter && dataFilter != "Selecione") {
       filteredList = filteredList.filter((item: any) => {
         if(item.situacao != "Falecido"){
           if (item.data_nascimento != null) {
@@ -149,6 +149,7 @@ const TableBirthdays = ({
       }
     } else {
       setLoader(false)
+      setFilteredData([])
       toast.error('Preencha os campos obrigatórios (*).')
     }
   }
