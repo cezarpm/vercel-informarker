@@ -3,7 +3,8 @@ import { Button, styled } from '@ignite-ui/react'
 export const HeaderBirthdays = styled('div', {
   display: 'flex',
   alignItems: 'flex-end',
-  justifyContent: 'space-between',
+  gap: '1rem',
+  justifyContent: 'flex-start',
 })
 
 export const ContainerFilters = styled('div', {

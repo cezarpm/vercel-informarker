@@ -33,7 +33,7 @@ const TableBirthdays = ({
   const { setSelection, selectedRowIds } = useContextCustom()
   const [filterSelect, setFilterSelect] = useState({
     data_filter: 'Selecione',
-    situacao_filter: 'Todos',
+    situacao_filter: 'Todos, exceto falecidos',
     categoria_filter: 'Todos',
   })
 
@@ -124,7 +124,7 @@ const TableBirthdays = ({
         }
       })
 
-      if (situacaoFilter) {
+      if (situacaoFilter != "Todos, exceto falecidos") {
         filteredList = filteredList.filter((item: any) => {
           const situacaoMatch =
             item.situacao === situacaoFilter && item.situacao !== 'Falecido'
@@ -132,7 +132,7 @@ const TableBirthdays = ({
         })
       }
 
-      if (categoriaFilter) {
+      if (categoriaFilter != "Todos") {
         filteredList = filteredList.filter((item: any) => {
           return item.categoria === categoriaFilter
         })
@@ -172,9 +172,9 @@ const TableBirthdays = ({
   }
 
   function valuesDefaultFilter() {
-    setValue('data_filter', 'month')
-    setValue('situacao_filter', '')
-    setValue('categoria_filter', '')
+    setValue('data_filter', '')
+    setValue('situacao_filter', 'Todos, exceto falecidos')
+    setValue('categoria_filter', 'Todos')
   }
 
   useEffect(() => {
@@ -227,7 +227,7 @@ const TableBirthdays = ({
           }}
         >
           <p style={{ fontFamily: 'Roboto' }}>
-            Confirma a impressão de etiquetas para os Associados selecionados.
+            Confirma a impressão de etiquetas para os Associados selecionados?
           </p>
           <Box
             style={{
@@ -287,19 +287,20 @@ const TableBirthdays = ({
               {...register('categoria_filter')}
               data={categoriaAssociado}
             />
-            <ButtonEtiqueta
-              style={{
-                margin: '0px',
-                fontSize: '12px',
-                width: '5rem',
-                border: 'solid 1px',
-                padding: '0.5rem',
-              }}
-              title="Buscar"
-              onClick={BuscarFiltro}
-            />
           </div>
         </ContainerFilters>
+        <ButtonEtiqueta
+          style={{
+            margin: '0px',
+            fontSize: '12px',
+            width: '5rem',
+            border: 'solid 1px',
+            padding: '0.5rem',
+          }}
+          title="Buscar"
+          onClick={BuscarFiltro}
+        />
+
         {selectedRowIds.length > 0 && (
           <ButtonEtiqueta
             style={{
