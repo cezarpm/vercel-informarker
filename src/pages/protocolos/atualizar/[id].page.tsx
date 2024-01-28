@@ -2,20 +2,19 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable camelcase */
 import { Container, Box } from './styled'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
-import { GetServerSideProps, GetStaticProps } from 'next'
+import { GetServerSideProps } from 'next'
 import { prisma } from '@/lib/prisma'
 import { Button } from '@/components/Button'
 import { api } from '@/lib/axios'
 import { TextInput } from '@/components/TextInput'
 import { SelectOptions } from '@/components/SelectOptions'
 import { SwitchInput } from '@/components/SwitchInput'
-import { ArrowBendDownLeft, CaretRight } from 'phosphor-react'
+import { CaretRight } from 'phosphor-react'
 import Link from 'next/link'
 import { toast } from 'react-toastify'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/router'
 import { useArrayDate } from '../../../utils/useArrayDate'
 import { BackPage } from '../../../components/BackPage'
@@ -224,7 +223,6 @@ export default function ProtocolosAtualizar({ data }: schemaProtocoloProps) {
       dataRecebimento != null) &&
       new Date(dataRecebimento) < new Date(dataEnvio)
     ) {
-      console.log(new Date(dataRecebimento), new Date(dataEnvio))
       toast.error('A data de recebimento deve ser maior que a data de envio.')
     } else if (datasRecebimento == false) {
       toast.error(
@@ -246,7 +244,7 @@ export default function ProtocolosAtualizar({ data }: schemaProtocoloProps) {
         data_encerramento_protocolo_mes,
         data_encerramento_protocolo_ano,
         ...newData
-      } = data
+      } = dataSubmit
 
       try {
         await api.put('/protocolos/update', {
@@ -301,7 +299,7 @@ export default function ProtocolosAtualizar({ data }: schemaProtocoloProps) {
     }
   }
 
-  useEffect(() => {
+  function setInitialValues(){
     setValue('id', data.id)
     setValue('num_protocolo', data.num_protocolo)
     setValue('assunto_protocolo', data.assunto_protocolo)
@@ -336,6 +334,10 @@ export default function ProtocolosAtualizar({ data }: schemaProtocoloProps) {
       'usuario_encerramento_protocolo',
       data.usuario_encerramento_protocolo,
     )
+  }
+
+  useEffect(() => {
+    setInitialValues()
   }, [])
 
   return (
@@ -358,6 +360,7 @@ export default function ProtocolosAtualizar({ data }: schemaProtocoloProps) {
                 title="Número do Protocolo"
                 {...register('num_protocolo')}
                 defaultValue={data.num_protocolo}
+                disabled={true}
               />
             </div>
 
