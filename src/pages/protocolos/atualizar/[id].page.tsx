@@ -377,20 +377,12 @@ export default function ProtocolosAtualizar({ data }: schemaProtocoloProps) {
                 }
               />
             </div>
-          </Box>
 
-          <Box>
-            <div>
-              <SelectOptions
-                data={assuntoProtocoloOptionsData}
-                description="Assunto Protocolo"
-                w={500}
+            <div  style={{ width: '40%' }}>
+              <TextInput
+                title="Assunto Protocolo"
                 {...register('assunto_protocolo')}
-                defaultValue={
-                  assuntoProtocoloOptionsData.find(
-                    (option) => option.label === data.assunto_protocolo,
-                  ) || null
-                }
+                defaultValue={data.assunto_protocolo}
               />
             </div>
           </Box>
