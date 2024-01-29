@@ -18,6 +18,8 @@ import Link from "next/link";
 import { toast } from "react-toastify";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useRouter } from "next/router";
+import { useArrayDate } from "../../../utils/useArrayDate";
+import { BackPage } from "../../../components/BackPage";
 
 // import 'react-date-picker/dist/DatePicker.css';
 // import 'react-calendar/dist/Calendar.css';
@@ -43,26 +45,6 @@ const schemaProtocoloForm = z.object({
   data_encerramento_protocolo_ano: z.number(),
   usuario_encerramento_protocolo: z.string(), // ALTERAR PARA USUÁRIO
 });
-
-const dayOptionsData = Array.from({ length: 31 }, (_, index) => ({
-  id: index + 1,
-  label: `${index + 1}`,
-}));
-
-const monthOptionsData = Array.from({ length: 12 }, (_, index) => ({
-  id: index + 1,
-  label: `${index + 1}`,
-}));
-
-const currentYear = new Date().getFullYear();
-
-const yearOptionsData = Array.from(
-  { length: currentYear - (currentYear - 30) + 1 },
-  (_, index) => ({
-    id: currentYear - 30 + index,
-    label: `${currentYear - 30 + index}`,
-  })
-);
 
 // ATUALIZAR QUANDO HOUVER API CORRESPONDENTE - TIPO PROTOCOLO
 
@@ -181,37 +163,65 @@ export default function Protocolos() {
     formState: { isSubmitting, errors },
   } = useForm<SchemaProtocoloForm>();
 
-  async function handleOnSubmit(data: SchemaProtocoloForm) {
+  const dataDays = useArrayDate.Dia();
+  const dataMonths = useArrayDate.Mes();
+  const dataYears = useArrayDate.AnoAtualMenor();
 
-    const data_envio = new Date(
-      data.data_envio_ano +
-        "-" +
-        data.data_envio_mes +
-        "-" +
-        data.data_envio_dia
-    );
-    const data_recebimento = new Date(
-      data.data_recebimento_ano +
-        "-" +
-        data.data_recebimento_mes +
-        "-" +
-        data.data_recebimento_dia
-    );
+  async function handleOnSubmit(data: SchemaProtocoloForm) {
 
     const datasRecebimento = verificaData(data, "recebimento");
     const datasEncerramento = verificaData(data, "encerramento");
+
+    let dataEnvio;
+    let dataRecebimento;
+    let dataEncerramento;
+
+    if (data.data_envio_dia && data.data_envio_mes && data.data_envio_ano) {
+      dataEnvio = useArrayDate.MontarDate(
+        data.data_envio_ano,
+        data.data_envio_mes,
+        data.data_envio_dia
+      );
+    }
+
+    if (
+      data.data_recebimento_dia &&
+      data.data_recebimento_mes &&
+      data.data_recebimento_ano
+    ) {
+      dataRecebimento = useArrayDate.MontarDate(
+        data.data_recebimento_ano,
+        data.data_recebimento_mes,
+        data.data_recebimento_dia
+      );
+    }
+
+    if (
+      data.data_encerramento_protocolo_dia &&
+      data.data_encerramento_protocolo_mes &&
+      data.data_encerramento_protocolo_ano
+    ) {
+      dataEncerramento = useArrayDate.MontarDate(
+        data.data_encerramento_protocolo_ano,
+        data.data_encerramento_protocolo_mes,
+        data.data_encerramento_protocolo_dia
+      );
+    }
+    
 
     if (
       data.num_protocolo == "" ||
       data.tipo_protocolo == "" ||
       data.assunto_protocolo == "" ||
       Number.isNaN(data.data_envio_dia) ||
-      Number.isNaN(data.data_envio_mes)  ||
-      Number.isNaN(data.data_envio_ano) 
+      Number.isNaN(data.data_envio_mes) ||
+      Number.isNaN(data.data_envio_ano)
     ) {
       toast.error("Preencha os campos obrigatórios (*).");
-    } else if (data_recebimento < data_envio) {
-      toast.error("A data de recebimento deve ser maior que a data de envio.");
+    } else if ((dataEnvio != null && dataRecebimento != null) && (new Date(dataRecebimento) < new Date(dataEnvio))) {
+      toast.error(
+        "A data de recebimento deve ser maior que a data de envio."
+      );
     } else if (datasRecebimento == false) {
       toast.error(
         "A data de recebimento deve ser toda preenchida (dia, mês e ano)."
@@ -221,8 +231,27 @@ export default function Protocolos() {
         "A data de encerramento deve ser toda preenchida (dia, mês e ano)."
       );
     } else {
+
+      const {
+        data_envio_dia,
+        data_envio_mes,
+        data_envio_ano,
+        data_recebimento_dia,
+        data_recebimento_mes,
+        data_recebimento_ano,
+        data_encerramento_protocolo_dia,
+        data_encerramento_protocolo_mes,
+        data_encerramento_protocolo_ano,
+        ...newData
+      } = data
+
       try {
-        await api.post("/protocolos/incluir", { ...data });
+        await api.post("/protocolos/incluir", { 
+          ...newData,
+          data_envio: dataEnvio,
+          data_recebimento: dataRecebimento,
+          data_encerramento_protocolo: dataEncerramento,
+        });
         router.push("/protocolos");
         return toast.success("Protocolo cadastrado!");
       } catch (error) {
@@ -233,7 +262,6 @@ export default function Protocolos() {
   }
 
   const verificaData = (data: SchemaProtocoloForm, tipoData: string) => {
-
     if (tipoData == "encerramento") {
       if (
         !Number.isNaN(data.data_encerramento_protocolo_dia) ||
@@ -275,21 +303,7 @@ export default function Protocolos() {
     <Container>
       <form onSubmit={handleSubmit(handleOnSubmit)}>
         <Box style={{ justifyContent: "end" }}>
-          <Link
-            href="/protocolos"
-            style={{
-              textDecoration: "none",
-              fontFamily: "Roboto",
-              display: "flex",
-              alignItems: "center",
-              gap: "0.5rem",
-              marginBottom: "1rem",
-              color: "#000",
-            }}
-          >
-            <ArrowBendDownLeft size={32} />
-            Retornar
-          </Link>
+          <BackPage backRoute="/protocolos" discartPageBack />
         </Box>
         <fieldset>
           <legend>
@@ -352,7 +366,7 @@ export default function Protocolos() {
 
             <div>
               <SelectOptions
-                data={dayOptionsData}
+                data={dataDays}
                 description="Dia"
                 w={100}
                 {...register("data_recebimento_dia", {
@@ -364,7 +378,7 @@ export default function Protocolos() {
 
             <div>
               <SelectOptions
-                data={monthOptionsData}
+                data={dataMonths}
                 description="Mês"
                 w={100}
                 {...register("data_recebimento_mes", {
@@ -376,7 +390,7 @@ export default function Protocolos() {
 
             <div>
               <SelectOptions
-                data={yearOptionsData}
+                data={dataYears}
                 description="Ano"
                 w={150}
                 {...register("data_recebimento_ano", {
@@ -427,7 +441,7 @@ export default function Protocolos() {
 
             <div>
               <SelectOptions
-                data={dayOptionsData}
+                data={dataDays}
                 description="Dia *"
                 w={100}
                 {...register("data_envio_dia", {
@@ -441,7 +455,7 @@ export default function Protocolos() {
 
             <div>
               <SelectOptions
-                data={monthOptionsData}
+                data={dataMonths}
                 description="Mês *"
                 w={100}
                 {...register("data_envio_mes", {
@@ -455,7 +469,7 @@ export default function Protocolos() {
 
             <div>
               <SelectOptions
-                data={yearOptionsData}
+                data={dataYears}
                 description="Ano *"
                 w={150}
                 {...register("data_envio_ano", {
@@ -503,7 +517,7 @@ export default function Protocolos() {
 
             <div>
               <SelectOptions
-                data={dayOptionsData}
+                data={dataDays}
                 description="Dia"
                 w={100}
                 {...register("data_encerramento_protocolo_dia", {
@@ -515,7 +529,7 @@ export default function Protocolos() {
 
             <div>
               <SelectOptions
-                data={monthOptionsData}
+                data={dataMonths}
                 description="Mês"
                 w={100}
                 {...register("data_encerramento_protocolo_mes", {
@@ -527,7 +541,7 @@ export default function Protocolos() {
 
             <div>
               <SelectOptions
-                data={yearOptionsData}
+                data={dataYears}
                 description="Ano"
                 w={150}
                 {...register("data_encerramento_protocolo_ano", {

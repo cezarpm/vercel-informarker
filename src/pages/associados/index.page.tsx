@@ -32,7 +32,11 @@ export default function AssociadoList({
   const router = useRouter()
   const { selectedRowIds } = useContextCustom()
   const [List, setList] = useState(data)
-
+  const [filterSelect, setFilterSelect] = useState({
+    situacao_filter: 'Todos',
+    categoria_filter: 'Todos',
+    pendenciaAssociado_filter: 'Todos',
+  })
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'id', width: 60 },
     {
@@ -91,6 +95,11 @@ export default function AssociadoList({
     // Inicialize a lista com os dados originais
     let filteredList = data
 
+    const filterSelected = {
+      situacao_filter: situacaoFilter,
+      categoria_filter: categoriaFilter,
+      pendenciaAssociado_filter: pendenciaAssociadoFilter,
+    }
     // Realize a filtragem com base nos valores selecionados
     if (situacaoFilter !== 'Todos') {
       filteredList = filteredList.filter((item: any) => {
@@ -112,7 +121,8 @@ export default function AssociadoList({
       })
     }
 
-    // Atualize o estado com os dados filtrados
+    localStorage.setItem('@valuesSelected', JSON.stringify(filterSelected))
+    localStorage.setItem('@filtro', JSON.stringify(filteredList))
     setList(filteredList)
 
     // Imprima a lista filtrada (opcional, apenas para fins de depuração)
@@ -120,15 +130,72 @@ export default function AssociadoList({
   }
 
   function valuesDefaultFilter() {
+    setValue('situacao_filter', 'Todos')
     setValue('categoria_filter', 'Todos')
     setValue('pendenciaAssociado_filter', 'Todos')
-    setValue('situacao_filter', 'Todos')
   }
 
   useEffect(() => {
     setList(data)
-    valuesDefaultFilter()
+    const getFilterList = localStorage.getItem('@filtro')
+    if (getFilterList !== null) {
+      setList(JSON.parse(getFilterList))
+    } else {
+      setList(data)
+    }
+
+    const getFilterSelected = localStorage.getItem('@valuesSelected')
+    if (getFilterSelected !== null) {
+      const getItemsFilter = JSON.parse(getFilterSelected)
+      setFilterSelect(getItemsFilter)
+      setValue('situacao_filter', getItemsFilter.situacao_filter)
+      setValue('categoria_filter', getItemsFilter.categoria_filter)
+      setValue(
+        'pendenciaAssociado_filter',
+        getItemsFilter.pendenciaAssociado_filter,
+      )
+      BuscarFiltro()
+    } else {
+      valuesDefaultFilter()
+    }
   }, [data])
+
+  const isDataSituacao = situacaoAssociado?.map((item: any) => {
+    return {
+      ...item,
+    }
+  })
+
+  const objTodos = {
+    id: 0,
+    codigo_tabela: 'Situação_Associado',
+    ocorrencia_tabela: 'Todos',
+  }
+  isDataSituacao.unshift(objTodos)
+  const objDataSimNaoTodos = {
+    id: 0,
+    ocorrencia_tabela: 'Todos',
+  }
+
+  const isDataSimNao = dataSimNao?.map((item: any) => {
+    return {
+      ...item,
+    }
+  })
+  isDataSimNao.unshift(objDataSimNaoTodos)
+
+  const isDataCategoria = situacaoAssociado?.map((item: any) => {
+    return {
+      ...item,
+    }
+  })
+
+  const objTodosCategoria = {
+    id: 0,
+    codigo_tabela: 'Categoria_Associado',
+    ocorrencia_tabela: 'Todos',
+  }
+  isDataCategoria.unshift(objTodosCategoria)
 
   return (
     <Container>
@@ -137,27 +204,71 @@ export default function AssociadoList({
       <ContainerFormFilter>
         <Box style={{ justifyContent: 'start', alignItems: 'end' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <SelectNoComplete
-              p="0px 0px 0px 0.5rem"
-              value="Todos"
-              title="Situação"
-              data={situacaoAssociado}
-              {...register('situacao_filter')}
-            />
-            <SelectNoComplete
-              p="0px 0px 0px 0.5rem"
-              value="Todos"
-              title="Categoria"
-              {...register('categoria_filter')}
-              data={categoriaAssociado}
-            />
-            <SelectNoComplete
-              p="0px 0px 0px 0.5rem"
-              value="Todos"
-              title="Pendência Associado"
-              {...register('pendenciaAssociado_filter')}
-              data={dataSimNao}
-            />
+            {filterSelect.situacao_filter &&
+            filterSelect.situacao_filter !== 'Todos' ? (
+              <SelectNoComplete
+                p="0px 0px 0px 0.5rem"
+                value={`${filterSelect.situacao_filter}`}
+                title="Situação"
+                data={isDataSituacao}
+                {...register('situacao_filter')}
+              />
+            ) : null}
+
+            {filterSelect.situacao_filter &&
+            filterSelect.situacao_filter === 'Todos' ? (
+              <SelectNoComplete
+                p="0px 0px 0px 0.5rem"
+                value="Todos"
+                title="Situação"
+                data={situacaoAssociado}
+                {...register('situacao_filter')}
+              />
+            ) : null}
+
+            {filterSelect.categoria_filter &&
+            filterSelect.categoria_filter !== 'Todos' ? (
+              <SelectNoComplete
+                p="0px 0px 0px 0.5rem"
+                value={`${filterSelect.categoria_filter}`}
+                title="Categoria"
+                data={isDataCategoria}
+                {...register('categoria_filter')}
+              />
+            ) : null}
+
+            {filterSelect.categoria_filter &&
+            filterSelect.categoria_filter === 'Todos' ? (
+              <SelectNoComplete
+                p="0px 0px 0px 0.5rem"
+                value="Todos"
+                title="Categoria"
+                {...register('categoria_filter')}
+                data={categoriaAssociado}
+              />
+            ) : null}
+
+            {filterSelect.pendenciaAssociado_filter &&
+            filterSelect.pendenciaAssociado_filter !== 'Todos' ? (
+              <SelectNoComplete
+                p="0px 0px 0px 0.5rem"
+                value={`${filterSelect.pendenciaAssociado_filter}`}
+                title="Pendência Associado"
+                data={isDataSimNao}
+                {...register('pendenciaAssociado_filter')}
+              />
+            ) : null}
+
+            {filterSelect.pendenciaAssociado_filter &&
+            filterSelect.pendenciaAssociado_filter === 'Todos' ? (
+              <SelectNoComplete
+                p="0px 0px 0px 0.5rem"
+                value="Todos"
+                title="Pendência Associado"
+                {...register('pendenciaAssociado_filter')}
+                data={dataSimNao}
+              />
+            ) : null}
           </div>
 
           <Button

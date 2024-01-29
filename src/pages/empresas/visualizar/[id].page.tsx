@@ -65,6 +65,9 @@ export default function Vizualizar({ data }: schemaEmpresasProps) {
             <span>Visualizar</span>
           </legend>
           <Box>
+            <div>
+              <TextInput w={60} title="ID" disabled value={data.id} />
+            </div>
             <div style={{ width: '10%' }}>
               <TextInput title="Codigo Empresa" value={data.cod_empresa} />
             </div>

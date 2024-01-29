@@ -1,46 +1,188 @@
+/* eslint-disable prettier/prettier */
 /* eslint-disable eqeqeq */
 /* eslint-disable camelcase */
 import React, { useEffect, useState } from 'react'
 import Box from '@mui/material/Box'
 import { DataGrid } from '@mui/x-data-grid'
 import { useContextCustom } from '@/context'
-import {
-  InputLabel,
-  MenuItem,
-  Modal,
-  Select,
-  SelectChangeEvent,
-} from '@mui/material'
+import { CircularProgress, Modal } from '@mui/material'
 import { ContainerFilters, HeaderBirthdays } from './styled'
 import { Button } from '@ignite-ui/react'
 import { EtiquetaPDF } from '@/utils/ticketsAssociates'
 import { Button as ButtonEtiqueta } from '../Button'
+import SelectNoComplete from '../SelectNoComplete'
+import { useForm } from 'react-hook-form'
+import { z } from 'zod'
+import { toast } from 'react-toastify'
 
-const TableBirthdays = ({ rows, columns, w }: any) => {
+const shemaFilter = z.object({
+  data_filter: z.string(),
+  situacao_filter: z.string(),
+  categoria_filter: z.string(),
+})
+
+type SchemaFilter = z.infer<typeof shemaFilter>
+
+const TableBirthdays = ({
+  rows,
+  columns,
+  w,
+  situacaoAssociado,
+  categoriaAssociado,
+}: any) => {
   const { setSelection, selectedRowIds } = useContextCustom()
+  const [filterSelect, setFilterSelect] = useState({
+    data_filter: 'Selecione',
+    situacao_filter: 'Todos, exceto falecidos',
+    categoria_filter: 'Todos',
+  })
 
-  const [filter, setFilter] = useState('0')
   const [quantidadeLinhas, setQuantidadeLinhas] = useState(10)
 
-  const [open, setOpen] = React.useState(false)
+  const [open, setOpen] = useState(false)
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
 
-  const [mes, setMes] = React.useState<string>('')
-  const [semana, setSemana] = React.useState<number[]>([])
-  const [dia, setDia] = React.useState<number>(0)
+  const [loader, setLoader] = useState(false)
 
-  const [filteredData, setFilteredData] = React.useState([])
+  const [mes, setMes] = useState<string>('')
+  const [semana, setSemana] = useState<number[]>([])
+  const [dia, setDia] = useState<number>(0)
+
+  const [filteredData, setFilteredData] = useState([])
+
+  const { register, watch, setValue } = useForm<SchemaFilter>()
+
+  const filtroData = [
+    {
+      id: 'month',
+      ocorrencia_tabela: 'Mês',
+    },
+    {
+      id: 'week',
+      ocorrencia_tabela: 'Semana',
+    },
+    {
+      id: 'day',
+      ocorrencia_tabela: 'Dia',
+    },
+  ]
 
   useEffect(() => {
     getQuantityRows()
     setSelection([])
   }, [])
 
+  function BuscarFiltro() {
+    setLoader(true)
+    const situacaoFilter = watch('situacao_filter')
+    const categoriaFilter = watch('categoria_filter')
+    const dataFilter = watch('data_filter')
+
+    const filterSelected = {
+      data_filter: dataFilter,
+      situacao_filter: situacaoFilter,
+      categoria_filter: categoriaFilter,
+    }
+
+    // Inicialize a lista com os dados originais
+    let filteredList = rows
+
+    if (dataFilter && dataFilter != "Selecione") {
+      filteredList = filteredList.filter((item: any) => {
+        if(item.situacao != "Falecido"){
+          if (item.data_nascimento != null) {
+            const data_nasc = item.data_nascimento.split('/')
+
+            if (dataFilter === 'Mês') {
+              const filterMonth = data_nasc[1] === mes
+
+              return filterMonth
+            }
+
+            if (dataFilter === 'Semana') {
+              const filterWeek =
+                semana.indexOf(parseInt(data_nasc[0], 10)) > -1 &&
+                data_nasc[1] === mes
+
+              return filterWeek
+            }
+
+            if (dataFilter === 'Dia') {
+              const filterDay =
+                parseInt(data_nasc[0], 10) === dia && data_nasc[1] === mes
+
+              return filterDay
+            }
+
+            return true // Caso não seja nenhum dos filtros, incluir na lista
+          } else {
+            return false
+          }
+        } else {
+          return false
+        }
+      })
+
+      if (situacaoFilter != "Todos, exceto falecidos") {
+        filteredList = filteredList.filter((item: any) => {
+          const situacaoMatch =
+            item.situacao === situacaoFilter && item.situacao !== 'Falecido'
+          return situacaoMatch
+        })
+      }
+
+      if (categoriaFilter != "Todos") {
+        filteredList = filteredList.filter((item: any) => {
+          return item.categoria === categoriaFilter
+        })
+      }
+
+      if (filteredList.length > 0) {
+        // Atualize o estado com os dados filtrados
+        setLoader(false)
+        setFilteredData(filteredList)
+      } else {
+        setLoader(false)
+        toast.warn('A consulta não possui dados para serem exibidos.')
+        setFilteredData([])
+      }
+    } else {
+      setLoader(false)
+      setFilteredData([])
+      toast.error('Preencha os campos obrigatórios (*).')
+    }
+  }
+
+  const getQuantityRows = async () => {
+    const response = await fetch(`/api/parametros`)
+    const data = await response.json()
+
+    if (data) {
+      setQuantidadeLinhas(data[0].quantidade_linhas_listas)
+    }
+  }
+
+  const handleSelectionModelChange = (newSelectionModel: any) => {
+    setSelection(newSelectionModel)
+  }
+
+  const gerarEtiqueta = () => {
+    EtiquetaPDF(selectedRowIds)
+    handleClose()
+  }
+
+  function valuesDefaultFilter() {
+    setValue('data_filter', '')
+    setValue('situacao_filter', 'Todos, exceto falecidos')
+    setValue('categoria_filter', 'Todos')
+  }
+
   useEffect(() => {
     if (rows.length == 1) {
       setSelection([rows[0].id])
     }
+    valuesDefaultFilter()
 
     const date = new Date()
 
@@ -64,64 +206,7 @@ const TableBirthdays = ({ rows, columns, w }: any) => {
     }
 
     setSemana(diasDaSemana)
-  }, [filter, rows])
-
-  useEffect(() => {
-    setFilteredData(
-      rows.filter((item: any) => {
-        if (item.data_nascimento != null) {
-          const data_nasc = item.data_nascimento.split('/')
-
-          if (filter === 'month') {
-            const filterMonth = data_nasc[1] === mes
-
-            return filterMonth
-          }
-
-          if (filter === 'week') {
-            const filterWeek =
-              semana.indexOf(parseInt(data_nasc[0], 10)) > -1 &&
-              data_nasc[1] === mes
-
-            return filterWeek
-          }
-
-          if (filter === 'day') {
-            const filterDay =
-              parseInt(data_nasc[0], 10) === dia && data_nasc[1] === mes
-
-            return filterDay
-          }
-
-          return true // Caso não seja nenhum dos filtros, incluir na lista
-        } else {
-          return false
-        }
-      }),
-    )
-  }, [mes, semana, dia])
-
-  const getQuantityRows = async () => {
-    const response = await fetch(`/api/parametros`)
-    const data = await response.json()
-
-    if (data) {
-      setQuantidadeLinhas(data[0].quantidade_linhas_listas)
-    }
-  }
-
-  const handleSelectionModelChange = (newSelectionModel: any) => {
-    setSelection(newSelectionModel)
-  }
-
-  const handleFilterChange = (event: SelectChangeEvent<string>) => {
-    setFilter(event.target.value)
-  }
-
-  const gerarEtiqueta = () => {
-    EtiquetaPDF(selectedRowIds)
-    handleClose()
-  }
+  }, [rows])
 
   return (
     <>
@@ -143,7 +228,7 @@ const TableBirthdays = ({ rows, columns, w }: any) => {
           }}
         >
           <p style={{ fontFamily: 'Roboto' }}>
-            Confirma a impressão de etiquetas para os Associados selecionados.
+            Confirma a impressão de etiquetas para os Associados selecionados?
           </p>
           <Box
             style={{
@@ -174,30 +259,49 @@ const TableBirthdays = ({ rows, columns, w }: any) => {
 
       <HeaderBirthdays>
         <ContainerFilters>
-          <InputLabel sx={{ fontSize: '12px' }}>
-            Por favor selecione um filtro
-          </InputLabel>
-          <Select
-            size="small"
-            sx={{ width: '30%', fontSize: '12px' }}
-            defaultValue={filter}
-            label={'Filtros'}
-            onChange={handleFilterChange}
+          <div
+            style={{
+              display: 'flex',
+              alignItems: 'end',
+              gap: '0.5rem',
+              width: '100%',
+            }}
           >
-            <MenuItem sx={{ fontSize: '12px' }} value={'0'}>
-              Selecione
-            </MenuItem>
-            <MenuItem sx={{ fontSize: '12px' }} value={'month'}>
-              Mês
-            </MenuItem>
-            <MenuItem sx={{ fontSize: '12px' }} value={'week'}>
-              Semana
-            </MenuItem>
-            <MenuItem sx={{ fontSize: '12px' }} value={'day'}>
-              Dia
-            </MenuItem>
-          </Select>
+            <SelectNoComplete
+              p="0px 0px 0px 0.5rem"
+              value={`${filterSelect.data_filter}`}
+              title="Período *"
+              data={filtroData}
+              {...register('data_filter')}
+            />
+            <SelectNoComplete
+              p="0px 0px 0px 0.5rem"
+              value={`${filterSelect.situacao_filter}`}
+              title="Situação"
+              {...register('situacao_filter')}
+              data={situacaoAssociado}
+            />
+            <SelectNoComplete
+              p="0px 0px 0px 0.5rem"
+              value={`${filterSelect.categoria_filter}`}
+              title="Categoria"
+              {...register('categoria_filter')}
+              data={categoriaAssociado}
+            />
+          </div>
         </ContainerFilters>
+        <ButtonEtiqueta
+          style={{
+            margin: '0px',
+            fontSize: '12px',
+            width: '5rem',
+            border: 'solid 1px',
+            padding: '0.5rem',
+          }}
+          title="Buscar"
+          onClick={BuscarFiltro}
+        />
+
         {selectedRowIds.length > 0 && (
           <ButtonEtiqueta
             style={{
@@ -213,7 +317,7 @@ const TableBirthdays = ({ rows, columns, w }: any) => {
         )}
       </HeaderBirthdays>
 
-      {filter !== '0' && (
+      {filteredData.length > 0 && (
         <Box sx={{ height: '60vh', width: w, marginTop: '1rem' }}>
           <DataGrid
             rows={filteredData}
@@ -232,6 +336,20 @@ const TableBirthdays = ({ rows, columns, w }: any) => {
             rowSelectionModel={selectedRowIds}
             onRowSelectionModelChange={handleSelectionModelChange}
           />
+        </Box>
+      )}
+
+      {loader != false && (
+        <Box
+          sx={{
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            height: '100%',
+            marginTop: '1rem',
+          }}
+        >
+          <CircularProgress color="primary" />
         </Box>
       )}
     </>

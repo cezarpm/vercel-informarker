@@ -53,10 +53,15 @@ interface EtiquetaProps {
 
 export const EtiquetaPDF = async (linhas: number[]) => {
   var doc = new jsPDF({
-
     unit: 'mm',
     format: 'a4',
-  })
+  });
+
+  const verticalSpacing = 40; // Aumentei o espaçamento vertical para 40 unidades
+
+  let currentPage = 1;
+  let startY = 10; // Adjust the starting Y position as needed
+  let remainingSpace = doc.internal.pageSize.height - startY;
 
   for (let index = 0; index < linhas.length; index++) {
     try {
@@ -108,27 +113,43 @@ export const EtiquetaPDF = async (linhas: number[]) => {
           return false;
         }
 
-        const startX = 10;
-        const startY = index * 40; // Aumentei o espaçamento vertical para 40 unidades
+        // Calculate the space required for the current label
+        const spaceRequired = verticalSpacing;
 
+        // Check if there is enough space on the current page
+        if (spaceRequired > remainingSpace) {
+          // If not enough space, start a new page
+          doc.addPage();
+          currentPage++;
+          startY = 10; // Adjust the starting Y position as needed
+          remainingSpace = doc.internal.pageSize.height - startY;
+        }
+
+        const startX = 10;
 
         doc.setFontSize(12);
         const splitNome = doc.splitTextToSize(`${tratamento}${nome_completo}`, 80);
-        doc.text(splitNome, startX + 4, 12 + startY);
+        doc.text(splitNome, startX + 4, startY + 12);
 
         if (endereco != '') {
           doc.setFontSize(10);
           const splitEndereco = doc.splitTextToSize(`${endereco}`, 80);
-          doc.text(splitEndereco, startX + 4, 17 + startY);
+          doc.text(splitEndereco, startX + 4, startY + 17);
         }
 
         if ((bairro != '' && bairro != null) && linhaCidade != '') {
           const splitBairro = doc.splitTextToSize(bairro, 80);
-          doc.text(splitBairro, startX + 4, 22 + startY);
+          doc.text(splitBairro, startX + 4, startY + 22);
 
           const splitCidade = doc.splitTextToSize(`${linhaCidade}`, 80);
-          doc.text(splitCidade, startX + 4, 27 + startY);
+          doc.text(splitCidade, startX + 4, startY + 27);
         }
+
+        // Update the remaining space on the current page
+        remainingSpace -= spaceRequired;
+
+        // Update the Y position for the next label
+        startY += verticalSpacing;
       } catch {
         toast.error('Erro ao gerar etiquetas');
         return false;
@@ -140,6 +161,5 @@ export const EtiquetaPDF = async (linhas: number[]) => {
     }
   }
 
-  doc.save('etiquetas.pdf');
+  doc.save(`etiquetas_${currentPage}.pdf`); // Save the PDF with page number
 };
-

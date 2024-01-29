@@ -14,9 +14,12 @@ export const config = {
 };
 
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  if (req.method !== 'POST') {
-    res.status(405).json({ message: 'Somente método POST permitido' });
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  if (req.method !== "POST") {
+    res.status(405).json({ message: "Somente método POST permitido" });
     return;
   }
 
