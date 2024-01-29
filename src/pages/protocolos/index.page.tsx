@@ -12,6 +12,7 @@ import Modal from '@/components/Modal'
 import { useEffect, useState } from 'react'
 import Link from 'next/link'
 import { ArrowBendDownLeft } from 'phosphor-react'
+import { BackPage } from '../../components/BackPage'
 
 export default function ProtocoloList({ data }: any) {
   const router = useRouter()
@@ -21,7 +22,7 @@ export default function ProtocoloList({ data }: any) {
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'ID', width: 50 },
     { field: 'num_protocolo', headerName: 'Número' },
-    { field: 'assunto_protocolo', headerName: 'Assunto', width: 180 },
+    { field: 'assunto_protocolo', headerName: 'Assunto', width: 300 },
     { field: 'tipo_protocolo', headerName: 'Tipo', width: 150 },
     {
       field: 'data_recebimento',
@@ -63,20 +64,7 @@ export default function ProtocoloList({ data }: any) {
     <Container>
       <Box style={{ justifyContent: 'space-between', alignItems: 'center' }}>
         <p>Protocolos</p>
-        <Link
-          href="/"
-          style={{
-            textDecoration: 'none',
-            fontFamily: 'Roboto',
-            display: 'flex',
-            alignItems: 'center',
-            gap: '0.5rem',
-            color: '#000',
-          }}
-        >
-          <ArrowBendDownLeft size={32} />
-          Retornar
-        </Link>
+        <BackPage backRoute="/" discartPageBack />
       </Box>
 
       <DataGridDemo columns={columns} rows={data} w="100%" />

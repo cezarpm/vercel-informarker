@@ -13,6 +13,7 @@ export const config = {
   },
 };
 
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -47,7 +48,7 @@ export default async function handler(
     const csvData = fs.readFileSync(csvFilePath, "utf8");
     const records = Papa.parse(csvData, {
       header: true,
-      delimiter: ",",
+      delimiter: ';',
       skipEmptyLines: true,
     }).data;
 
