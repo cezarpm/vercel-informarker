@@ -16,6 +16,7 @@ import { toast } from 'react-toastify'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/router'
 import { TextAreaInput } from '../atualizar/styled'
+import { BasicModal } from './components/BasicModal'
 
 interface schemaTipoEmpresa {
   id: number
@@ -53,6 +54,29 @@ interface schemaEmpresasProps {
   dataPais: schemaEndereco[]
   dataCargo: schemaCargo[]
   dataTratamento: schemaTratamento[]
+}
+
+interface schemaParametros {
+  id: number
+  random: string
+  cep_invalido: boolean
+  data_limite_pgto_antecipado_anuidade: Date
+  percent_desc_pgto_antecipado_anuidade: number
+  taxa_pgto_atrasado_anuidade: number
+  parcelamento_permitido_anuidade: string
+  data_limite_pgto_antecipado_JAER: Date
+  percent_desc_pgto_antecipado_JAER: number
+  taxa_pgto_atrasado_JAER: number
+  parcelamento_permitido_JAER: string
+  presidente_pode_se_reeleger: boolean
+  demais_podem_se_reeleger: true
+  duracao_mandato: number
+  exite_listas_imediato: boolean
+  quantidade_linhas_listas: number
+  acesso_externo_sis: boolean
+  endereco_IP_primario: string
+  endereco_IP_secundario: string
+  permitir_dado_invalido: boolean
 }
 
 const schemaEmpresaForm = z.object({
@@ -98,7 +122,8 @@ export default function Empresas({
   dataCargo,
   dataTratamento,
 }: schemaEmpresasProps) {
-  const [cepInvalido, setCepInvalido] = useState()
+  const [parametros, setParametros] = useState<schemaParametros[]>()
+  const [valoresFormulario, setValoresFormulario] = useState()
   const [disableCamposCepInvalido, setDisableCamposCepInvalido] =
     useState(false)
 
@@ -134,12 +159,12 @@ export default function Empresas({
   async function handleGetAllParams(): Promise<void> {
     try {
       const response = await api.get('/parametros')
-      setCepInvalido(response.data[0].cep_invalido)
+      setParametros(response.data)
     } catch (error) {
       console.log(error)
     }
   }
-
+  // console.log()
   const {
     register,
     handleSubmit,
@@ -167,32 +192,50 @@ export default function Empresas({
 
       // await api.post('/empresa/cadastro', { ...data })
 
+      const valoresFormulario: any = {
+        ...data,
+        cnpj: checkTamanhoCnpj,
+        cep: checkTamanhoCep,
+      }
+
       if (checkTamanhoCnpj.length === 14 && checkTamanhoCep.length === 8) {
-        await api.post('/empresa/cadastro', {
+        await api.post('empresa/cadastro', {
           ...data,
           cnpj: checkTamanhoCnpj,
           cep: checkTamanhoCep,
         })
       } else {
-        const ErrorCnpj =
-          checkTamanhoCnpj.length !== 14
-            ? toast.error('CNPJ precisa ser válido')
-            : null
-        const ErrorCep =
-          checkTamanhoCep.length !== 8
-            ? toast.error('CEP precisa ser válido')
-            : null
-        return ErrorCep || ErrorCnpj
+        if (parametros && parametros[0].permitir_dado_invalido === true) {
+          const ErrorCnpj =
+            checkTamanhoCnpj.length !== 14
+              ? (localStorage.setItem('@modalStatus', JSON.stringify(true)),
+                setValoresFormulario(valoresFormulario))
+              : null
+          const ErrorCep =
+            checkTamanhoCep.length !== 8
+              ? toast.error('CEP precisa ser válido')
+              : null
+          return ErrorCep || ErrorCnpj
+        } else {
+          const ErrorCnpj =
+            checkTamanhoCnpj.length !== 14
+              ? toast.error('CNPJ precisa ser válido')
+              : null
+          const ErrorCep =
+            checkTamanhoCep.length !== 8
+              ? toast.error('CEP precisa ser válido')
+              : null
+          return ErrorCep || ErrorCnpj
+        }
       }
-
       toast.success('Operação concluída com sucesso')
-
       return router.push('/empresas')
     } catch (error) {
       console.log(error)
       return toast.error('Ops algo deu errado...')
     }
   }
+
   const cepValue = watch('cep')
   const cnpj = watch('cnpj')
 
@@ -223,7 +266,7 @@ export default function Empresas({
 
   function checkedViaCep(dataViaCep: any) {
     if (dataViaCep.erro === true) {
-      if (cepInvalido === true) {
+      if (parametros && parametros[0].cep_invalido === true) {
         toast.warn('você optou: aceitar cep inválido')
       } else {
         setDisableCamposCepInvalido(true)
@@ -247,6 +290,8 @@ export default function Empresas({
 
   return (
     <Container>
+      <BasicModal valuesForm={valoresFormulario} />
+
       <form onSubmit={handleSubmit(handleOnSubmit)}>
         <Box style={{ justifyContent: 'end' }}>
           <Link
@@ -620,5 +665,7 @@ export const getStaticProps: GetStaticProps = async () => {
         dataTratamento: [],
       },
     }
+  } finally {
+    prisma.$disconnect()
   }
 }
