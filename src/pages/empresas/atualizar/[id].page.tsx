@@ -133,25 +133,20 @@ export default function Vizualizar({
         }
       } else {
         if (parametros?.permitir_dado_invalido === true) {
-          localStorage.setItem('@modalStatus', 'true')
-          const valuesForm = {
-            cnpj: '',
-            ...data,
+          if (checkTamanhoCnpj === '') {
+            localStorage.setItem('@modalStatus', 'true')
+            const valuesForm = {
+              cnpj: '',
+              ...data,
+            }
+            return setValoresFormulario(valuesForm)
           }
-          return setValoresFormulario(valuesForm)
         } else {
-          // if (response?.data.message === 'CNPJ inválido') {
-          //   return response
-          // }
-          const ErrorCnpj =
-            checkTamanhoCnpj.length !== 14
-              ? toast.error('CNPJ precisa ser válido')
-              : null
-          const ErrorCep =
-            checkTamanhoCep.length !== 8
-              ? toast.error('CEP precisa ser válido')
-              : null
-          return ErrorCep || ErrorCnpj
+          if (parametros?.permitir_dado_invalido === false) {
+            if (checkTamanhoCnpj === '') {
+              return toast.warn('CNPJ inválido')
+            }
+          }
         }
       }
     } catch (error) {
