@@ -6,11 +6,13 @@ import { prisma } from "@/lib/prisma";
 import { Logs } from "@/utils/Logs";
 
 
+
 export const config = {
   api: {
     bodyParser: false,
   },
 };
+
 
 export default async function handler(
   req: NextApiRequest,
@@ -18,7 +20,6 @@ export default async function handler(
 ) {
   if (req.method !== "POST") {
     res.status(405).json({ message: "Somente método POST permitido" });
-
     return;
   }
 
@@ -47,7 +48,7 @@ export default async function handler(
     const csvData = fs.readFileSync(csvFilePath, "utf8");
     const records = Papa.parse(csvData, {
       header: true,
-      delimiter: ",",
+      delimiter: ';',
       skipEmptyLines: true,
     }).data;
 

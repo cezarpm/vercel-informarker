@@ -17,23 +17,25 @@ export default function CsvUpload() {
       const formData = new FormData()
       formData.append('file', file)
 
-      try {
-        const response = await axios.post(
-          '/api/importExcelPagamentos',
-          formData,
-          {
-            headers: {
-              'Content-Type': 'multipart/form-data',
-            },
-          },
-        )
-
-        const {
-          linhasModificadas,
-          linhasDuplicadas,
-          linhasNaoEncontradas,
-          linhasNaoPagas,
-        } = response.data
+    const handleUpload = async () => {
+      if (file) {
+          const formData = new FormData();
+          formData.append('file', file);
+  
+          try {
+              await axios.post('/api/importExcelPagamentos', formData, {
+                  headers: {
+                      'Content-Type': 'multipart/form-data'
+                  }
+              });
+              alert('Dados enviados com sucesso!');
+          } catch (error) {
+              console.error('Erro ao enviar dados:', error);
+              alert('Erro ao enviar dados.');
+          }
+        };
+        
+        const { linhasModificadas, linhasDuplicadas, linhasNaoEncontradas, linhasNaoPagas } = response.data;
 
         if (linhasModificadas === 0) {
           toast.warn('Nenhuma linha foi modificada.')

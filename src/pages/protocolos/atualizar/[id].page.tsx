@@ -2,22 +2,22 @@
 /* eslint-disable eqeqeq */
 /* eslint-disable camelcase */
 import { Container, Box } from './styled'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
-import { GetServerSideProps, GetStaticProps } from 'next'
+import { GetServerSideProps } from 'next'
 import { prisma } from '@/lib/prisma'
 import { Button } from '@/components/Button'
 import { api } from '@/lib/axios'
 import { TextInput } from '@/components/TextInput'
 import { SelectOptions } from '@/components/SelectOptions'
 import { SwitchInput } from '@/components/SwitchInput'
-import { ArrowBendDownLeft, CaretRight } from 'phosphor-react'
+import { CaretRight } from 'phosphor-react'
 import Link from 'next/link'
 import { toast } from 'react-toastify'
-import { zodResolver } from '@hookform/resolvers/zod'
 import { useRouter } from 'next/router'
 import { useArrayDate } from '../../../utils/useArrayDate'
+import { BackPage } from '../../../components/BackPage'
 
 // import 'react-date-picker/dist/DatePicker.css';
 // import 'react-calendar/dist/Calendar.css';
@@ -223,7 +223,6 @@ export default function ProtocolosAtualizar({ data }: schemaProtocoloProps) {
       dataRecebimento != null) &&
       new Date(dataRecebimento) < new Date(dataEnvio)
     ) {
-      console.log(new Date(dataRecebimento), new Date(dataEnvio))
       toast.error('A data de recebimento deve ser maior que a data de envio.')
     } else if (datasRecebimento == false) {
       toast.error(
@@ -245,7 +244,7 @@ export default function ProtocolosAtualizar({ data }: schemaProtocoloProps) {
         data_encerramento_protocolo_mes,
         data_encerramento_protocolo_ano,
         ...newData
-      } = data
+      } = dataSubmit
 
       try {
         await api.put('/protocolos/update', {
@@ -300,7 +299,7 @@ export default function ProtocolosAtualizar({ data }: schemaProtocoloProps) {
     }
   }
 
-  useEffect(() => {
+  function setInitialValues(){
     setValue('id', data.id)
     setValue('num_protocolo', data.num_protocolo)
     setValue('assunto_protocolo', data.assunto_protocolo)
@@ -335,27 +334,17 @@ export default function ProtocolosAtualizar({ data }: schemaProtocoloProps) {
       'usuario_encerramento_protocolo',
       data.usuario_encerramento_protocolo,
     )
+  }
+
+  useEffect(() => {
+    setInitialValues()
   }, [])
 
   return (
     <Container>
       <form onSubmit={handleSubmit(OnSubmit)}>
         <Box style={{ justifyContent: 'end' }}>
-          <Link
-            href="/protocolos"
-            style={{
-              textDecoration: 'none',
-              fontFamily: 'Roboto',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '0.5rem',
-              marginBottom: '1rem',
-              color: '#000',
-            }}
-          >
-            <ArrowBendDownLeft size={32} />
-            Retornar
-          </Link>
+          <BackPage backRoute="/protocolos" discartPageBack />
         </Box>
         <fieldset>
           <legend>
@@ -371,6 +360,7 @@ export default function ProtocolosAtualizar({ data }: schemaProtocoloProps) {
                 title="Número do Protocolo"
                 {...register('num_protocolo')}
                 defaultValue={data.num_protocolo}
+                disabled={true}
               />
             </div>
 
@@ -387,20 +377,12 @@ export default function ProtocolosAtualizar({ data }: schemaProtocoloProps) {
                 }
               />
             </div>
-          </Box>
 
-          <Box>
-            <div>
-              <SelectOptions
-                data={assuntoProtocoloOptionsData}
-                description="Assunto Protocolo"
-                w={500}
+            <div  style={{ width: '40%' }}>
+              <TextInput
+                title="Assunto Protocolo"
                 {...register('assunto_protocolo')}
-                defaultValue={
-                  assuntoProtocoloOptionsData.find(
-                    (option) => option.label === data.assunto_protocolo,
-                  ) || null
-                }
+                defaultValue={data.assunto_protocolo}
               />
             </div>
           </Box>
