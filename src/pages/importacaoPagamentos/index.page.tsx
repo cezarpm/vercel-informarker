@@ -33,7 +33,7 @@ export default function CsvUpload() {
               console.error('Erro ao enviar dados:', error);
               alert('Erro ao enviar dados.');
           }
-        });
+        };
         
         const { linhasModificadas, linhasDuplicadas, linhasNaoEncontradas, linhasNaoPagas } = response.data;
 
