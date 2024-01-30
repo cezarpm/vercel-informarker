@@ -485,7 +485,11 @@ export default function Empresas({ data, dataTipoEmpresa }: any) {
 }
 export const getServerSideProps: GetServerSideProps = async () => {
   try {
-    const response = await prisma.empresa.findMany()
+    const response = await prisma.empresa.findMany({
+      orderBy: {
+        id: 'desc',
+      },
+    })
     const data = response.map((item) => {
       return {
         id: item.id,

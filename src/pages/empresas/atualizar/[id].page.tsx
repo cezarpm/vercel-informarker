@@ -17,6 +17,7 @@ import axios from 'axios'
 import { BackPage } from '@/components/BackPage'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { FormError } from '@/pages/pagamentos/cadastro/styled'
+import { BasicModal } from './components/BasicModal'
 
 const schemaEmpresaForm = z.object({
   id: z.number(),
@@ -25,7 +26,7 @@ const schemaEmpresaForm = z.object({
   patrocinadora: z.boolean(),
   faculdade_anestesiologia: z.boolean(),
   empresa_ativa: z.boolean(),
-  cnpj: z.string().min(14, { message: 'CNPJ inválido' }),
+  cnpj: z.string(),
   razao_social: z.string().min(1, { message: 'Campo Obrigatório' }),
   nome_fantasia: z.string().min(1, { message: 'Campo Obrigatório' }),
   cep: z.string().min(1, { message: 'Campo Obrigatório' }),
@@ -72,8 +73,8 @@ export default function Vizualizar({
   dataTratamento,
 }: any) {
   const router = useRouter()
-
-  const [cepInvalido, setCepInvalido] = useState()
+  const [valoresFormulario, setValoresFormulario] = useState()
+  const [parametros, setParametros] = useState<any>()
   const [disabledButtonCep, setDisabledButtonCep] = useState(false)
 
   const newDataTipoEmpresa = dataTipoEmpresa?.map((item: shemaTabelas) => {
@@ -113,7 +114,6 @@ export default function Vizualizar({
   } = useForm<SchemaEmpresaForm>({
     resolver: zodResolver(schemaEmpresaForm),
   })
-  // console.log(errors)
 
   async function OnSubmit(data: any) {
     const checkTamanhoCnpj = data.cnpj.replace(/[^\d]/g, '')
@@ -122,21 +122,38 @@ export default function Vizualizar({
       return toast.warn('Não é possivel atualizar com CEP inválido')
     }
     try {
+      const response = await handleCheckCnpj(checkTamanhoCnpj)
       if (checkTamanhoCnpj.length === 14 && checkTamanhoCep.length === 8) {
-        await api.put('/empresa/update', { cnpj: checkTamanhoCnpj, ...data })
+        if (response?.data.message === 'CNPJ inválido') {
+          return response
+        } else {
+          await api.put('/empresa/update', { cnpj: checkTamanhoCnpj, ...data })
+          toast.success('Operação concluída com sucesso')
+          return router.push('/empresas')
+        }
       } else {
-        const ErrorCnpj =
-          checkTamanhoCnpj.length !== 14
-            ? toast.error('CNPJ precisa ser válido')
-            : null
-        const ErrorCep =
-          checkTamanhoCep.length !== 8
-            ? toast.error('CEP precisa ser válido')
-            : null
-        return ErrorCep || ErrorCnpj
+        if (parametros?.permitir_dado_invalido === true) {
+          localStorage.setItem('@modalStatus', 'true')
+          const valuesForm = {
+            cnpj: '',
+            ...data,
+          }
+          return setValoresFormulario(valuesForm)
+        } else {
+          // if (response?.data.message === 'CNPJ inválido') {
+          //   return response
+          // }
+          const ErrorCnpj =
+            checkTamanhoCnpj.length !== 14
+              ? toast.error('CNPJ precisa ser válido')
+              : null
+          const ErrorCep =
+            checkTamanhoCep.length !== 8
+              ? toast.error('CEP precisa ser válido')
+              : null
+          return ErrorCep || ErrorCnpj
+        }
       }
-      toast.success('Operação concluída com sucesso')
-      return router.push('/empresas')
     } catch (error) {
       console.log(error)
     }
@@ -156,7 +173,7 @@ export default function Vizualizar({
   async function handleGetAllParams(): Promise<void> {
     try {
       const response = await api.get('/parametros')
-      setCepInvalido(response.data[0].cep_invalido)
+      setParametros(response.data[0])
     } catch (error) {
       console.log(error)
     }
@@ -164,7 +181,7 @@ export default function Vizualizar({
 
   function checkedViaCep(dataViaCep: any) {
     if (dataViaCep.erro === true) {
-      if (cepInvalido === true) {
+      if (parametros?.cep_invalido === true) {
         toast.warn('Você optou: aceitar cep inválido')
       } else {
         setDisabledButtonCep(true)
@@ -192,6 +209,7 @@ export default function Vizualizar({
       } else {
         toast.success('CNPJ Válido')
       }
+      return response
     } catch (error) {
       console.log(error)
     }
@@ -240,6 +258,7 @@ export default function Vizualizar({
   }, [])
   return (
     <Container>
+      <BasicModal valuesForm={valoresFormulario} />
       <form onSubmit={handleSubmit(OnSubmit)}>
         <BackPage backRoute="empresas" />
         <fieldset>
@@ -300,8 +319,8 @@ export default function Vizualizar({
                 title="CNPJ *"
                 {...register('cnpj')}
                 mask="99.999.999/9999-99"
-                error={!!errors?.cnpj?.message}
-                helperText={errors?.cnpj?.message}
+                // error={!!errors?.cnpj?.message}
+                // helperText={errors?.cnpj?.message}
               />
               <Button
                 type="button"

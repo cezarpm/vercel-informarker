@@ -20,7 +20,6 @@ export default async function handler(
 
   const data = req.query.cnpj
   const cnpjLimpo = removerCaracteresEspeciais(data)
-  console.log(cnpjLimpo)
 
   await axios
     .get(`https://www.receitaws.com.br/v1/cnpj/${cnpjLimpo}`)

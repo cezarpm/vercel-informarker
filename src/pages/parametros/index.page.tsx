@@ -44,6 +44,7 @@ const schemaParams = z.object({
   dayJaer: z.string(),
   monthJaer: z.string(),
   yearJaer: z.string(),
+  permitir_dado_invalido: z.boolean(),
 })
 
 type SchemaParametros = z.infer<typeof schemaParams>
@@ -69,6 +70,7 @@ interface schemeDataParametros {
   acesso_externo_sis: boolean
   endereco_IP_primario: string
   endereco_IP_secundario: string
+  permitir_dado_invalido: boolean
 }
 
 interface schemaParametrosProps {
@@ -210,6 +212,22 @@ export default function Parametros({
               />
             </div>
 
+            <div style={{ flex: 0.8 }}>
+              <SwitchInput
+                title="Dados inválido: Aceita cadastrar dado inválido?"
+                {...register('permitir_dado_invalido')}
+                defaultChecked={dataParametros.permitir_dado_invalido}
+              />
+            </div>
+
+            <Button
+              style={{ width: '100%' }}
+              type="button"
+              title="Associados"
+              onClick={handleNextPage}
+            />
+          </Box>
+          <Box>
             <div style={{ display: 'flex', alignItems: 'end', width: '38rem' }}>
               <Text>
                 Data limite para pagamento antecipado da Anuidade com desconto?
@@ -249,13 +267,6 @@ export default function Parametros({
               defaultValue={
                 dataParametros.percent_desc_pgto_antecipado_anuidade
               }
-            />
-
-            <Button
-              style={{ width: '100%' }}
-              type="button"
-              title="Associados"
-              onClick={handleNextPage}
             />
           </Box>
           <Box>
