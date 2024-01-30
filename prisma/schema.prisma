@@ -146,8 +146,8 @@ model Pagamentos {
   matricula_saerj       String
   tipo_pagamento        String
   ano_anuidade          String?
-  data_pagto_unica      DateTime?
-  valor_pagto_unica     Decimal?  @db.Decimal(10, 2)
+  data_pagto_unico      DateTime?
+  valor_pagto_unico     Decimal?  @db.Decimal(10, 2)
   data_pagto_parcela_1  DateTime?
   valor_pagto_parcela_1 Decimal?  @db.Decimal(10, 2)
   data_pagto_parcela_2  DateTime?
