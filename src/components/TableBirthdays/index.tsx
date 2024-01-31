@@ -14,6 +14,7 @@ import SelectNoComplete from "../SelectNoComplete";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "react-toastify";
+import { BackPage } from "../BackPage";
 
 const shemaFilter = z.object({
   data_filter: z.string(),
@@ -264,7 +265,7 @@ const TableBirthdays = ({
               display: "flex",
               alignItems: "end",
               gap: "0.5rem",
-              width: "100%",
+              width: "fit-content",
             }}
           >
             <SelectNoComplete
@@ -289,18 +290,18 @@ const TableBirthdays = ({
               data={situacaoAssociado}
             />
           </div>
-        </ContainerFilters>
-        <ButtonEtiqueta
-          style={{
-            margin: "0px",
-            fontSize: "12px",
-            width: "5rem",
-            border: "solid 1px",
-            padding: "0.5rem",
-          }}
-          title="Buscar"
-          onClick={BuscarFiltro}
-        />
+
+          <ButtonEtiqueta
+            style={{
+              margin: "0px",
+              fontSize: "12px",
+              width: "5rem",
+              border: "solid 1px",
+              padding: "0.5rem",
+            }}
+            title="Buscar"
+            onClick={BuscarFiltro}
+          />
 
         {selectedRowIds.length > 0 && (
           <ButtonEtiqueta
@@ -315,6 +316,8 @@ const TableBirthdays = ({
             title={"Gerar etiqueta"}
           />
         )}
+        </ContainerFilters>
+        <BackPage backRoute="/" discartPageBack />
       </HeaderBirthdays>
 
       {filteredData.length > 0 && (

@@ -135,7 +135,6 @@ export default function Aniversariantes({ data }: any) {
     <Container>
       <Box style={{ justifyContent: 'space-between' }}>
         <p>Aniversariantes</p>
-        <BackPage backRoute="/" discartPageBack />
       </Box>
 
       <TableBirthdays
