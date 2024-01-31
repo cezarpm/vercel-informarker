@@ -5,12 +5,15 @@ export const HeaderBirthdays = styled('div', {
   alignItems: 'flex-end',
   gap: '1rem',
   justifyContent: 'flex-start',
+  marginTop: '1rem',
+  marginBottom: '5.3rem',
 })
 
 export const ContainerFilters = styled('div', {
   display: 'flex',
-  alignItems: 'center',
-  width: '65%',
+  alignItems: 'flex-end',
+  width: '100%',
+  gap: '1rem',
 })
 
 export const TextNoFilter = styled('p', {
