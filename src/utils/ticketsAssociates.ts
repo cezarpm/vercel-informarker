@@ -109,9 +109,6 @@ export const EtiquetaPDF = async (linhas: number[]) => {
           linhaCidade += '' + formatarCEP(cep) + ' - '; // Aplicar a máscara de CEP
         }
 
-        if (cep != null && cep != '') {
-          linhaCidade += '' + cep + ' - ';
-        }
 
         if ((cidade != null && cidade != '') && (uf != null && uf != '')) {
           linhaCidade += '' + cidade + '/' + uf;
