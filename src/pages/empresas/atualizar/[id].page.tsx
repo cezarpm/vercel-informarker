@@ -17,28 +17,29 @@ import axios from 'axios'
 import { BackPage } from '@/components/BackPage'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { FormError } from '@/pages/pagamentos/cadastro/styled'
+import { BasicModal } from './components/BasicModal'
 
 const schemaEmpresaForm = z.object({
   id: z.number(),
-  cod_empresa: z.string().min(1, { message: 'Campo Obrigatório' }),
+  cod_empresa: z.string(),
   tipo_empresa: z.string(),
   patrocinadora: z.boolean(),
   faculdade_anestesiologia: z.boolean(),
   empresa_ativa: z.boolean(),
-  cnpj: z.string().min(14, { message: 'CNPJ inválido' }),
-  razao_social: z.string().min(1, { message: 'Campo Obrigatório' }),
-  nome_fantasia: z.string().min(1, { message: 'Campo Obrigatório' }),
-  cep: z.string().min(1, { message: 'Campo Obrigatório' }),
-  logradouro: z.string().min(1, { message: 'Campo Obrigatório' }),
-  numero: z.string().min(1, { message: 'Campo Obrigatório' }),
+  cnpj: z.string(),
+  razao_social: z.string(),
+  nome_fantasia: z.string(),
+  cep: z.string(),
+  logradouro: z.string(),
+  numero: z.string(),
   complemento: z.string(),
-  cidade: z.string().min(1, { message: 'Campo Obrigatório' }),
-  pais: z.string().min(1, { message: 'Campo Obrigatório' }),
-  bairro: z.string().min(1, { message: 'Campo Obrigatório' }),
-  uf: z.string().min(1, { message: 'Campo Obrigatório' }),
+  cidade: z.string(),
+  pais: z.string(),
+  bairro: z.string(),
+  uf: z.string(),
   telefone_comercial: z.string(),
   tratamento_contato_primario: z.string(),
-  nome_contato_primario: z.string().min(1, { message: 'Campo Obrigatório' }),
+  nome_contato_primario: z.string(),
   cargo_contato_primario: z.string(),
   email_contato_primario: z.string(),
   telefone_contato_primario: z.string(),
@@ -63,7 +64,21 @@ interface shemaTabelas {
   complemento_ocorrencia_selecao: string
   ocorrencia_ativa: boolean
 }
-
+interface schemaFormError {
+  razao_social: { message: string | boolean }
+  cep: { message: string | boolean }
+  logradouro: { message: string | boolean }
+  numero: { message: string | boolean }
+  cidade: { message: string | boolean }
+  pais: { message: string | boolean }
+  bairro: { message: string | boolean }
+  uf: { message: string | boolean }
+  nome_contato_primario: { message: string | boolean }
+  nome_fantasia: { message: string | boolean }
+  tipo_empresa: { message: string | boolean }
+  cod_empresa: { message: string | boolean }
+  cnpj: { message: string | boolean }
+}
 export default function Vizualizar({
   data,
   dataTipoEmpresa,
@@ -72,9 +87,10 @@ export default function Vizualizar({
   dataTratamento,
 }: any) {
   const router = useRouter()
-
-  const [cepInvalido, setCepInvalido] = useState()
+  const [valoresFormulario, setValoresFormulario] = useState()
+  const [parametros, setParametros] = useState<any>()
   const [disabledButtonCep, setDisabledButtonCep] = useState(false)
+  const [errorsForm, setErrorsForm] = useState<schemaFormError>()
 
   const newDataTipoEmpresa = dataTipoEmpresa?.map((item: shemaTabelas) => {
     return {
@@ -113,7 +129,33 @@ export default function Vizualizar({
   } = useForm<SchemaEmpresaForm>({
     resolver: zodResolver(schemaEmpresaForm),
   })
-  // console.log(errors)
+
+  // function checkErrors(errors) {
+  //   const valuesErrors = () => {
+  //     setValue('razao_social', 'xxxxx')
+  //     setValue('cep', 'xxxxx')
+  //     setValue('logradouro', 'xxxxx')
+  //     setValue('numero', 'xxxxx')
+  //     setValue('cidade', 'xxxxx')
+  //     setValue('pais', 'xxxxx')
+  //     setValue('bairro', 'xxxxx')
+  //     setValue('uf', 'xxxxx')
+  //   }
+
+  //   if (
+  //     errors.razao_social.message === '' ||
+  //     errors.cep.message === '' ||
+  //     errors.logradouro.message === '' ||
+  //     errors.numero.message === '' ||
+  //     errors.cidade.message === '' ||
+  //     errors.pais.message === '' ||
+  //     errors.bairro.message === '' ||
+  //     errors.uf.message === '' ||
+  //     errors.nome_contato_primario.message === ''
+  //   ) {
+
+  //   }
+  // }
 
   async function OnSubmit(data: any) {
     const checkTamanhoCnpj = data.cnpj.replace(/[^\d]/g, '')
@@ -121,26 +163,166 @@ export default function Vizualizar({
     if (disabledButtonCep === true) {
       return toast.warn('Não é possivel atualizar com CEP inválido')
     }
+
     try {
-      if (checkTamanhoCnpj.length === 14 && checkTamanhoCep.length === 8) {
-        await api.put('/empresa/update', { cnpj: checkTamanhoCnpj, ...data })
-      } else {
-        const ErrorCnpj =
-          checkTamanhoCnpj.length !== 14
-            ? toast.error('CNPJ precisa ser válido')
-            : null
-        const ErrorCep =
-          checkTamanhoCep.length !== 8
-            ? toast.error('CEP precisa ser válido')
-            : null
-        return ErrorCep || ErrorCnpj
+      const response = await handleCheckCnpj(checkTamanhoCnpj)
+
+      if (response?.data.message === 'CNPJ inválido') {
+        return response
       }
-      toast.success('Operação concluída com sucesso')
-      return router.push('/empresas')
+
+      if (parametros?.permitir_dado_invalido === true) {
+       
+        if (
+          data.razao_social !== '' &&
+          data.cod_empresa !== '' &&
+          data.cep !== '' &&
+          data.logradouro !== '' &&
+          data.numero !== '' &&
+          data.cidade !== '' &&
+          data.nome_fantasia !== '' &&
+          data.pais !== '' &&
+          data.bairro !== '' &&
+          data.uf !== '' &&
+          data.nome_contato_primario !== '' &&
+          data.cnpj !== '' &&
+          data.tipo_empresa !== ''
+        ) {
+          await api.put('/empresa/update', { cnpj: checkTamanhoCnpj, ...data })
+          toast.success('Operação concluída com sucesso')
+          return router.push('/empresas')
+        }
+
+        setErrorsForm({
+          razao_social:
+            data.razao_social !== ''
+              ? { message: false }
+              : { message: 'Campo obrigatório' },
+          cep:
+            data.cep !== ''
+              ? { message: false }
+              : { message: 'Campo obrigatório' },
+          logradouro:
+            data.logradouro !== ''
+              ? { message: false }
+              : { message: 'Campo obrigatório' },
+          numero:
+            data.numero !== ''
+              ? { message: false }
+              : { message: 'Campo obrigatório' },
+          cidade:
+            data.cidade !== ''
+              ? { message: false }
+              : { message: 'Campo obrigatório' },
+          pais:
+            data.pais !== ''
+              ? { message: false }
+              : { message: 'Campo obrigatório' },
+          bairro:
+            data.bairro !== ''
+              ? { message: false }
+              : { message: 'Campo obrigatório' },
+          uf:
+            data.uf !== ''
+              ? { message: false }
+              : { message: 'Campo obrigatório' },
+          nome_contato_primario:
+            data.nome_contato_primario !== ''
+              ? { message: false }
+              : { message: 'Campo obrigatório' },
+          nome_fantasia:
+            data.nome_fantasia !== ''
+              ? { message: false }
+              : { message: 'Campo obrigatório' },
+          tipo_empresa:
+            data.nome_fantasia !== ''
+              ? { message: false }
+              : { message: 'Campo obrigatório' },
+          cod_empresa:
+            data.cod_empresa !== ''
+              ? { message: false }
+              : { message: 'Campo obrigatório' },
+          cnpj:
+            data.cnpj !== ''
+              ? { message: false }
+              : { message: 'Campo obrigatório' },
+        })
+        localStorage.setItem('@modalStatus', 'true')
+        const valuesForm = {
+          cnpj: '',
+          ...data,
+        }
+        setValoresFormulario(valuesForm)
+      } else {
+        if (
+          data.razao_social !== '' &&
+          data.cod_empresa !== '' &&
+          data.cep !== '' &&
+          data.logradouro !== '' &&
+          data.numero !== '' &&
+          data.cidade !== '' &&
+          data.nome_fantasia !== '' &&
+          data.pais !== '' &&
+          data.bairro !== '' &&
+          data.uf !== '' &&
+          data.nome_contato_primario !== '' &&
+          data.cnpj !== '' &&
+          data.tipo_empresa !== ''
+        ) {
+          await api.put('/empresa/update', { cnpj: checkTamanhoCnpj, ...data })
+          toast.success('Operação concluída com sucesso')
+          return router.push('/empresas')
+        }
+        alert('ok')
+        setErrorsForm({
+          razao_social: { message: 'Campo obrigatório' },
+          nome_fantasia: { message: 'Campo obrigatório' },
+          cep: { message: 'Campo obrigatório' },
+          cod_empresa: { message: 'Campo obrigatório' },
+          logradouro: { message: 'Campo obrigatório' },
+          numero: { message: 'Campo obrigatório' },
+          cidade: { message: 'Campo obrigatório' },
+          pais: { message: 'Campo obrigatório' },
+          bairro: { message: 'Campo obrigatório' },
+          uf: { message: 'Campo obrigatório' },
+          nome_contato_primario: { message: 'Campo obrigatório' },
+          tipo_empresa: { message: 'Campo obrigatório' },
+          cnpj: { message: 'Campo obrigatório' },
+        })
+        if (checkTamanhoCnpj.length !== 14 && checkTamanhoCep.length !== 8) {
+          return toast.warn('CNPJ inválido')
+        }
+        return toast.warn('Campos obrigatórios')
+      }
+      // const filteredErrors = Object.fromEntries(
+      //   Object.entries(errorsForm).filter(([key, value]) => value.message !== false)
+      // );
+
+      // }
+      // } else {
+      //   if (parametros?.permitir_dado_invalido === false) {
+
+      //     if (checkTamanhoCnpj === '') {
+      //       localStorage.setItem('@modalStatus', 'true')
+      //       const valuesForm = {
+      //         cnpj: '',
+      //         ...data,
+      //       }
+      //       return setValoresFormulario(valuesForm)
+      //     }
+      //   } else {
+      //     if (parametros?.permitir_dado_invalido === false) {
+      //       if (checkTamanhoCnpj === '') {
+      //         return toast.warn('CNPJ inválido')
+      //       }
+      //     }
+      //   }
+      // }
     } catch (error) {
       console.log(error)
     }
   }
+  console.log(errorsForm)
 
   // API VIA CEP
   const cepValue = watch('cep')
@@ -156,7 +338,7 @@ export default function Vizualizar({
   async function handleGetAllParams(): Promise<void> {
     try {
       const response = await api.get('/parametros')
-      setCepInvalido(response.data[0].cep_invalido)
+      setParametros(response.data[0])
     } catch (error) {
       console.log(error)
     }
@@ -164,7 +346,7 @@ export default function Vizualizar({
 
   function checkedViaCep(dataViaCep: any) {
     if (dataViaCep.erro === true) {
-      if (cepInvalido === true) {
+      if (parametros?.cep_invalido === true) {
         toast.warn('Você optou: aceitar cep inválido')
       } else {
         setDisabledButtonCep(true)
@@ -192,6 +374,7 @@ export default function Vizualizar({
       } else {
         toast.success('CNPJ Válido')
       }
+      return response
     } catch (error) {
       console.log(error)
     }
@@ -240,6 +423,7 @@ export default function Vizualizar({
   }, [])
   return (
     <Container>
+      <BasicModal valuesForm={valoresFormulario} />
       <form onSubmit={handleSubmit(OnSubmit)}>
         <BackPage backRoute="empresas" />
         <fieldset>
@@ -260,8 +444,8 @@ export default function Vizualizar({
                 title="Codigo Empresa *"
                 {...register('cod_empresa')}
                 quantidadeCaracteres={20}
-                error={!!errors?.cod_empresa?.message}
-                helperText={errors?.cod_empresa?.message}
+                error={!!errorsForm?.cod_empresa?.message}
+                helperText={errorsForm?.cod_empresa?.message}
               />
             </div>
 
@@ -300,8 +484,8 @@ export default function Vizualizar({
                 title="CNPJ *"
                 {...register('cnpj')}
                 mask="99.999.999/9999-99"
-                error={!!errors?.cnpj?.message}
-                helperText={errors?.cnpj?.message}
+                error={!!errorsForm?.cnpj?.message}
+                helperText={errorsForm?.cnpj?.message}
               />
               <Button
                 type="button"
@@ -315,15 +499,15 @@ export default function Vizualizar({
             <TextInput
               title="Nome Fantasia *"
               {...register('nome_fantasia')}
-              error={!!errors?.nome_fantasia?.message}
-              helperText={errors?.nome_fantasia?.message}
+              error={!!errorsForm?.nome_fantasia?.message}
+              helperText={errorsForm?.nome_fantasia?.message}
             />
 
             <TextInput
               title="Razao Social *"
               {...register('razao_social')}
-              error={!!errors?.razao_social?.message}
-              helperText={errors?.razao_social?.message}
+              error={!!errorsForm?.razao_social.message}
+              helperText={errorsForm?.razao_social.message}
             />
             {/* <TextInput title="CNPJ" {...register('cnpj')} /> */}
           </Box>
@@ -352,8 +536,8 @@ export default function Vizualizar({
                 title="Cep *"
                 {...register('cep')}
                 mask="99999-999"
-                error={!!errors?.cep?.message}
-                helperText={errors?.cep?.message}
+                error={!!errorsForm?.cep?.message}
+                helperText={errorsForm?.cep?.message}
               />
 
               <Button
@@ -371,15 +555,15 @@ export default function Vizualizar({
               disabled
               {...register('logradouro')}
               quantidadeCaracteres={50}
-              error={!!errors?.logradouro?.message}
-              helperText={errors?.logradouro?.message}
+              error={!!errorsForm?.logradouro?.message}
+              helperText={errorsForm?.logradouro?.message}
             />
             <div style={{ width: '8%' }}>
               <TextInput
                 title="Numero *"
                 {...register('numero')}
-                error={!!errors?.numero?.message}
-                helperText={errors?.numero?.message}
+                error={!!errorsForm?.numero?.message}
+                helperText={errorsForm?.numero?.message}
               />
             </div>
             <TextInput
@@ -397,8 +581,8 @@ export default function Vizualizar({
                 title="Bairro *"
                 {...register('bairro')}
                 quantidadeCaracteres={50}
-                error={!!errors?.bairro?.message}
-                helperText={errors?.bairro?.message}
+                error={!!errorsForm?.bairro?.message}
+                helperText={errorsForm?.bairro?.message}
               />
             </div>
 
@@ -406,8 +590,8 @@ export default function Vizualizar({
               disabled
               title="Cidade *"
               {...register('cidade')}
-              error={!!errors?.cidade?.message}
-              helperText={errors?.cidade?.message}
+              error={!!errorsForm?.cidade?.message}
+              helperText={errorsForm?.cidade?.message}
               quantidadeCaracteres={50}
             />
 
@@ -418,8 +602,8 @@ export default function Vizualizar({
                 disabled
                 {...register('uf')}
                 quantidadeCaracteres={10}
-                error={!!errors?.uf?.message}
-                helperText={errors?.uf?.message}
+                error={!!errorsForm?.uf?.message}
+                helperText={errorsForm?.uf?.message}
               />
             </div>
 
@@ -431,7 +615,7 @@ export default function Vizualizar({
                 {...register('pais')}
                 defaultValue={{ label: data.pais ? data.pais : 'Brasil' }}
               />
-              <FormError>{errors?.pais?.message}</FormError>
+              <FormError>{errorsForm?.pais?.message}</FormError>
             </div>
             <div style={{ width: '15%' }}>
               <TextInput
@@ -448,8 +632,8 @@ export default function Vizualizar({
               title="Nome do Contato Primario *"
               {...register('nome_contato_primario')}
               quantidadeCaracteres={150}
-              error={!!errors?.nome_contato_primario?.message}
-              helperText={errors?.nome_contato_primario?.message}
+              error={!!errorsForm?.nome_contato_primario?.message}
+              helperText={errorsForm?.nome_contato_primario?.message}
             />
             <SelectOptions
               description="Tratamento"
