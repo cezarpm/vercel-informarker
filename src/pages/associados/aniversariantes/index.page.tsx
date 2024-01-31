@@ -94,7 +94,7 @@ export default function Aniversariantes({ data }: any) {
       field: 'email',
       headerName: 'E-mail',
       disableColumnMenu: true,
-      width: 250,
+      width: 290,
     },
     {
       field: 'data_nascimento',
