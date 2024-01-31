@@ -64,37 +64,42 @@ export default function Aniversariantes({ data }: any) {
     {
       field: 'id',
       headerName: 'id',
-      disableColumnMenu: true,
       width: 80,
     },
     {
       field: 'categoria',
       headerName: 'Categoria',
+      disableColumnMenu: true,
       width: 150,
     },
     {
       field: 'situacao',
       headerName: 'Situação',
+      disableColumnMenu: true,
       width: 150,
     },
     {
       field: 'tratamento',
       headerName: 'Tratamento',
+      disableColumnMenu: true,
       width: 150,
     },
     {
       field: 'nome_completo',
+      disableColumnMenu: true,
       headerName: 'Nome',
       width: 250,
     },
     {
       field: 'email',
       headerName: 'E-mail',
-      width: 250,
+      disableColumnMenu: true,
+      width: 290,
     },
     {
       field: 'data_nascimento',
       headerName: 'Data Nascimento',
+      disableColumnMenu: true,
       width: 200,
     },
   ]
