@@ -50,6 +50,11 @@ interface EtiquetaProps {
     tratamento?: string;
 }
 
+const formatarCEP = (cep) => {
+  const cepNumerico = cep.replace(/\D/g, ''); // Remover caracteres não numéricos
+  const cepFormatado = cepNumerico.replace(/^(\d{5})(\d{3})$/, '$1-$2'); // Aplicar a máscara de CEP (XXXXX-XXX)
+  return cepFormatado;
+};
 
 export const EtiquetaPDF = async (linhas: number[]) => {
   var doc = new jsPDF({
@@ -99,6 +104,10 @@ export const EtiquetaPDF = async (linhas: number[]) => {
         }
 
         var linhaCidade = '';
+
+        if (cep != null && cep != '') {
+          linhaCidade += '' + formatarCEP(cep) + ' - '; // Aplicar a máscara de CEP
+        }
 
         if (cep != null && cep != '') {
           linhaCidade += '' + cep + ' - ';
