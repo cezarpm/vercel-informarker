@@ -1,7 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable eqeqeq */
 /* eslint-disable prettier/prettier */
 /* eslint-disable camelcase */
-import { Container, Box } from "./styled";
+import { Container, Box, Text, FormError } from "./styled";
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
@@ -28,22 +29,22 @@ const schemaProtocoloForm = z.object({
   num_protocolo: z.string().min(1, { message: "Campo obrigatório" }),
   assunto_protocolo: z.string().min(1, { message: "Campo obrigatório" }),
   tipo_protocolo: z.string().min(1, { message: "Campo obrigatório" }),
-  data_recebimento_dia: z.number(),
-  data_recebimento_mes: z.number(),
-  data_recebimento_ano: z.number(),
-  data_envio_dia: z.number().min(1, { message: "Campo obrigatório" }),
-  data_envio_mes: z.number().min(1, { message: "Campo obrigatório" }),
-  data_envio_ano: z.number().min(1, { message: "Campo obrigatório" }),
+  data_recebimento_dia: z.string(),
+  data_recebimento_mes: z.string(),
+  data_recebimento_ano: z.string(),
+  data_envio_dia: z.string().min(1, { message: "Dia obrigatório" }),
+  data_envio_mes: z.string().min(1, { message: "Mês obrigatório" }),
+  data_envio_ano: z.string().min(1, { message: "Ano obrigatório" }),
   meio_recebimento: z.string(),
   meio_envio: z.string(),
-  quem_redigiu_documento_a_ser_enviado: z.string(),
+  quem_redigiu_envio: z.string(),
   entregue_em_maos: z.boolean(),
-  doc_entrada_requer_resposta: z.boolean(),
-  anexos: z.string(), // ALTERAR PARA ANEXO DE ARQUIVO
-  data_encerramento_protocolo_dia: z.number(),
-  data_encerramento_protocolo_mes: z.number(),
-  data_encerramento_protocolo_ano: z.number(),
-  usuario_encerramento_protocolo: z.string(), // ALTERAR PARA USUÁRIO
+  obrigatoria_resp_receb: z.boolean(),
+  anexos: z.any(), // ALTERAR PARA ANEXO DE ARQUIVO
+  data_encerramento_protocolo_dia: z.string(),
+  data_encerramento_protocolo_mes: z.string(),
+  data_encerramento_protocolo_ano: z.string(),
+  usuario_encerramento: z.any(), // ALTERAR PARA USUÁRIO
 });
 
 // ATUALIZAR QUANDO HOUVER API CORRESPONDENTE - TIPO PROTOCOLO
@@ -154,21 +155,20 @@ export default function Protocolos() {
       setSelectedFiles(filesArray);
     }
   };
-
   const router = useRouter();
 
   const {
     register,
     handleSubmit,
     formState: { isSubmitting, errors },
-  } = useForm<SchemaProtocoloForm>();
-
+  } = useForm<SchemaProtocoloForm>({
+    resolver: zodResolver(schemaProtocoloForm)
+  });
   const dataDays = useArrayDate.Dia();
   const dataMonths = useArrayDate.Mes();
   const dataYears = useArrayDate.AnoAtualMenor();
 
   async function handleOnSubmit(data: SchemaProtocoloForm) {
-
     const datasRecebimento = verificaData(data, "recebimento");
     const datasEncerramento = verificaData(data, "encerramento");
 
@@ -242,18 +242,34 @@ export default function Protocolos() {
         data_encerramento_protocolo_dia,
         data_encerramento_protocolo_mes,
         data_encerramento_protocolo_ano,
+        anexos,
         ...newData
       } = data
 
       try {
+
+        const formData = new FormData()
+        formData.append('anexos', data.anexos[0])
+       
+
+        const response = await axios.post('/api/upload', formData, {
+          headers: {
+            'Content-Type': 'multipart/form-data',
+          },
+        })
+        const nameFile = response.data.names_arquivos?.map((item: any) => {
+           return item.anexoProtocolo
+         })
+
         await api.post("/protocolos/incluir", { 
           ...newData,
           data_envio: dataEnvio,
           data_recebimento: dataRecebimento,
-          data_encerramento_protocolo: dataEncerramento,
+          data_encerramento: dataEncerramento,
+          anexos: nameFile[0]
         });
-        router.push("/protocolos");
-        return toast.success("Protocolo cadastrado!");
+        // router.push("/protocolos");
+        return toast.success('Operação concluída com sucesso')
       } catch (error) {
         console.log(error);
         return toast.error("Ops, algo deu errado ao cadastrar o protocolo...");
@@ -302,16 +318,21 @@ export default function Protocolos() {
   return (
     <Container>
       <form onSubmit={handleSubmit(handleOnSubmit)}>
-        <Box style={{ justifyContent: "end" }}>
-          <BackPage backRoute="/protocolos" discartPageBack />
-        </Box>
+       
         <fieldset>
-          <legend>
+          <legend style={{ width: '100%', justifyContent: 'space-between', flexWrap: 'wrap' }}>
+            <div style={{display: 'flex', alignItems:'center', gap: '0.5rem'}}>
             <span>
               <Link href={"/protocolos"}>Protocolos</Link>
             </span>
             <CaretRight size={14} />
             <span>Cadastro</span>
+            </div>
+            <div>
+              {/* <Box style={{ alignItems: "center", display: 'flex' }}> */}
+                <BackPage backRoute="/protocolos" discartPageBack />
+              {/* </Box> */}
+            </div>
           </legend>
           <Box>
             <div style={{ width: "15%" }}>
@@ -320,7 +341,7 @@ export default function Protocolos() {
                 {...register("num_protocolo")}
                 // helperText={errors.num_protocolo?.message}
                 error={!!errors.num_protocolo?.message}
-                messageError={errors.num_protocolo?.message}
+                helperText={errors.num_protocolo?.message}
               />
             </div>
 
@@ -343,14 +364,14 @@ export default function Protocolos() {
                 description="Assunto Protocolo *"
                 w={500}
                 {...register("assunto_protocolo")}
-                // helperText={errors.assunto_protocolo?.message}
+                helperText={errors.assunto_protocolo?.message}
                 error={!!errors.assunto_protocolo?.message}
               />
             </div>
           </Box>
 
           <Box>
-            <p
+            {/* <p
               style={{
                 borderBottomColor: "#A9A9B2",
                 fontFamily: "Roboto, Helvetica, Arial, sans-serif",
@@ -369,10 +390,7 @@ export default function Protocolos() {
                 data={dataDays}
                 description="Dia"
                 w={100}
-                {...register("data_recebimento_dia", {
-                  valueAsNumber: true, // Essa opção indica que o valor deve ser tratado como número
-                  setValueAs: (value) => parseInt(value), // Função para converter o valor para número
-                })}
+                {...register("data_recebimento_dia")}
               />
             </div>
 
@@ -381,10 +399,7 @@ export default function Protocolos() {
                 data={dataMonths}
                 description="Mês"
                 w={100}
-                {...register("data_recebimento_mes", {
-                  valueAsNumber: true, // Essa opção indica que o valor deve ser tratado como número
-                  setValueAs: (value) => parseInt(value), // Função para converter o valor para número
-                })}
+                {...register("data_recebimento_mes")}
               />
             </div>
 
@@ -393,11 +408,59 @@ export default function Protocolos() {
                 data={dataYears}
                 description="Ano"
                 w={150}
-                {...register("data_recebimento_ano", {
-                  valueAsNumber: true, // Essa opção indica que o valor deve ser tratado como número
-                  setValueAs: (value) => parseInt(value), // Função para converter o valor para número
-                })}
+                {...register("data_recebimento_ano")}
               />
+            </div> */}
+
+            
+            <div>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'end',
+                  width: '25rem',
+                }}
+              >
+                <Text>Data de Recebimento:</Text>
+                <SelectOptions
+                  description="Dia"
+                  data={dataDays}
+                  w={90}
+                  {...register('data_recebimento_dia')}
+                // defaultValue={{ label: newDateAnuidade.dia }}
+                />
+                <SelectOptions
+                  data={dataMonths}
+                  description="Mês"
+                  w={90}
+                  {...register('data_recebimento_mes')}
+                // defaultValue={{ label: newDateAnuidade.mes }}
+                />
+                <SelectOptions
+                  w={120}
+                  description="Ano"
+                  data={dataYears}
+                  {...register('data_recebimento_ano')}
+                // defaultValue={{ label: newDateAnuidade.ano }}
+                />
+              </div>
+              <span
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                }}
+              >
+                {/* <FormError>
+                  {errors.data_recebimento_dia?.message ||
+                    errors.data_recebimento_mes?.message ||
+                    errors.data_recebimento_ano?.message
+                    ? 'Data de Recebimento:'
+                    : null}
+                </FormError>
+                <FormError>{errors.data_recebimento_dia?.message}</FormError>
+                <FormError>{errors.data_recebimento_mes?.message}</FormError>
+                <FormError>{errors.data_recebimento_ano?.message}</FormError> */}
+              </span>
             </div>
 
             <div>
@@ -409,10 +472,10 @@ export default function Protocolos() {
               />
             </div>
 
-            <div style={{ width: "15%" }}>
+            <div>
               <SwitchInput
                 title="Documento de entrada requer resposta?"
-                {...register("doc_entrada_requer_resposta")}
+                {...register("obrigatoria_resp_receb")}
               />
             </div>
 
@@ -425,7 +488,7 @@ export default function Protocolos() {
           </Box>
 
           <Box>
-            <p
+            {/* <p
               style={{
                 borderBottomColor: "#A9A9B2",
                 fontFamily: "Roboto, Helvetica, Arial, sans-serif",
@@ -444,10 +507,7 @@ export default function Protocolos() {
                 data={dataDays}
                 description="Dia *"
                 w={100}
-                {...register("data_envio_dia", {
-                  valueAsNumber: true, // Essa opção indica que o valor deve ser tratado como número
-                  setValueAs: (value) => parseInt(value), // Função para converter o valor para número
-                })}
+                {...register("data_envio_dia")}
                 // helperText={errors.data_envio_dia?.message}
                 error={!!errors.data_envio_dia?.message}
               />
@@ -458,10 +518,7 @@ export default function Protocolos() {
                 data={dataMonths}
                 description="Mês *"
                 w={100}
-                {...register("data_envio_mes", {
-                  valueAsNumber: true, // Essa opção indica que o valor deve ser tratado como número
-                  setValueAs: (value) => parseInt(value), // Função para converter o valor para número
-                })}
+                {...register("data_envio_mes")}
                 // helperText={errors.data_envio_mes?.message}
                 error={!!errors.data_envio_mes?.message}
               />
@@ -472,15 +529,63 @@ export default function Protocolos() {
                 data={dataYears}
                 description="Ano *"
                 w={150}
-                {...register("data_envio_ano", {
-                  valueAsNumber: true, // Essa opção indica que o valor deve ser tratado como número
-                  setValueAs: (value) => parseInt(value), // Função para converter o valor para número
-                })}
+                {...register("data_envio_ano")}
                 // helperText={errors.data_envio_ano?.message}
                 error={!!errors.data_envio_ano?.message}
               />
-            </div>
+            </div> */}
 
+
+            <div>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'end',
+                  width: '22rem',
+                }}
+              >
+                <Text> Data de Envio:</Text>
+                <SelectOptions
+                  description="Dia *"
+                  data={dataDays}
+                  w={90}
+                  {...register('data_envio_dia')}
+                // defaultValue={{ label: newDateAnuidade.dia }}
+                />
+                <SelectOptions
+                  data={dataMonths}
+                  description="Mês *"
+                  w={93}
+                  {...register('data_envio_mes')}
+                // defaultValue={{ label: newDateAnuidade.mes }}
+                />
+                <SelectOptions
+                  w={120}
+                  description="Ano *"
+                  data={dataYears}
+                  {...register('data_envio_ano')}
+                // defaultValue={{ label: newDateAnuidade.ano }}
+                />
+              </div>
+              <span
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                }}
+              >
+                <FormError>
+                  {errors.data_envio_dia?.message ||
+                    errors.data_envio_mes?.message ||
+                    errors.data_envio_ano?.message
+                    ? ' Data de Envio:'
+                    : null}
+                </FormError>
+                <FormError>{errors.data_envio_dia?.message}</FormError>
+                <FormError>{errors.data_envio_mes?.message}</FormError>
+                <FormError>{errors.data_envio_ano?.message}</FormError>
+              </span>
+            </div>
+            
             <div>
               <SelectOptions
                 data={meioProtocoloOptionsData}
@@ -497,13 +602,13 @@ export default function Protocolos() {
                 data={quemRedigiuDocumentoOptionsData}
                 description="Quem redigiu documento a ser enviado?"
                 w={500}
-                {...register("quem_redigiu_documento_a_ser_enviado")}
+                {...register("quem_redigiu_envio")}
               />
             </div>
           </Box>
 
           <Box>
-            <p
+            {/* <p
               style={{
                 borderBottomColor: "#A9A9B2",
                 fontFamily: "Roboto, Helvetica, Arial, sans-serif",
@@ -520,10 +625,7 @@ export default function Protocolos() {
                 data={dataDays}
                 description="Dia"
                 w={100}
-                {...register("data_encerramento_protocolo_dia", {
-                  valueAsNumber: true, // Essa opção indica que o valor deve ser tratado como número
-                  setValueAs: (value) => parseInt(value), // Função para converter o valor para número
-                })}
+                {...register("data_encerramento_protocolo_dia")}
               />
             </div>
 
@@ -532,10 +634,7 @@ export default function Protocolos() {
                 data={dataMonths}
                 description="Mês"
                 w={100}
-                {...register("data_encerramento_protocolo_mes", {
-                  valueAsNumber: true, // Essa opção indica que o valor deve ser tratado como número
-                  setValueAs: (value) => parseInt(value), // Função para converter o valor para número
-                })}
+                {...register("data_encerramento_protocolo_mes")}
               />
             </div>
 
@@ -544,16 +643,67 @@ export default function Protocolos() {
                 data={dataYears}
                 description="Ano"
                 w={150}
-                {...register("data_encerramento_protocolo_ano", {
-                  valueAsNumber: true, // Essa opção indica que o valor deve ser tratado como número
-                  setValueAs: (value) => parseInt(value), // Função para converter o valor para número
-                })}
+                {...register("data_encerramento_protocolo_ano")}
               />
+            </div> */}
+
+            
+            <div>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'end',
+                  width: '28rem',
+                }}
+              >
+                <Text> Data de Encerramento do Protocolo:</Text>
+                <SelectOptions
+                  description="Dia"
+                  data={dataDays}
+                  w={90}
+                  {...register('data_encerramento_protocolo_dia')}
+                // defaultValue={{ label: newDateAnuidade.dia }}
+                />
+                <SelectOptions
+                  data={dataMonths}
+                  description="Mês"
+                  w={90}
+                  {...register('data_encerramento_protocolo_mes')}
+                // defaultValue={{ label: newDateAnuidade.mes }}
+                />
+                <SelectOptions
+                  w={120}
+                  description="Ano"
+                  data={dataYears}
+                  {...register('data_encerramento_protocolo_ano')}
+                // defaultValue={{ label: newDateAnuidade.ano }}
+                />
+              </div>
+              <span
+                style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                }}
+              >
+                {/* <FormError>
+                  {errors.data_recebimento_dia?.message ||
+                    errors.data_recebimento_mes?.message ||
+                    errors.data_recebimento_ano?.message
+                    ? 'Data de Recebimento:'
+                    : null}
+                </FormError>
+                <FormError>{errors.data_recebimento_dia?.message}</FormError>
+                <FormError>{errors.data_recebimento_mes?.message}</FormError>
+                <FormError>{errors.data_recebimento_ano?.message}</FormError> */}
+              </span>
             </div>
-            <div style={{ width: "15%" }}>
+
+
+            <div>
               <TextInput
+                w={200}
                 title="Usuário Encerramento Protocolo"
-                {...register("usuario_encerramento_protocolo")}
+                {...register("usuario_encerramento")}
               />
             </div>
           </Box>
@@ -572,7 +722,7 @@ export default function Protocolos() {
               >
                 Anexos
               </h4>
-              <input type="file" multiple onInput={handleFileChange} />
+              <input type="file" {...register('anexos')} multiple onInput={handleFileChange} />
               {selectedFiles.length > 0 && (
                 <div>
                   <b>

@@ -69,10 +69,10 @@ export function BasicModal({ valuesForm }: schema) {
       >
         <Box sx={style}>
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            CNPJ inválido ⚠️
+            Campos inválidos ⚠️
           </Typography>
           <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-            Permitir gravar com CNPJ inválido?
+            Permitir gravar com dados inválidos?
           </Typography>
           <Button title="Sim" onClick={OnSubmit} />
           <Button
