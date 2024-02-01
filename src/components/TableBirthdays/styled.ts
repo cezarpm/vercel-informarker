@@ -6,7 +6,7 @@ export const HeaderBirthdays = styled('div', {
   gap: '1rem',
   justifyContent: 'flex-start',
   marginTop: '1rem',
-  marginBottom: '5.3rem',
+  marginBottom: '4.5rem',
 })
 
 export const ContainerFilters = styled('div', {

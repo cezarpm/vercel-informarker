@@ -46,8 +46,12 @@ const TableBirthdays = ({
 
   const [loader, setLoader] = useState(false);
 
+  const [ano, setAno] = useState<number>(0);
   const [mes, setMes] = useState<string>("");
   const [semana, setSemana] = useState<number[]>([]);
+
+  const [primeiroDiaSemana, setPrimeiroDiaSemana] = useState<Date>();
+  const [ultimoDiaSemana, setUltimoDiaSemana] = useState<Date>();
   const [dia, setDia] = useState<number>(0);
 
   const [filteredData, setFilteredData] = useState([]);
@@ -102,11 +106,20 @@ const TableBirthdays = ({
             }
 
             if (dataFilter === "Semana") {
-              const filterWeek =
-                semana.indexOf(parseInt(data_nasc[0], 10)) > -1 &&
-                data_nasc[1] === mes;
+              const dataNascString = item.data_nascimento.split("/");
+              const dataNascimento = new Date(
+                ano+"-" + dataNascString[1] + "-" + dataNascString[0]
+              );
 
-              return filterWeek;
+              if (
+                primeiroDiaSemana != undefined &&
+                ultimoDiaSemana != undefined
+              ) {
+                const filterWeek =
+                  dataNascimento >= primeiroDiaSemana &&
+                  dataNascimento <= ultimoDiaSemana;
+                return filterWeek;
+              }
             }
 
             if (dataFilter === "Dia") {
@@ -187,12 +200,22 @@ const TableBirthdays = ({
 
     const date = new Date();
 
+    // O primeiro dia é o dia do mês, menos o dia da semana
+    const primeiro = date.getDate() - date.getDay();
+
+    const primeiroDia = new Date(date.setDate(primeiro));
+    const ultimoDia = new Date(date.setDate(date.getDate() + 6));
+
+    setPrimeiroDiaSemana(primeiroDia);
+    setUltimoDiaSemana(ultimoDia);
+
     setMes(
       date.getMonth() + 1 < 10
         ? ("0" + (date.getMonth() + 1)).toString()
         : (date.getMonth() + 1).toString()
     );
     setDia(date.getDate());
+    setAno(date.getFullYear());
 
     const diaAtual = date.getDay();
 
@@ -303,19 +326,19 @@ const TableBirthdays = ({
             onClick={BuscarFiltro}
           />
 
-        {selectedRowIds.length > 0 && (
-          <ButtonEtiqueta
-            style={{
-              backgroundColor: `${"#0da9a4"}`,
-              margin: "0px",
-              fontSize: "12px",
-              border: "solid 1px",
-              padding: "0.5rem",
-            }}
-            onClick={handleOpen}
-            title={"Gerar etiqueta"}
-          />
-        )}
+          {selectedRowIds.length > 0 && (
+            <ButtonEtiqueta
+              style={{
+                backgroundColor: `${"#0da9a4"}`,
+                margin: "0px",
+                fontSize: "12px",
+                border: "solid 1px",
+                padding: "0.5rem",
+              }}
+              onClick={handleOpen}
+              title={"Gerar etiqueta"}
+            />
+          )}
         </ContainerFilters>
         <BackPage backRoute="/" discartPageBack />
       </HeaderBirthdays>

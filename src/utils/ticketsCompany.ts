@@ -64,7 +64,8 @@ export const EtiquetaPDFCompany = async (linhas: number[], exibirContatoPrimario
         nome_contato_primario,
         tratamento_contato_primario,
         nome_contato_secundario,
-        tratamento_contato_secundario
+        tratamento_contato_secundario,
+        razao_social,
       } = data;
 
       const contato = exibirContatoPrimario ? nome_contato_primario : nome_contato_secundario;
@@ -83,7 +84,7 @@ export const EtiquetaPDFCompany = async (linhas: number[], exibirContatoPrimario
       const startY = index * verticalSpacing;
 
       doc.setFontSize(12);
-      const splitNome = doc.splitTextToSize(`${cod_empresa}`, 80);
+      const splitNome = doc.splitTextToSize(`${cod_empresa} - ${razao_social}`, 80);
       doc.text(splitNome, startX + 4, 12 + startY);
 
       doc.setFontSize(10);
