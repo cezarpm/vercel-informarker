@@ -387,7 +387,7 @@ export default function Empresas({
             />
             <div>
               <TextInput
-                w="100"
+                w={150}
                 title="Inscrição Estadual"
                 {...register('inscricao_estadual')}
               />
@@ -395,7 +395,7 @@ export default function Empresas({
 
             <div>
               <TextInput
-                w="100"
+                w={150}
                 title="Inscrição Municipal"
                 {...register('inscricao_municipal')}
               />

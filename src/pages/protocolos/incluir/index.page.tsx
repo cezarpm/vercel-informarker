@@ -330,7 +330,7 @@ export default function Protocolos() {
             </div>
             <div>
               {/* <Box style={{ alignItems: "center", display: 'flex' }}> */}
-                <BackPage backRoute="/protocolos" discartPageBack />
+                <BackPage backRoute="/protocolos" />
               {/* </Box> */}
             </div>
           </legend>
@@ -359,9 +359,8 @@ export default function Protocolos() {
 
           <Box>
             <div>
-              <SelectOptions
-                data={assuntoProtocoloOptionsData}
-                description="Assunto Protocolo *"
+              <TextInput
+                title="Assunto Protocolo *"
                 w={500}
                 {...register("assunto_protocolo")}
                 helperText={errors.assunto_protocolo?.message}

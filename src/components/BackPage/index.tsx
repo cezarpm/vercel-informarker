@@ -7,7 +7,11 @@ interface schemaBackPageComponent {
   backRoute: string
   discartPageBack?: any
 }
-
+async function limparCache() {
+  const cache = await caches.open('cache')
+  const chaves = await cache.keys()
+  await Promise.all(chaves.map((chave) => cache.delete(chave)))
+}
 export function BackPage({
   backRoute,
   discartPageBack,
@@ -25,7 +29,8 @@ export function BackPage({
                 localStorage.removeItem('@paginationOld'),
                 localStorage.removeItem('@filtro'),
                 localStorage.removeItem('@valuesSelected'),
-                localStorage.removeItem('@pageCache'))
+                localStorage.removeItem('@pageCache'),
+                limparCache())
               : null
           }}
           style={{
