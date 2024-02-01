@@ -172,7 +172,6 @@ export default function Vizualizar({
       }
 
       if (parametros?.permitir_dado_invalido === true) {
-       
         if (
           data.razao_social !== '' &&
           data.cod_empresa !== '' &&
@@ -510,24 +509,27 @@ export default function Vizualizar({
               helperText={errorsForm?.razao_social.message}
             />
             {/* <TextInput title="CNPJ" {...register('cnpj')} /> */}
+            <div>
+              <TextInput
+                w={150}
+                title="Inscrição Estadual"
+                {...register('inscricao_estadual')}
+                defaultValue={data.inscricao_estadual}
+                quantidadeCaracteres={20}
+              />
+            </div>
+            <div>
+              <TextInput
+                w={150}
+                title="Inscrição Municipal"
+                {...register('inscricao_municipal')}
+                defaultValue={data.inscricao_municipal}
+                quantidadeCaracteres={20}
+              />
+            </div>
           </Box>
 
-          <Box>
-            <TextInput
-              title="Inscrição Estadual"
-              {...register('inscricao_estadual')}
-              defaultValue={data.inscricao_estadual}
-              quantidadeCaracteres={20}
-            />
-
-            <TextInput
-              title="Inscrição Municipal"
-              {...register('inscricao_municipal')}
-              defaultValue={data.inscricao_municipal}
-              quantidadeCaracteres={20}
-            />
-          </Box>
-
+        
           <Box>
             <div
               style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}

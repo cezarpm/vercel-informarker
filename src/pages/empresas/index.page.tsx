@@ -117,7 +117,6 @@ export default function Empresas({ data, dataTipoEmpresa }: any) {
     localStorage.setItem('@valuesSelected', JSON.stringify(filterSelected))
     localStorage.setItem('@filtro', JSON.stringify(filteredList))
     setList(filteredList)
-    // useEffect(() => {}, [filterSelect])
   }
 
   const columns: GridColDef[] = [
