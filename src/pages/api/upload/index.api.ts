@@ -28,6 +28,7 @@ const multerUpload = upload.fields([
   { name: 'certificado_conclusao_especializacao', maxCount: 1 },
   { name: 'declaracao_hospital', maxCount: 1 },
   { name: 'diploma_medicina', maxCount: 1 },
+  { name: 'anexos', maxCount: 1 },
 ])
 
 export default async function handler(
@@ -51,6 +52,9 @@ export default async function handler(
         req.files.certificado_conclusao_especializacao?.[0]
       const fileDeclaracaoHospital = req.files.declaracao_hospital?.[0]
       const fileDiplomaMedicina = req.files.diploma_medicina?.[0]
+      const fileAnexos = req.files.anexos?.[0]
+
+      // console.log(fileAnexosProtocolos)
 
       // if (
       //   !cpfFile ||
@@ -140,6 +144,16 @@ export default async function handler(
 
       const names_arquivos = []
 
+      if (fileAnexos) {
+        const anexosFileName = `ANEXO_PROTOCOLO_id-${idRamdom}${timestamp}.pdf`
+        const anexosUploadPath = path.join(
+          process.cwd(),
+          'upload',
+          anexosFileName,
+        )
+        fs.writeFileSync(anexosUploadPath, fileAnexos.buffer)
+        names_arquivos.push({ anexoProtocolo: anexosFileName })
+      }
       // Processar e salvar apenas os arquivos que foram enviados
       if (cpfFile) {
         const cpfFileName = `COMPROVANTE_CPF_id-${idRamdom}${timestamp}.pdf`
