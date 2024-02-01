@@ -284,16 +284,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         data_envio_dia: Number(dataEnvio?.split('/')[0]),
         data_envio_mes: Number(dataEnvio?.split('/')[1]),
         data_envio_ano: Number(dataEnvio?.split('/')[2]),
-        data_encerramento_protocolo: dataEncerramento,
-        data_encerramento_protocolo_dia: Number(
-          dataEncerramento?.split('/')[0],
-        ),
-        data_encerramento_protocolo_mes: Number(
-          dataEncerramento?.split('/')[1],
-        ),
-        data_encerramento_protocolo_ano: Number(
-          dataEncerramento?.split('/')[2],
-        ),
+        data_encerramento: dataEncerramento,
+        // data_encerramento_protocolo_dia: Number(
+        //   dataEncerramento?.split('/')[0],
+        // ),
+        // data_encerramento_protocolo_mes: Number(
+        //   dataEncerramento?.split('/')[1],
+        // ),
+        // data_encerramento_protocolo_ano: Number(
+        //   dataEncerramento?.split('/')[2],
+        // ),
       }
 
       return {

@@ -1,6 +1,6 @@
 /* eslint-disable eqeqeq */
 import { Button } from '@/components/Button'
-import { Container, Box } from './styled'
+import { Container, Box, ContentFilterDates } from './styled'
 import { useRouter } from 'next/router'
 import DataGridDemo from '@/components/TableList'
 import { prisma } from '@/lib/prisma'
@@ -14,6 +14,7 @@ import { BackPage } from '../../components/BackPage'
 import SelectNoComplete from '@/components/SelectNoComplete'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
+import { TextInput } from '@/components/TextInput'
 
 const shemaFilter = z.object({
   tipo_protocolo_filter: z.string(),
@@ -22,7 +23,7 @@ const shemaFilter = z.object({
   data_recebimento_filter_de: z.string(),
   data_recebimento_filter_ate: z.string(),
 
-  data_envio_filter: z.string(),
+  data_envio_filter: z.date(),
   data_envio_filter_de: z.string(),
   data_envio_filter_ate: z.string(),
 
@@ -34,6 +35,14 @@ const shemaFilter = z.object({
 })
 
 type SchemaFilter = z.infer<typeof shemaFilter>
+
+interface schemaFilters {
+  tipo_protocolo: string
+  data_envio: Date
+  data_recebimento: Date
+  meio_envio: string
+  meio_recebimento: string
+}
 export default function ProtocoloList({
   data,
   tipoProtocol,
@@ -154,13 +163,39 @@ export default function ProtocoloList({
       data_encerramento_filter: dataEncerramentoFilter,
       usuario_encerramento_filter: usuarioEncerramentoFilter,
     }
-    if (protocoloFilter !== 'Todos') {
-      filteredList = filteredList.filter((item: any) => {
-        const situacaoMatch =
-          protocoloFilter === 'Todos' || item.tipo_protocolo === protocoloFilter
-        return situacaoMatch
-      })
+    if (protocoloFilter && protocoloFilter !== 'Todos') {
+      if (protocoloFilter === 'Entrada') {
+        filteredList = filteredList.filter(
+          (item: schemaFilters) =>
+            item.tipo_protocolo === protocoloFilter &&
+            item.data_envio !== null &&
+            item.data_recebimento !== null,
+        )
+      } else if (protocoloFilter === 'Saída') {
+        filteredList = filteredList.filter(
+          (item: schemaFilters) =>
+            item.tipo_protocolo === protocoloFilter &&
+            item.meio_envio !== null &&
+            item.meio_envio !== '' &&
+            item.meio_recebimento !== null &&
+            item.meio_recebimento !== '',
+        )
+      }
+      // else {
+      //   filteredList = filteredList.filter(
+      //     (item: schemaFilters) => item.tipo_protocolo === protocoloFilter,
+      //   )
+      // }
     }
+    console.log(filteredList)
+
+    // if (protocoloFilter !== 'Todos') {
+    //   filteredList = filteredList.filter((item: any) => {
+    //     const situacaoMatch =
+    //       protocoloFilter === 'Todos' || item.tipo_protocolo === protocoloFilter
+    //     return situacaoMatch
+    //   })
+    // }
     if (recebimentoFilter && recebimentoFilter !== 'Todos') {
       filteredList = filteredList.filter((item: any) => {
         return item.data_recebimento === recebimentoFilter
@@ -194,10 +229,21 @@ export default function ProtocoloList({
     salvarDadosNoCache('@filtro', filteredList)
     setList(filteredList)
   }
-  async function salvarDadosNoCache(chave: any, dados: any) {
-    const dadosParaCache = new Response(JSON.stringify(dados))
-    const cache = await caches.open('cache')
-    await cache.put(chave, dadosParaCache)
+  async function salvarDadosNoCache(chave, dados) {
+    // Verifica se a API de Cache está disponível
+    if ('caches' in window) {
+      try {
+        const dadosParaCache = new Response(
+          new Blob([JSON.stringify(dados)], { type: 'application/json' }),
+        )
+        const cache = await caches.open('cache') // Abre ou cria um cache com o nome 'cache'
+        await cache.put(chave, dadosParaCache) // Salva os dados no cache com a chave especificada
+      } catch (error) {
+        console.error('Ocorreu um erro ao salvar dados no cache:', error)
+      }
+    } else {
+      console.error('API de Cache não está disponível neste navegador.')
+    }
   }
 
   function defaultFilters() {
@@ -211,58 +257,93 @@ export default function ProtocoloList({
   }
 
   async function buscarDadosNoCache(chave: any) {
-    const cache = await caches.open('cache') // Abre o cache pelo nome
-    const resposta = await cache.match(chave) // Busca a resposta no cache pela chave
+    // const cache = await caches.open('cache') // Abre o cache pelo nome
+    // const resposta = await cache.match(chave) // Busca a resposta no cache pela chave
 
-    if (!resposta) {
-      console.log('Nenhum dado encontrado para essa chave:', chave)
-      return null // Retorna nulo se não encontrar nada
+    // if (!resposta) {
+    //   console.log('Nenhum dado encontrado para essa chave:', chave)
+    //   return null // Retorna nulo se não encontrar nada
+    // }
+
+    // // Se encontrou, retorna os dados convertidos de volta para o formato original (e.g., JSON)
+    // return await resposta.json()
+
+    // Verifica se a API de Cache está disponível
+    if ('caches' in window) {
+      try {
+        const cache = await caches.open('cache') // Abre o cache pelo nome
+        const resposta = await cache.match(chave) // Busca a resposta no cache pela chave
+
+        if (!resposta) {
+          console.log('Nenhum dado encontrado para essa chave:', chave)
+          return null // Retorna nulo se não encontrar nada
+        }
+
+        // Se encontrou, retorna os dados convertidos de volta para o formato original (e.g., JSON)
+        return await resposta.json()
+      } catch (error) {
+        console.error('Ocorreu um erro ao buscar dados no cache:', error)
+        return null // Retorna nulo em caso de erro
+      }
+    } else {
+      console.error('API de Cache não está disponível neste navegador.')
+      return null // Retorna nulo se a API de Cache não estiver disponível
     }
-
-    // Se encontrou, retorna os dados convertidos de volta para o formato original (e.g., JSON)
-    return await resposta.json()
   }
 
   useEffect(() => {
-    buscarDadosNoCache('@filtro').then((dados) => {
-      if (dados !== null) {
-        setList(dados)
-      } else {
-        setList(data)
-      }
-    })
+    buscarDadosNoCache('@filtro')
+      .then((dados) => {
+        if (dados !== null) {
+          setList(dados)
+        } else {
+          setList(data)
+        }
+      })
+      .catch((error) => {
+        console.error('Erro ao buscar dados para @filtro:', error)
+        // Tratar o erro conforme necessário
+      })
 
-    buscarDadosNoCache('@valuesSelected').then((dados) => {
-      // console.log('Dados de @valuesSelected:', dados)
-      if (dados !== null) {
-        const getItemsFilter = dados
-        setFilterSelect(getItemsFilter)
-        setValue('tipo_protocolo_filter', getItemsFilter.tipo_protocolo_filter)
-        setValue('data_envio_filter', getItemsFilter.data_recebimento_filter)
-        setValue(
-          'data_recebimento_filter',
-          getItemsFilter.data_recebimento_filter,
-        )
-        setValue(
-          'meio_recebimento_filter',
-          getItemsFilter.meio_recebimento_filter,
-        )
-        setValue('meio_envio_filter', getItemsFilter.meio_envio_filter)
-        setValue(
-          'usuario_encerramento_filter',
-          getItemsFilter.usuario_encerramento,
-        )
-        setValue(
-          'data_encerramento_filter',
-          getItemsFilter.data_encerramento_filter,
-        )
-        BuscarFiltro()
-      } else {
-        defaultFilters()
-      }
-    })
+    buscarDadosNoCache('@valuesSelected')
+      .then((dados) => {
+        // console.log('Dados de @valuesSelected:', dados)
+        if (dados !== null) {
+          const getItemsFilter = dados
+          setFilterSelect(getItemsFilter)
+          setValue(
+            'tipo_protocolo_filter',
+            getItemsFilter.tipo_protocolo_filter,
+          )
+          setValue('data_envio_filter', getItemsFilter.data_recebimento_filter)
+          setValue(
+            'data_recebimento_filter',
+            getItemsFilter.data_recebimento_filter,
+          )
+          setValue(
+            'meio_recebimento_filter',
+            getItemsFilter.meio_recebimento_filter,
+          )
+          setValue('meio_envio_filter', getItemsFilter.meio_envio_filter)
+          setValue(
+            'usuario_encerramento_filter',
+            getItemsFilter.usuario_encerramento,
+          )
+          setValue(
+            'data_encerramento_filter',
+            getItemsFilter.data_encerramento_filter,
+          )
+          BuscarFiltro()
+        } else {
+          defaultFilters()
+        }
+      })
+      .catch((error) => {
+        console.error('Erro ao buscar dados para @valuesSelected:', error)
+        // Tratar o erro conforme necessário
+      })
   }, [data])
- 
+
   const objTodos = {
     id: 0,
     ocorrencia_tabela: 'Todos',
@@ -329,7 +410,7 @@ export default function ProtocoloList({
                 />
               ) : null}
 
-              {filterSelect.data_envio_filter &&
+              {/* {filterSelect.data_envio_filter &&
               filterSelect.data_envio_filter !== 'Todos' ? (
                 <SelectNoComplete
                   p="0px 0px 0px 0.5rem"
@@ -353,9 +434,9 @@ export default function ProtocoloList({
                   // data={() => []}
                   // data={dataSimNao}
                 />
-              ) : null}
+              ) : null} */}
 
-              {filterSelect.data_recebimento_filter &&
+              {/* {filterSelect.data_recebimento_filter &&
               filterSelect.data_recebimento_filter !== 'Todos' ? (
                 <SelectNoComplete
                   p="0px 0px 0px 0.5rem"
@@ -376,30 +457,7 @@ export default function ProtocoloList({
                   {...register('data_recebimento_filter')}
                   data={dataSimNao}
                 />
-              ) : null}
-
-              {filterSelect.data_envio_filter &&
-              filterSelect.data_envio_filter !== 'Todos' ? (
-                <SelectNoComplete
-                  p="0px 0px 0px 0.5rem"
-                  value={`${filterSelect.data_envio_filter}`}
-                  title="Envio"
-                  {...register('data_envio_filter')}
-                  data={dataSimNao}
-                />
-              ) : null}
-
-              {filterSelect.data_envio_filter &&
-              filterSelect.data_envio_filter === 'Todos' ? (
-                <SelectNoComplete
-                  p="0px 0px 0px 0.5rem"
-                  value={`Todos`}
-                  title="Envio"
-                  {...register('data_envio_filter')}
-                  data={dataSimNao}
-                  // data={() => []}
-                />
-              ) : null}
+              ) : null} */}
 
               {filterSelect.meio_recebimento_filter &&
               filterSelect.meio_recebimento_filter !== 'Todos' ? (
@@ -463,6 +521,68 @@ export default function ProtocoloList({
           </div>
           <BackPage backRoute="/" discartPageBack />
         </Box>
+        <ContentFilterDates>
+          <div>
+            <p>Recebimento De:</p>
+            <label>
+              <input
+                type="date"
+                // value={`${filterSelect.data_envio_filter}`}
+                // title="Envio"
+                {...register('data_envio_filter')}
+                // data={isDataSimNao}
+                // data={() => []}
+              />
+            </label>
+            {/* <label>
+            Até:
+            <input
+              type="date"
+              // value={`${filterSelect.data_envio_filter}`}
+              // title="Envio"
+              // {...register('data_envio_filter')}
+              // data={isDataSimNao}
+              // data={() => []}
+            />
+          </label> */}
+            <p>Até:</p>
+            <article>
+              <Button title="Dia" onClick={() => {}} />
+              <Button title="Mês" onClick={() => {}} />
+              <Button title="Ano" onClick={() => {}} />
+            </article>
+          </div>
+          <div>
+            <p>Envio De:</p>
+            <label>
+              <input
+                type="date"
+                // value={`${filterSelect.data_envio_filter}`}
+                // title="Envio"
+                {...register('data_envio_filter')}
+                // data={isDataSimNao}
+                // data={() => []}
+              />
+            </label>
+            {/* <label>
+            Até:
+            <input
+              type="date"
+              // value={`${filterSelect.data_envio_filter}`}
+              // title="Envio"
+              // {...register('data_envio_filter')}
+              // data={isDataSimNao}
+              // data={() => []}
+            />
+          </label> */}
+            <p>Até:</p>
+            <article>
+              <Button title="Dia" onClick={() => {}} />
+              <Button title="Mês" onClick={() => {}} />
+              <Button title="Ano" onClick={() => {}} />
+            </article>
+          </div>
+        </ContentFilterDates>
       </div>
 
       {/* <DataGridDemo columns={columns} rows={data} w="100%" /> */}
