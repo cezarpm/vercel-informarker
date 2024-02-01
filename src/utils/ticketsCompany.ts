@@ -89,16 +89,16 @@ export const EtiquetaPDFCompany = async (linhas: number[], exibirContatoPrimario
 
       doc.setFontSize(10);
       const splitEndereco = doc.splitTextToSize(`${logradouro} , ${numero} ${complemento}`, 80);
-      doc.text(splitEndereco, startX + 4, 17 + startY);
+      doc.text(splitEndereco, startX + 4, 22 + startY);
 
       const splitBairro = doc.splitTextToSize(`${bairro}`, 80);
-      doc.text(splitBairro, startX + 4, 22 + startY);
+      doc.text(splitBairro, startX + 4, 27 + startY);
 
       const splitCidade = doc.splitTextToSize(`${cep} - ${cidade} / ${uf}`, 80);
-      doc.text(splitCidade, startX + 4, 27 + startY);
+      doc.text(splitCidade, startX + 4, 32 + startY);
 
       const splitContato = doc.splitTextToSize(`${tratamento} ${contato}`, 80);
-      doc.text(splitContato, startX + 4, 32 + startY);
+      doc.text(splitContato, startX + 4, 37 + startY);
 
     } catch (error) {
       toast.error('Erro ao gerar etiquetas')
