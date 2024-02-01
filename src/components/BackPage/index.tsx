@@ -14,9 +14,13 @@ export function BackPage({
 }: schemaBackPageComponent) {
   const { setVoltarPagina } = useContextCustom()
   async function limparCache() {
-    const cache = await caches.open('cache')
-    const chaves = await cache.keys()
-    await Promise.all(chaves.map((chave) => cache.delete(chave)))
+    try {
+      const cache = await caches.open('cache') // Abre o cache específico
+      const chaves = await cache.keys() // Obtém todas as chaves (requests) no cache
+      await Promise.all(chaves.map((chave) => cache.delete(chave))) // Deleta cada item no cache
+    } catch (error) {
+      console.error('Erro ao limpar o cache:', error)
+    }
   }
 
   return (

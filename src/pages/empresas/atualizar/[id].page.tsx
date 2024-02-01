@@ -466,7 +466,7 @@ export default function Vizualizar({
             <SwitchInput
               title="Faculdade Anestesiologia?"
               {...register('faculdade_anestesiologia')}
-              defaultChecked={data.faculdade_anestesioggia}
+              defaultChecked={data.faculdade_anestesiologia}
             />
             <SwitchInput
               title="Empresa Ativa?"
@@ -529,7 +529,6 @@ export default function Vizualizar({
             </div>
           </Box>
 
-        
           <Box>
             <div
               style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}
