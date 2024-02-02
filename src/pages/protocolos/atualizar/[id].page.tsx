@@ -555,7 +555,7 @@ export default function ProtocolosAtualizar({ data }: schemaProtocoloProps) {
                 width: '25rem',
               }}
             >
-              <Text>Data de Recebimento:</Text>
+              <Text>Data de Envio:</Text>
 
               <SelectOptions
                 data={dataDays}
@@ -645,7 +645,7 @@ export default function ProtocolosAtualizar({ data }: schemaProtocoloProps) {
                 width: '25rem',
               }}
             >
-              <Text>Data de Recebimento:</Text>
+              <Text>Data de Encerramento do Protocolo:</Text>
 
               <SelectOptions
                 data={dataDays}

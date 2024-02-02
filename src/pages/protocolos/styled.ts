@@ -19,23 +19,35 @@ export const Box = styled('div', {
 })
 
 export const ContentFilterDates = styled('div', {
-  width: '30%',
   display: 'flex',
   flexDirection: 'column',
   p: {
     fontSize: '12px',
-    width: '100px',
+    minWidth: '100px',
+    textAlign: 'left',
+    display: 'flex',
+    alignItems: 'center',
+  },
+  input: {
+    border: 'solid 1px',
+    borderTopColor: 'transparent',
+    borderLeftColor: 'transparent',
+    borderRightColor: 'transparent',
+    height: '100%',
+    fontFamily: 'Roboto',
+  },
+  span: {
+    fontSize: '12px',
   },
   '>div': {
-    marginTop: '0.5rem',
     display: 'flex',
     gap: '0.5rem',
-    alignItems: 'center',
-
+    alignItems: 'end',
     justifyContent: 'space-between',
   },
   article: {
     display: 'flex',
+    gap: '0.1rem',
   },
   button: {
     margin: '0px',

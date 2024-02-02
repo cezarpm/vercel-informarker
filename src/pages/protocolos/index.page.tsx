@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable eqeqeq */
 import { Button } from '@/components/Button'
 import { Container, Box, ContentFilterDates } from './styled'
@@ -14,7 +15,16 @@ import { BackPage } from '../../components/BackPage'
 import SelectNoComplete from '@/components/SelectNoComplete'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
-import { TextInput } from '@/components/TextInput'
+import {
+  format,
+  subDays,
+  isAfter,
+  parseISO,
+  isEqual,
+  isWithinInterval,
+} from 'date-fns'
+import { ptBR } from 'date-fns/locale'
+import { useArrayDate } from '@/utils/useArrayDate'
 
 const shemaFilter = z.object({
   tipo_protocolo_filter: z.string(),
@@ -23,7 +33,7 @@ const shemaFilter = z.object({
   data_recebimento_filter_de: z.string(),
   data_recebimento_filter_ate: z.string(),
 
-  data_envio_filter: z.date(),
+  data_envio_filter: z.string(),
   data_envio_filter_de: z.string(),
   data_envio_filter_ate: z.string(),
 
@@ -60,7 +70,24 @@ export default function ProtocoloList({
     data_encerramento_filter: 'Todos',
     usuario_encerramento_filter: 'Todos',
   })
-  // console.log(selectedRowIds)
+  const objTodos = {
+    id: 0,
+    ocorrencia_tabela: 'Todos',
+  }
+  const isTipoProtocol = tipoProtocol?.map((item: any) => {
+    return {
+      ...item,
+    }
+  })
+  isTipoProtocol.unshift(objTodos)
+
+  const isMeioProtocol = tipoProtocol?.map((item: any) => {
+    return {
+      ...item,
+    }
+  })
+  isMeioProtocol.unshift(objTodos)
+
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'ID', width: 100 },
     {
@@ -144,25 +171,57 @@ export default function ProtocoloList({
   ]
 
   const { register, watch, setValue } = useForm<SchemaFilter>()
+  function handleCheckDateUser() {
+    const dataDigitadaEnvio = watch('data_envio_filter_de')
+    const dataDigitadaRecebimento = watch('data_recebimento_filter_de')
+    const convertDate = parseISO(dataDigitadaEnvio)
+    const convertDateRecebimento = parseISO(dataDigitadaRecebimento)
+    const dataAtual = new Date()
+    const compareEnvio = isAfter(convertDate, dataAtual)
+    const compareRecebimento = isAfter(convertDateRecebimento, dataAtual)
+
+    if (compareEnvio) {
+      toast.warn('Data de Envio maior que a data atual')
+    } else if (compareRecebimento) {
+      toast.warn('Data de Recebimento maior que a data atual')
+    }
+
+    return compareEnvio || compareRecebimento
+  }
   function BuscarFiltro() {
+    const checkDateEnvio: boolean = handleCheckDateUser()
+    if (checkDateEnvio) {
+      return
+    }
     // Inicialize a lista com os dados originais
     let filteredList: any = data
     const protocoloFilter = watch('tipo_protocolo_filter')
-    const recebimentoFilter = watch('data_recebimento_filter')
-    const envioFilter = watch('data_envio_filter')
+    const recebimentoFilterDe = watch('data_recebimento_filter_de')
+    const recebimentoFilterAte = watch('data_recebimento_filter_ate')
+
+    const envioFilterDe = watch('data_envio_filter_de')
+    const envioFilterAte = watch('data_envio_filter_ate')
+
     const meioRecebidoFilter = watch('meio_recebimento_filter')
     const meioEvnioFilter = watch('meio_envio_filter')
+
     const dataEncerramentoFilter = watch('data_encerramento_filter')
     const usuarioEncerramentoFilter = watch('usuario_encerramento_filter')
+
     const filterSelected = {
       tipo_protocolo_filter: protocoloFilter,
-      data_recebimento_filter: recebimentoFilter,
-      data_envio_filter: envioFilter,
+      data_recebimento_filter_de: recebimentoFilterDe,
+      data_recebimento_filter_ate: recebimentoFilterAte,
+
+      data_envio_filter_de: envioFilterDe,
+      data_envio_filter_ate: envioFilterAte,
+
       meio_recebimento_filter: meioRecebidoFilter,
       meio_envio_filter: meioEvnioFilter,
       data_encerramento_filter: dataEncerramentoFilter,
       usuario_encerramento_filter: usuarioEncerramentoFilter,
     }
+
     if (protocoloFilter && protocoloFilter !== 'Todos') {
       if (protocoloFilter === 'Entrada') {
         filteredList = filteredList.filter(
@@ -181,55 +240,86 @@ export default function ProtocoloList({
             item.meio_recebimento !== '',
         )
       }
-      // else {
-      //   filteredList = filteredList.filter(
-      //     (item: schemaFilters) => item.tipo_protocolo === protocoloFilter,
-      //   )
-      // }
     }
-    console.log(filteredList)
 
-    // if (protocoloFilter !== 'Todos') {
+    // console.log(recebimentoFilterAte, recebimentoFilterDe, filteredList)
+
+    if (
+      recebimentoFilterAte &&
+      recebimentoFilterAte !== 'Todos' &&
+      recebimentoFilterDe &&
+      recebimentoFilterDe !== 'Todos'
+    ) {
+      const dataInicio = parseISO(recebimentoFilterDe)
+      const dataFim = parseISO(recebimentoFilterAte)
+      filteredList = filteredList.filter((item: any) => {
+        if (item.data_recebimento) {
+          const desestructDate = useArrayDate.extrairComponentesData(
+            item.data_recebimento,
+          )
+          const estrutureDateStr = useArrayDate.MontarDate(
+            desestructDate.ano,
+            desestructDate.mes,
+            desestructDate.dia,
+          )
+          const estrutureDate = new Date(estrutureDateStr)
+          return estrutureDate >= dataInicio && estrutureDate <= dataFim
+        }
+        return false
+      })
+      // console.log(filteredList)
+    }
+
+    if (
+      envioFilterAte &&
+      envioFilterAte !== 'Todos' &&
+      envioFilterDe &&
+      envioFilterDe !== 'Todos'
+    ) {
+      const dataInicio = parseISO(envioFilterDe)
+      const dataFim = parseISO(envioFilterAte)
+      filteredList = filteredList.filter((item: any) => {
+        if (item.data_recebimento) {
+          const desestructDate = useArrayDate.extrairComponentesData(
+            item.data_recebimento,
+          )
+          const estrutureDateStr = useArrayDate.MontarDate(
+            desestructDate.ano,
+            desestructDate.mes,
+            desestructDate.dia,
+          )
+          const estrutureDate = new Date(estrutureDateStr)
+          return estrutureDate >= dataInicio && estrutureDate <= dataFim
+        }
+        return false
+      })
+    }
+
+    // if (meioRecebidoFilter && meioRecebidoFilter !== 'Todos') {
     //   filteredList = filteredList.filter((item: any) => {
-    //     const situacaoMatch =
-    //       protocoloFilter === 'Todos' || item.tipo_protocolo === protocoloFilter
-    //     return situacaoMatch
+    //     console.log('log:', item.meio_recebimento)
+    //     return item.meio_recebimento === meioRecebidoFilter
+    //   })
+    //   console.log(filteredList)
+    // }
+
+    // if (meioEvnioFilter && meioEvnioFilter !== 'Todos') {
+    //   filteredList = filteredList.filter((item: any) => {
+    //     return item.meio_envio === meioEvnioFilter
     //   })
     // }
-    if (recebimentoFilter && recebimentoFilter !== 'Todos') {
-      filteredList = filteredList.filter((item: any) => {
-        return item.data_recebimento === recebimentoFilter
-      })
-    }
-
-    if (envioFilter && envioFilter !== 'Todos') {
-      filteredList = filteredList.filter((item: any) => {
-        return item.data_envio === envioFilter
-      })
-    }
-
-    if (meioRecebidoFilter && meioRecebidoFilter !== 'Todos') {
-      filteredList = filteredList.filter((item: any) => {
-        return item.meio_recebimento === meioRecebidoFilter
-      })
-    }
-
-    if (meioEvnioFilter && meioEvnioFilter !== 'Todos') {
-      filteredList = filteredList.filter((item: any) => {
-        return item.meio_envio === meioEvnioFilter
-      })
-    }
-    if (dataEncerramentoFilter && dataEncerramentoFilter !== 'Todos') {
-      filteredList = filteredList.filter((item: any) => {
-        return item.data_encerramento === dataEncerramentoFilter
-      })
-    }
+    // if (dataEncerramentoFilter && dataEncerramentoFilter !== 'Todos') {
+    //   filteredList = filteredList.filter((item: any) => {
+    //     return item.data_encerramento === dataEncerramentoFilter
+    //   })
+    // }
 
     salvarDadosNoCache('@valuesSelected', filterSelected)
     salvarDadosNoCache('@filtro', filteredList)
     setList(filteredList)
   }
-  async function salvarDadosNoCache(chave, dados) {
+
+  async function salvarDadosNoCache(chave: any, dados: any) {
     // Verifica se a API de Cache está disponível
     if ('caches' in window) {
       try {
@@ -246,28 +336,92 @@ export default function ProtocoloList({
     }
   }
 
+  // PEGAR ULTIMA SEMANA COM BASE NO DIA ATUAL -7 dias
+  function handleGetSemana(tipo: string) {
+    const dateNow = new Date()
+    const diasAnteriores: Date = subDays(dateNow, 7)
+    const formatDateDiasAnteriores = format(diasAnteriores, 'yyyy-MM-dd', {
+      locale: ptBR,
+    })
+
+    const formatDate = format(dateNow, 'yyyy-MM-dd', {
+      locale: ptBR,
+    })
+
+    const executeValueSelect = (tipo: string) => {
+      if (tipo === 'envio') {
+        setValue('data_envio_filter_de', formatDateDiasAnteriores)
+        setValue('data_envio_filter_ate', formatDate)
+      } else if (tipo === 'recebimento') {
+        setValue('data_recebimento_filter_de', formatDateDiasAnteriores)
+        setValue('data_recebimento_filter_ate', formatDate)
+      }
+    }
+
+    return executeValueSelect(tipo)
+  }
+  // PEGAR DIA ATUAL
+  function handleGetDia(tipo: string) {
+    const dateNow = new Date()
+    const formatDate = format(dateNow, 'yyyy-MM-dd', {
+      locale: ptBR,
+    })
+
+    const executeValueSelect = (tipo: string) => {
+      if (tipo === 'envio') {
+        setValue('data_envio_filter_de', formatDate)
+        setValue('data_envio_filter_ate', formatDate)
+      } else if (tipo === 'recebimento') {
+        setValue('data_recebimento_filter_de', formatDate)
+        setValue('data_recebimento_filter_ate', formatDate)
+      }
+    }
+
+    return executeValueSelect(tipo)
+  }
+  // PEGAR ULTIMO DIA DO MES ATUAL -30 dias
+  function handleGetMes(tipo: string) {
+    const dateNow = new Date()
+    const quantidadeDiasMenos = 30
+    const diasAnteriores: Date = subDays(dateNow, quantidadeDiasMenos)
+
+    const formatDate = format(dateNow, 'yyyy-MM-dd', {
+      locale: ptBR,
+    })
+
+    const formatDateDiasAnteriores = format(diasAnteriores, 'yyyy-MM-dd', {
+      locale: ptBR,
+    })
+
+    const executeValueSelect = (tipo: string) => {
+      if (tipo === 'envio') {
+        setValue('data_envio_filter_de', formatDateDiasAnteriores)
+        setValue('data_envio_filter_ate', formatDate)
+      } else if (tipo === 'recebimento') {
+        setValue('data_recebimento_filter_de', formatDateDiasAnteriores)
+        setValue('data_recebimento_filter_ate', formatDate)
+      }
+    }
+
+    return executeValueSelect(tipo)
+  }
+  // SETANDO VALORES PADRÕES
   function defaultFilters() {
     setValue('tipo_protocolo_filter', 'Todos')
     setValue('data_encerramento_filter', 'Todos')
+
+    setValue('data_envio_filter_ate', 'Todos')
+    setValue('data_envio_filter_de', 'Todos')
+
     setValue('data_envio_filter', 'Todos')
-    setValue('data_recebimento_filter', 'Todos')
+    setValue('data_recebimento_filter_de', 'Todos')
+    setValue('data_recebimento_filter_ate', 'Todos')
     setValue('meio_envio_filter', 'Todos')
     setValue('meio_recebimento_filter', 'Todos')
     setValue('usuario_encerramento_filter', 'Todos')
   }
 
   async function buscarDadosNoCache(chave: any) {
-    // const cache = await caches.open('cache') // Abre o cache pelo nome
-    // const resposta = await cache.match(chave) // Busca a resposta no cache pela chave
-
-    // if (!resposta) {
-    //   console.log('Nenhum dado encontrado para essa chave:', chave)
-    //   return null // Retorna nulo se não encontrar nada
-    // }
-
-    // // Se encontrou, retorna os dados convertidos de volta para o formato original (e.g., JSON)
-    // return await resposta.json()
-
     // Verifica se a API de Cache está disponível
     if ('caches' in window) {
       try {
@@ -291,6 +445,17 @@ export default function ProtocoloList({
     }
   }
 
+  const dataSimNao = [
+    {
+      id: 1,
+      ocorrencia_tabela: 'sim',
+    },
+    {
+      id: 2,
+      ocorrencia_tabela: 'não',
+    },
+  ]
+
   useEffect(() => {
     buscarDadosNoCache('@filtro')
       .then((dados) => {
@@ -302,7 +467,6 @@ export default function ProtocoloList({
       })
       .catch((error) => {
         console.error('Erro ao buscar dados para @filtro:', error)
-        // Tratar o erro conforme necessário
       })
 
     buscarDadosNoCache('@valuesSelected')
@@ -315,11 +479,15 @@ export default function ProtocoloList({
             'tipo_protocolo_filter',
             getItemsFilter.tipo_protocolo_filter,
           )
-          setValue('data_envio_filter', getItemsFilter.data_recebimento_filter)
           setValue(
-            'data_recebimento_filter',
-            getItemsFilter.data_recebimento_filter,
+            'data_recebimento_filter_de',
+            getItemsFilter.data_recebimento_filter_de,
           )
+          setValue(
+            'data_recebimento_filter_ate',
+            getItemsFilter.data_recebimento_filter_ate,
+          )
+          setValue('data_envio_filter', getItemsFilter.data_recebimento_filter)
           setValue(
             'meio_recebimento_filter',
             getItemsFilter.meio_recebimento_filter,
@@ -343,36 +511,7 @@ export default function ProtocoloList({
         // Tratar o erro conforme necessário
       })
   }, [data])
-
-  const objTodos = {
-    id: 0,
-    ocorrencia_tabela: 'Todos',
-  }
-  const isTipoProtocol = tipoProtocol?.map((item: any) => {
-    return {
-      ...item,
-    }
-  })
-  isTipoProtocol.unshift(objTodos)
-
-  const isMeioProtocol = tipoProtocol?.map((item: any) => {
-    return {
-      ...item,
-    }
-  })
-  isMeioProtocol.unshift(objTodos)
-
-  const dataSimNao = [
-    {
-      id: 1,
-      ocorrencia_tabela: 'sim',
-    },
-    {
-      id: 2,
-      ocorrencia_tabela: 'não',
-    },
-  ]
-
+  console.log(filterSelect.meio_recebimento_filter)
   return (
     <Container>
       <div style={{ paddingBottom: '3rem' }}>
@@ -382,10 +521,11 @@ export default function ProtocoloList({
             marginTop: '0.5rem',
             justifyContent: 'space-between',
             alignItems: 'end',
+            width: '100%',
           }}
         >
-          <div>
-            <div style={{ display: 'flex', gap: '0.5rem' }}>
+          <div style={{ display: 'flex' }}>
+            <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'end' }}>
               {filterSelect.tipo_protocolo_filter &&
               filterSelect.tipo_protocolo_filter !== 'Todos' ? (
                 <SelectNoComplete
@@ -410,55 +550,75 @@ export default function ProtocoloList({
                 />
               ) : null}
 
-              {/* {filterSelect.data_envio_filter &&
-              filterSelect.data_envio_filter !== 'Todos' ? (
-                <SelectNoComplete
-                  p="0px 0px 0px 0.5rem"
-                  value={`${filterSelect.data_envio_filter}`}
-                  title="Envio"
-                  {...register('data_envio_filter')}
-                  // data={isDataSimNao}
-                  // data={() => []}
-                  data={dataSimNao}
-                />
-              ) : null}
-
-              {filterSelect.data_envio_filter &&
-              filterSelect.data_envio_filter === 'Todos' ? (
-                <SelectNoComplete
-                  p="0px 0px 0px 0.5rem"
-                  value={`Todos`}
-                  title="Envio"
-                  {...register('data_envio_filter')}
-                  data={dataSimNao}
-                  // data={() => []}
-                  // data={dataSimNao}
-                />
-              ) : null} */}
-
-              {/* {filterSelect.data_recebimento_filter &&
-              filterSelect.data_recebimento_filter !== 'Todos' ? (
-                <SelectNoComplete
-                  p="0px 0px 0px 0.5rem"
-                  value={`${filterSelect.data_recebimento_filter}`}
-                  title="data_recebimento_filter"
-                  {...register('data_recebimento_filter')}
-                  data={dataSimNao}
-                  // data={() => []}
-                />
-              ) : null}
-
-              {filterSelect.data_recebimento_filter &&
-              filterSelect.data_recebimento_filter === 'Todos' ? (
-                <SelectNoComplete
-                  p="0px 0px 0px 0.5rem"
-                  value={`Todos`}
-                  title="Recebimento"
-                  {...register('data_recebimento_filter')}
-                  data={dataSimNao}
-                />
-              ) : null} */}
-
+              <ContentFilterDates>
+                <div>
+                  <p>Recebimento De:</p>
+                  <label>
+                    <input
+                      type="date"
+                      {...register('data_recebimento_filter_de')}
+                    />
+                  </label>
+                  <span>Até:</span>
+                  <label>
+                    <input
+                      type="date"
+                      {...register('data_recebimento_filter_ate')}
+                    />
+                  </label>
+                  <article>
+                    <Button
+                      title="Hoje"
+                      onClick={() => {
+                        handleGetDia('recebimento')
+                      }}
+                    />
+                    <Button
+                      title="Semana"
+                      onClick={() => {
+                        handleGetSemana('recebimento')
+                      }}
+                    />
+                    <Button
+                      title="Mês"
+                      onClick={() => {
+                        handleGetMes('recebimento')
+                      }}
+                    />
+                  </article>
+                </div>
+                <div>
+                  <p>Envio De:</p>
+                  <label>
+                    <input type="date" {...register('data_envio_filter_de')} />
+                  </label>
+                  <span>Até:</span>
+                  <label>
+                    <input type="date" {...register('data_envio_filter_ate')} />
+                  </label>
+                  <article>
+                    <Button
+                      title="Hoje"
+                      onClick={() => {
+                        handleGetDia('envio')
+                      }}
+                    />
+                    <Button
+                      title="Semana"
+                      onClick={() => {
+                        handleGetSemana('envio')
+                      }}
+                    />
+                    <Button
+                      title="Mês"
+                      onClick={() => {
+                        handleGetMes('envio')
+                      }}
+                    />
+                  </article>
+                </div>
+              </ContentFilterDates>
+              {/* {console.log(filterSelect.meio_recebimento_filter)} */}
               {filterSelect.meio_recebimento_filter &&
               filterSelect.meio_recebimento_filter !== 'Todos' ? (
                 <SelectNoComplete
@@ -466,7 +626,7 @@ export default function ProtocoloList({
                   value={`${filterSelect.meio_recebimento_filter}`}
                   title="Meio recebimento"
                   {...register('meio_recebimento_filter')}
-                  data={dataSimNao}
+                  data={isMeioProtocol}
                   // data={() => []}
                 />
               ) : null}
@@ -478,10 +638,10 @@ export default function ProtocoloList({
                   value={`Todos`}
                   title="Meio recebimento"
                   {...register('meio_recebimento_filter')}
-                  data={isMeioProtocol}
-                  // data={() => []}
+                  data={meioProtocol}
                 />
               ) : null}
+
               {filterSelect.meio_envio_filter &&
               filterSelect.meio_envio_filter !== 'Todos' ? (
                 <SelectNoComplete
@@ -489,7 +649,7 @@ export default function ProtocoloList({
                   value={`${filterSelect.meio_envio_filter}`}
                   title="Meio Envio"
                   {...register('meio_envio_filter')}
-                  data={meioProtocol}
+                  data={isMeioProtocol}
                   // data={() => []}
                 />
               ) : null}
@@ -502,9 +662,53 @@ export default function ProtocoloList({
                   title="Meio Envio"
                   {...register('meio_envio_filter')}
                   data={meioProtocol}
-                  // data={() => []}
                 />
               ) : null}
+
+              <ContentFilterDates>
+                <div>
+                  <p>Data encerramento</p>
+                  <label>
+                    <input
+                      type="date"
+                      // value={`${filterSelect.data_envio_filter}`}
+                      // title="Envio"
+                      // {...register('data_envio_filter')}
+                      // data={isDataSimNao}
+                      // data={() => []}
+                    />
+                  </label>
+                  <article>
+                    <Button
+                      style={{ width: '50px' }}
+                      title="Hoje"
+                      onClick={() => {}}
+                    />
+                  </article>
+                </div>
+
+                <div>
+                  <p>Usuário Encerramento</p>
+                  <label>
+                    <input
+                      type="text"
+                      value={'Iniciais do usuário'}
+                      // value={`${filterSelect.data_envio_filter}`}
+                      // title="Envio"
+                      // {...register('data_envio_filter')}
+                      // data={isDataSimNao}
+                      // data={() => []}
+                    />
+                  </label>
+                  <article>
+                    <Button
+                      style={{ width: '50px' }}
+                      title="Eu"
+                      onClick={() => {}}
+                    />
+                  </article>
+                </div>
+              </ContentFilterDates>
 
               <Button
                 style={{
@@ -519,70 +723,9 @@ export default function ProtocoloList({
               />
             </div>
           </div>
+
           <BackPage backRoute="/" discartPageBack />
         </Box>
-        <ContentFilterDates>
-          <div>
-            <p>Recebimento De:</p>
-            <label>
-              <input
-                type="date"
-                // value={`${filterSelect.data_envio_filter}`}
-                // title="Envio"
-                {...register('data_envio_filter')}
-                // data={isDataSimNao}
-                // data={() => []}
-              />
-            </label>
-            {/* <label>
-            Até:
-            <input
-              type="date"
-              // value={`${filterSelect.data_envio_filter}`}
-              // title="Envio"
-              // {...register('data_envio_filter')}
-              // data={isDataSimNao}
-              // data={() => []}
-            />
-          </label> */}
-            <p>Até:</p>
-            <article>
-              <Button title="Dia" onClick={() => {}} />
-              <Button title="Mês" onClick={() => {}} />
-              <Button title="Ano" onClick={() => {}} />
-            </article>
-          </div>
-          <div>
-            <p>Envio De:</p>
-            <label>
-              <input
-                type="date"
-                // value={`${filterSelect.data_envio_filter}`}
-                // title="Envio"
-                {...register('data_envio_filter')}
-                // data={isDataSimNao}
-                // data={() => []}
-              />
-            </label>
-            {/* <label>
-            Até:
-            <input
-              type="date"
-              // value={`${filterSelect.data_envio_filter}`}
-              // title="Envio"
-              // {...register('data_envio_filter')}
-              // data={isDataSimNao}
-              // data={() => []}
-            />
-          </label> */}
-            <p>Até:</p>
-            <article>
-              <Button title="Dia" onClick={() => {}} />
-              <Button title="Mês" onClick={() => {}} />
-              <Button title="Ano" onClick={() => {}} />
-            </article>
-          </div>
-        </ContentFilterDates>
       </div>
 
       {/* <DataGridDemo columns={columns} rows={data} w="100%" /> */}
