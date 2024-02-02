@@ -14,30 +14,26 @@ import { SelectOptions } from '@/components/SelectOptions'
 import { BackPage } from '../../../components/BackPage'
 
 const schemaEmpresaForm = z.object({
+  id: z.number(),
   num_protocolo: z.string(),
   assunto_protocolo: z.string(),
   tipo_protocolo: z.string(),
-  remetente: z.string(),
-  destinatario: z.string(),
-  data_recebimento: z.string(),
-  data_recebimento_dia: z.number(),
-  data_recebimento_mes: z.number(),
-  data_recebimento_ano: z.number(),
-  data_envio: z.string(),
-  data_envio_dia: z.number(),
-  data_envio_mes: z.number(),
-  data_envio_ano: z.number(),
+  data_recebimento_dia: z.string(),
+  data_recebimento_mes: z.string(),
+  data_recebimento_ano: z.string(),
+  data_envio_dia: z.string(),
+  data_envio_mes: z.string(),
+  data_envio_ano: z.string(),
   meio_recebimento: z.string(),
   meio_envio: z.string(),
-  quem_redigiu_documento_a_ser_enviado: z.string(),
+  quem_redigiu_envio: z.string(),
   entregue_em_maos: z.boolean(),
-  doc_entrada_requer_resposta: z.boolean(),
-  anexos: z.string(), // ALTERAR PARA ANEXO DE ARQUIVO
-  data_encerramento_protocolo: z.string(),
-  data_encerramento_protocolo_dia: z.number(),
-  data_encerramento_protocolo_mes: z.number(),
-  data_encerramento_protocolo_ano: z.number(),
-  usuario_encerramento_protocolo: z.string(), // ALTERAR PARA USUÁRIO
+  obrigatoria_resp_receb: z.boolean(),
+  anexos: z.any(), // ALTERAR PARA ANEXO DE ARQUIVO
+  data_encerramento_protocolo_dia: z.string(),
+  data_encerramento_protocolo_mes: z.string(),
+  data_encerramento_protocolo_ano: z.string(),
+  usuario_encerramento: z.any(), // ALTERAR PARA USUÁRIO
 })
 
 type SchemaEmpresaForm = z.infer<typeof schemaEmpresaForm>
@@ -51,7 +47,7 @@ export default function Vizualizar({ data }: schemaEmpresasProps) {
     <Container>
       <form>
         <Box style={{ justifyContent: 'end' }}>
-          <BackPage backRoute="/protocolos" discartPageBack />
+          <BackPage backRoute="/protocolos" />
         </Box>
         <fieldset>
           <legend>
@@ -133,7 +129,7 @@ export default function Vizualizar({ data }: schemaEmpresasProps) {
             <div style={{ width: '15%' }}>
               <SwitchInput
                 title="Documento de entrada requer resposta?"
-                defaultChecked={data.doc_entrada_requer_resposta}
+                defaultChecked={data.obrigatoria_resp_receb}
                 disabled={true}
               />
             </div>
@@ -220,7 +216,7 @@ export default function Vizualizar({ data }: schemaEmpresasProps) {
             <div style={{ width: '30%' }}>
               <TextInput
                 title="Usuário Encerramento Protocolo"
-                value={data.usuario_encerramento_protocolo}
+                value={data.usuario_encerramento}
               />
             </div>
           </Box>
@@ -268,8 +264,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
           : null
 
       const dataEncerramento =
-        data.data_encerramento_protocolo != undefined
-          ? new Date(data.data_encerramento_protocolo)
+        data.data_encerramento != undefined
+          ? new Date(data.data_encerramento)
               .toISOString()
               .replace(/T.*/, '')
               .split('-')
@@ -288,16 +284,16 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         data_envio_dia: Number(dataEnvio?.split('/')[0]),
         data_envio_mes: Number(dataEnvio?.split('/')[1]),
         data_envio_ano: Number(dataEnvio?.split('/')[2]),
-        data_encerramento_protocolo: dataEncerramento,
-        data_encerramento_protocolo_dia: Number(
-          dataEncerramento?.split('/')[0],
-        ),
-        data_encerramento_protocolo_mes: Number(
-          dataEncerramento?.split('/')[1],
-        ),
-        data_encerramento_protocolo_ano: Number(
-          dataEncerramento?.split('/')[2],
-        ),
+        data_encerramento: dataEncerramento,
+        // data_encerramento_protocolo_dia: Number(
+        //   dataEncerramento?.split('/')[0],
+        // ),
+        // data_encerramento_protocolo_mes: Number(
+        //   dataEncerramento?.split('/')[1],
+        // ),
+        // data_encerramento_protocolo_ano: Number(
+        //   dataEncerramento?.split('/')[2],
+        // ),
       }
 
       return {

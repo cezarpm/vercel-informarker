@@ -343,7 +343,7 @@ export default function ProtocolosAtualizar({ data }: schemaProtocoloProps) {
     <Container>
       <form onSubmit={handleSubmit(OnSubmit)}>
         <Box style={{ justifyContent: 'end' }}>
-          <BackPage backRoute="/protocolos" discartPageBack />
+          <BackPage backRoute="/protocolos" />
         </Box>
         <fieldset>
           <legend>
