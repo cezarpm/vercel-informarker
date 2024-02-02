@@ -17,3 +17,42 @@ export const Box = styled('div', {
   gap: '2rem',
   width: '100%',
 })
+
+export const ContentFilterDates = styled('div', {
+  display: 'flex',
+  flexDirection: 'column',
+  p: {
+    fontSize: '12px',
+    minWidth: '100px',
+    textAlign: 'left',
+    display: 'flex',
+    alignItems: 'center',
+  },
+  input: {
+    border: 'solid 1px',
+    borderTopColor: 'transparent',
+    borderLeftColor: 'transparent',
+    borderRightColor: 'transparent',
+    height: '100%',
+    fontFamily: 'Roboto',
+  },
+  span: {
+    fontSize: '12px',
+  },
+  '>div': {
+    display: 'flex',
+    gap: '0.5rem',
+    alignItems: 'end',
+    justifyContent: 'space-between',
+  },
+  article: {
+    display: 'flex',
+    gap: '0.1rem',
+  },
+  button: {
+    margin: '0px',
+    fontSize: '12px',
+    border: 'solid 1px',
+    padding: '0.3rem 0.5rem',
+  },
+})
