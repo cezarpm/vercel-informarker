@@ -85,20 +85,30 @@ export const EtiquetaPDFCompany = async (linhas: number[], exibirContatoPrimario
 
       doc.setFontSize(12);
       const splitNome = doc.splitTextToSize(`${cod_empresa} - ${razao_social}`, 80);
+      const nomeHeight = doc.getTextDimensions(splitNome).h;
+
       doc.text(splitNome, startX + 4, 12 + startY);
 
       doc.setFontSize(10);
       const splitEndereco = doc.splitTextToSize(`${logradouro} , ${numero} ${complemento}`, 80);
-      doc.text(splitEndereco, startX + 4, 22 + startY);
+      const enderecoHeight = doc.getTextDimensions(splitEndereco).h;
+
+      doc.text(splitEndereco, startX + 4, 12 + startY + nomeHeight + 2);
 
       const splitBairro = doc.splitTextToSize(`${bairro}`, 80);
-      doc.text(splitBairro, startX + 4, 27 + startY);
+      const bairroHeight = doc.getTextDimensions(splitBairro).h;
+
+      doc.text(splitBairro, startX + 4, 12 + startY + nomeHeight + 2 + enderecoHeight + 2);
 
       const splitCidade = doc.splitTextToSize(`${cep} - ${cidade} / ${uf}`, 80);
-      doc.text(splitCidade, startX + 4, 32 + startY);
+      const cidadeHeight = doc.getTextDimensions(splitCidade).h;
+
+      doc.text(splitCidade, startX + 4, 12 + startY + nomeHeight + 2 + enderecoHeight + 2 + bairroHeight + 2);
 
       const splitContato = doc.splitTextToSize(`${tratamento} ${contato}`, 80);
-      doc.text(splitContato, startX + 4, 37 + startY);
+      const contatoHeight = doc.getTextDimensions(splitContato).h;
+
+      doc.text(splitContato, startX + 4, 12 + startY + nomeHeight + 2 + enderecoHeight + 2 + bairroHeight + 2 + cidadeHeight + 2);
 
     } catch (error) {
       toast.error('Erro ao gerar etiquetas')
