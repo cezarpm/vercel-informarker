@@ -57,7 +57,6 @@ class ArrayDate {
     const date = formatISO(
       parse(`${year}-${month}-${day}`, 'yyyy-MM-dd', new Date()),
     )
-    console.log(date)
     return date
   }
 

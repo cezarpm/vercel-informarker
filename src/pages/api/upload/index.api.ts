@@ -28,6 +28,7 @@ const multerUpload = upload.fields([
   { name: 'certificado_conclusao_especializacao', maxCount: 1 },
   { name: 'declaracao_hospital', maxCount: 1 },
   { name: 'diploma_medicina', maxCount: 1 },
+  { name: 'anexos', maxCount: 1 },
 ])
 
 export default async function handler(
@@ -42,7 +43,30 @@ export default async function handler(
           .status(400)
           .json({ success: false, error: 'Erro ao processar o arquivo' })
       }
+      // Lista de todos os campos de arquivo
+      const fileFields = [
+        'comprovante_cpf',
+        'comprovante_endereco',
+        'carta_indicacao_2_membros',
+        'certidao_quitacao_crm',
+        'certificado_conclusao_especializacao',
+        'declaracao_hospital',
+        'diploma_medicina',
+        'anexos',
+      ]
 
+      // Verifica se algum arquivo não é um PDF
+      const isNotPdf = fileFields.some((field) => {
+        const file = req.files[field]?.[0]
+        return file && file.mimetype !== 'application/pdf'
+      })
+
+      if (isNotPdf) {
+        return res.status(400).json({
+          success: false,
+          error: 'Todos os arquivos devem ser no formato PDF.',
+        })
+      }
       const cpfFile = req.files.comprovante_cpf?.[0]
       const enderecoFile = req.files.comprovante_endereco?.[0]
       const fileCartaIndicacao = req.files.carta_indicacao_2_membros?.[0]
@@ -51,6 +75,9 @@ export default async function handler(
         req.files.certificado_conclusao_especializacao?.[0]
       const fileDeclaracaoHospital = req.files.declaracao_hospital?.[0]
       const fileDiplomaMedicina = req.files.diploma_medicina?.[0]
+      const fileAnexos = req.files.anexos?.[0]
+
+      // console.log(fileAnexosProtocolos)
 
       // if (
       //   !cpfFile ||
@@ -140,6 +167,16 @@ export default async function handler(
 
       const names_arquivos = []
 
+      if (fileAnexos) {
+        const anexosFileName = `ANEXO_PROTOCOLO_id-${idRamdom}${timestamp}.pdf`
+        const anexosUploadPath = path.join(
+          process.cwd(),
+          'upload',
+          anexosFileName,
+        )
+        fs.writeFileSync(anexosUploadPath, fileAnexos.buffer)
+        names_arquivos.push({ anexoProtocolo: anexosFileName })
+      }
       // Processar e salvar apenas os arquivos que foram enviados
       if (cpfFile) {
         const cpfFileName = `COMPROVANTE_CPF_id-${idRamdom}${timestamp}.pdf`

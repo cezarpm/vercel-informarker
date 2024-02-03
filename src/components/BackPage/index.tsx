@@ -13,6 +13,16 @@ export function BackPage({
   discartPageBack,
 }: schemaBackPageComponent) {
   const { setVoltarPagina } = useContextCustom()
+  async function limparCache() {
+    try {
+      const cache = await caches.open('cache') // Abre o cache específico
+      const chaves = await cache.keys() // Obtém todas as chaves (requests) no cache
+      await Promise.all(chaves.map((chave) => cache.delete(chave))) // Deleta cada item no cache
+    } catch (error) {
+      console.error('Erro ao limpar o cache:', error)
+    }
+  }
+
   return (
     <Container>
       <Box>
@@ -20,7 +30,14 @@ export function BackPage({
           href={`/${backRoute}`}
           onClick={() => {
             // eslint-disable-next-line no-unused-expressions
-            discartPageBack ? setVoltarPagina(0) : null
+            discartPageBack
+              ? (setVoltarPagina(0),
+                localStorage.removeItem('@paginationOld'),
+                localStorage.removeItem('@filtro'),
+                localStorage.removeItem('@valuesSelected'),
+                localStorage.removeItem('@pageCache'),
+                limparCache())
+              : null
           }}
           style={{
             textDecoration: 'none',

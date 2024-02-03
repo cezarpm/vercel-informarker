@@ -10,6 +10,7 @@ interface schemaSelect {
   data: any
   style?: string
   p?: any
+  valueCustom?: any
 }
 
 export default function SelectNoComplete({
@@ -17,6 +18,7 @@ export default function SelectNoComplete({
   title,
   data,
   p,
+  valueCustom,
   ...rest
 }: schemaSelect) {
   return (

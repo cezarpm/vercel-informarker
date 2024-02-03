@@ -24,5 +24,5 @@ export const Box = styled('div', {
 export const ContainerFormFilter = styled('div', {
   display: 'flex',
   alignItems: 'center',
-  width: '65%',
+  marginBottom: '3rem',
 })

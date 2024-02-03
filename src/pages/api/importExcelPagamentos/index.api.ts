@@ -6,11 +6,13 @@ import { prisma } from "@/lib/prisma";
 import { Logs } from "@/utils/Logs";
 
 
+
 export const config = {
   api: {
     bodyParser: false,
   },
 };
+
 
 export default async function handler(
   req: NextApiRequest,
@@ -18,7 +20,6 @@ export default async function handler(
 ) {
   if (req.method !== "POST") {
     res.status(405).json({ message: "Somente método POST permitido" });
-
     return;
   }
 
@@ -47,7 +48,7 @@ export default async function handler(
     const csvData = fs.readFileSync(csvFilePath, "utf8");
     const records = Papa.parse(csvData, {
       header: true,
-      delimiter: ",",
+      delimiter: ';',
       skipEmptyLines: true,
     }).data;
 
@@ -100,7 +101,7 @@ export default async function handler(
                   data_pagto_unica: record.order_date //alterado para data do pedido
                     ? new Date(record.order_date).toISOString().split("T")[0]
                     : "2024-01-01 00:00:00", // DateTime ISO sem Timezone
-                  valor_pagto_unica: record.order_total
+                  valor_pagto_unico: record.order_total
                     ? record.order_total.toString()
                     : "",
                   data_pagto_parcela_1: "",

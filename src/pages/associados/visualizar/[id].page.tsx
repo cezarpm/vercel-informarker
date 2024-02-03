@@ -154,7 +154,7 @@ export default function AssociadosCadastro({
           <legend>
             <Link href="/associados">Associados</Link>
             <CaretRight size={14} />
-            <span>Vizualizar</span>
+            <span>Visualizar</span>
           </legend>
           {/* GERAIS */}
           <Fieldset>
