@@ -62,7 +62,7 @@ class ArrayDate {
 
   DesestruturarDate(date: any) {
     const resultConvert = new Date(date)
-    
+
     const dia = resultConvert.getUTCDate().toString()
     const mes = (resultConvert.getUTCMonth() + 1).toString()
     const ano = resultConvert.getUTCFullYear().toString()
