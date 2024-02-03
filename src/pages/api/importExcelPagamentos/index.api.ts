@@ -98,7 +98,7 @@ export default async function handler(
                   ano_anuidade: new Date(record.order_date)
                     .getFullYear()
                     .toString(),
-                  data_pagto_unico: record.order_date
+                  data_pagto_unica: record.order_date //alterado para data do pedido
                     ? new Date(record.order_date).toISOString().split("T")[0]
                     : "2024-01-01 00:00:00", // DateTime ISO sem Timezone
                   valor_pagto_unico: record.order_total
