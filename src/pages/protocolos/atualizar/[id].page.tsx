@@ -140,7 +140,7 @@ const assuntoProtocoloOptionsData = [
         })
       }
   */
-const quemRedigiuDocumentoOptionsData = [{ id: 1, label: 'Dr. Calazan' }]
+const quemRedigiuDocumentoOptionsData = [{ id: 1, label: '' }]
 
 type SchemaProtocoloForm = z.infer<typeof schemaProtocoloForm>
 interface schemaProtocoloProps {
@@ -226,11 +226,13 @@ export default function ProtocolosAtualizar({ data }: schemaProtocoloProps) {
       toast.error(
         'A data de recebimento deve ser toda preenchida (dia, mês e ano).',
       )
-    } else if (datasEncerramento == false) {
-      toast.error(
-        'A data de encerramento deve ser toda preenchida (dia, mês e ano).',
-      )
-    } else {
+    } 
+//    else if (datasEncerramento == false) {
+//      toast.error(
+//        'A data de encerramento deve ser toda preenchida (dia, mês e ano).',
+//      )
+//    } 
+    else {
       const {
         data_envio_dia,
         data_envio_mes,
@@ -555,7 +557,7 @@ export default function ProtocolosAtualizar({ data }: schemaProtocoloProps) {
                 width: '25rem',
               }}
             >
-              <Text>Data de Recebimento:</Text>
+              <Text>Data de Envio:</Text>
 
               <SelectOptions
                 data={dataDays}
@@ -645,7 +647,7 @@ export default function ProtocolosAtualizar({ data }: schemaProtocoloProps) {
                 width: '25rem',
               }}
             >
-              <Text>Data de Recebimento:</Text>
+              <Text>Data de Encerramento do Protocolo:</Text>
 
               <SelectOptions
                 data={dataDays}
