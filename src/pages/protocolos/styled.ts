@@ -21,6 +21,7 @@ export const Box = styled('div', {
 export const ContentFilterDates = styled('div', {
   display: 'flex',
   flexDirection: 'column',
+  fontSize: '12px',
   p: {
     fontSize: '12px',
     minWidth: '100px',

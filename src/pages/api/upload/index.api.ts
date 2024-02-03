@@ -43,7 +43,30 @@ export default async function handler(
           .status(400)
           .json({ success: false, error: 'Erro ao processar o arquivo' })
       }
+      // Lista de todos os campos de arquivo
+      const fileFields = [
+        'comprovante_cpf',
+        'comprovante_endereco',
+        'carta_indicacao_2_membros',
+        'certidao_quitacao_crm',
+        'certificado_conclusao_especializacao',
+        'declaracao_hospital',
+        'diploma_medicina',
+        'anexos',
+      ]
 
+      // Verifica se algum arquivo não é um PDF
+      const isNotPdf = fileFields.some((field) => {
+        const file = req.files[field]?.[0]
+        return file && file.mimetype !== 'application/pdf'
+      })
+
+      if (isNotPdf) {
+        return res.status(400).json({
+          success: false,
+          error: 'Todos os arquivos devem ser no formato PDF.',
+        })
+      }
       const cpfFile = req.files.comprovante_cpf?.[0]
       const enderecoFile = req.files.comprovante_endereco?.[0]
       const fileCartaIndicacao = req.files.carta_indicacao_2_membros?.[0]

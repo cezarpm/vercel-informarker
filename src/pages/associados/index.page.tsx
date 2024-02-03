@@ -199,13 +199,13 @@ export default function AssociadoList({
 
   return (
     <Container>
-      <BackPage backRoute="/" discartPageBack />
+
       <p>Associados</p>
       <ContainerFormFilter>
         <Box style={{ justifyContent: 'start', alignItems: 'end' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
             {filterSelect.situacao_filter &&
-            filterSelect.situacao_filter !== 'Todos' ? (
+              filterSelect.situacao_filter !== 'Todos' ? (
               <SelectNoComplete
                 p="0px 0px 0px 0.5rem"
                 value={`${filterSelect.situacao_filter}`}
@@ -216,7 +216,7 @@ export default function AssociadoList({
             ) : null}
 
             {filterSelect.situacao_filter &&
-            filterSelect.situacao_filter === 'Todos' ? (
+              filterSelect.situacao_filter === 'Todos' ? (
               <SelectNoComplete
                 p="0px 0px 0px 0.5rem"
                 value="Todos"
@@ -227,7 +227,7 @@ export default function AssociadoList({
             ) : null}
 
             {filterSelect.categoria_filter &&
-            filterSelect.categoria_filter !== 'Todos' ? (
+              filterSelect.categoria_filter !== 'Todos' ? (
               <SelectNoComplete
                 p="0px 0px 0px 0.5rem"
                 value={`${filterSelect.categoria_filter}`}
@@ -238,7 +238,7 @@ export default function AssociadoList({
             ) : null}
 
             {filterSelect.categoria_filter &&
-            filterSelect.categoria_filter === 'Todos' ? (
+              filterSelect.categoria_filter === 'Todos' ? (
               <SelectNoComplete
                 p="0px 0px 0px 0.5rem"
                 value="Todos"
@@ -249,7 +249,7 @@ export default function AssociadoList({
             ) : null}
 
             {filterSelect.pendenciaAssociado_filter &&
-            filterSelect.pendenciaAssociado_filter !== 'Todos' ? (
+              filterSelect.pendenciaAssociado_filter !== 'Todos' ? (
               <SelectNoComplete
                 p="0px 0px 0px 0.5rem"
                 value={`${filterSelect.pendenciaAssociado_filter}`}
@@ -260,7 +260,7 @@ export default function AssociadoList({
             ) : null}
 
             {filterSelect.pendenciaAssociado_filter &&
-            filterSelect.pendenciaAssociado_filter === 'Todos' ? (
+              filterSelect.pendenciaAssociado_filter === 'Todos' ? (
               <SelectNoComplete
                 p="0px 0px 0px 0.5rem"
                 value="Todos"
@@ -283,6 +283,7 @@ export default function AssociadoList({
             onClick={BuscarFiltro}
           />
         </Box>
+        <BackPage backRoute="/" discartPageBack />
       </ContainerFormFilter>
 
       <DataGridDemo columns={columns} rows={List} w="100%" />
