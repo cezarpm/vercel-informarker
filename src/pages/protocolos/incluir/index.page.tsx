@@ -6,7 +6,7 @@ import { Container, Box, Text, FormError } from "./styled";
 import React, { ChangeEvent, useEffect, useRef, useState } from "react";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
-import { GetStaticProps } from "next";
+import { GetServerSideProps, GetStaticProps } from "next";
 import { prisma } from "@/lib/prisma";
 import { Button } from "@/components/Button";
 import { api } from "@/lib/axios";
@@ -32,12 +32,11 @@ const schemaProtocoloForm = z.object({
   data_recebimento_dia: z.string(),
   data_recebimento_mes: z.string(),
   data_recebimento_ano: z.string(),
-  data_envio_dia: z.string().min(1, { message: "Dia obrigatório" }),
-  data_envio_mes: z.string().min(1, { message: "Mês obrigatório" }),
-  data_envio_ano: z.string().min(1, { message: "Ano obrigatório" }),
+  data_envio_dia: z.string(),
+  data_envio_mes: z.string(),
+  data_envio_ano: z.string(),
   meio_recebimento: z.string(),
   meio_envio: z.string(),
-  // quem_redigiu_envio: z.string(),
   entregue_em_maos: z.boolean(),
   obrigatoria_resp_receb: z.boolean(),
   anexos: z.any(), // ALTERAR PARA ANEXO DE ARQUIVO
@@ -47,105 +46,20 @@ const schemaProtocoloForm = z.object({
   usuario_encerramento: z.any(), // ALTERAR PARA USUÁRIO
 });
 
-// ATUALIZAR QUANDO HOUVER API CORRESPONDENTE - TIPO PROTOCOLO
+type SchemaProtocoloForm = z.infer<typeof schemaProtocoloForm>
 
-/* 
-      const response = await api.get('/tabelas')
-      const filteredResponse = response.data.filter(tabela => {
-        tabela.Cod_Tabela === "Tipo_Protocol"
-      })
-      const finalResponse = []
-      filteredResponse.forEach(response => finalResponse.push(response.Ocorrencia_Tab))
 
-      const tipoProtocoloOptions = []
-      for(let i = 1; i <= finalResponse.length; i++){
-        tipoProtocoloOptions.push({
-          id: i,
-          label: finalResponse[i]
-        })
-      }
-  */
-const tipoProtocoloOptionsData = [
-  { id: 1, label: "Entrada" },
-  { id: 2, label: "Saída" },
-];
+interface schemaTabelas {
+  id: number
+  label: string
+}
 
-// ATUALIZAR QUANDO HOUVER API CORRESPONDENTE - MEIO PROTOCOLO
+interface schemaProtocolos {
+  dataCategory: schemaTabelas
+  dataMeioProtocol: schemaTabelas
+}
 
-/* 
-      const response = await api.get('/tabelas')
-      const filteredResponse = response.data.filter(tabela => {
-        tabela.Cod_Tabela === "Meio_Protocol"
-      })
-      const finalResponse = []
-      filteredResponse.forEach(response => finalResponse.push(response.Ocorrencia_Tab))
-
-      const meioProtocoloOptions = []
-      for(let i = 1; i <= finalResponse.length; i++){
-        meioProtocoloOptions.push({
-          id: i,
-          label: finalResponse[i]
-        })
-      }
-  */
-const meioProtocoloOptionsData = [
-  { id: 1, label: "Corrêio" },
-  { id: 2, label: "Email" },
-  { id: 3, label: "Whatsapp" },
-  { id: 4, label: "Web Site" },
-];
-
-// ATUALIZAR QUANDO HOUVER API CORRESPONDENTE - ASSUNTO PROTOCOLO
-
-/* 
-      const response = await api.get('/tabelas')
-      const filteredResponse = response.data.filter(tabela => {
-        tabela.Cod_Tabela === "Assunto_Protocol"
-      })
-      const finalResponse = []
-      filteredResponse.forEach(response => finalResponse.push(response.Ocorrencia_Tab))
-
-      const assuntoProtocoloOptions = []
-      for(let i = 1; i <= finalResponse.length; i++){
-        assuntoProtocoloOptions.push({
-          id: i,
-          label: finalResponse[i]
-        })
-      }
-  */
-const assuntoProtocoloOptionsData = [
-  { id: 1, label: "Protocolo de Entrada" },
-  { id: 2, label: "Protocolo de Saída" },
-  { id: 3, label: "Confidencial" },
-];
-
-// ATUALIZAR QUANDO HOUVER API CORRESPONDENTE - QUEM REDIGIU O DOCUMENTO A SER ENVIADO
-
-/* 
-      const response = await api.get('/tabelas')
-      const filteredResponse = response.data.filter(tabela => {
-        tabela.Cod_Tabela === "Quem_Redigiu_Documento_Protocol"
-      })
-      const finalResponse = []
-      filteredResponse.forEach(response => finalResponse.push(response.Ocorrencia_Tab))
-
-      const quemRedigiuDocumentoOptionsData = []
-      for(let i = 1; i <= finalResponse.length; i++){
-        quemRedigiuDocumentoOptionsData.push({
-          id: i,
-          label: finalResponse[i]
-        })
-      }
-  */
-const quemRedigiuDocumentoOptionsData = [{ id: 1, label: "Dr. Calazan" }];
-
-type SchemaProtocoloForm = z.infer<typeof schemaProtocoloForm>;
-
-type ValuePiece = Date | null;
-
-type Value = ValuePiece | [ValuePiece, ValuePiece];
-
-export default function Protocolos() {
+export default function Protocolos({ dataCategory, dataMeioProtocol }: schemaProtocolos) {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -156,7 +70,6 @@ export default function Protocolos() {
     }
   };
   const router = useRouter();
-
   const {
     register,
     handleSubmit,
@@ -164,6 +77,7 @@ export default function Protocolos() {
   } = useForm<SchemaProtocoloForm>({
     resolver: zodResolver(schemaProtocoloForm)
   });
+
   const dataDays = useArrayDate.Dia();
   const dataMonths = useArrayDate.Mes();
   const dataYears = useArrayDate.AnoAtualMenor();
@@ -208,19 +122,31 @@ export default function Protocolos() {
       );
     }
 
+    if (String(data.tipo_protocolo.toLowerCase()) === String('saída')) {
+      if (dataEnvio === undefined && data.meio_envio === '') {
+        return toast.warn('Meio Envio Obrigatório')
+      } else if (dataEnvio === undefined) {
+        return toast.warn('Data Envio Obrigatório')
+      }
+    }
+
+    if (String(data.tipo_protocolo.toLowerCase()) === String('entrada')) {
+      if (dataRecebimento === undefined && data.meio_recebimento === '') {
+        return toast.warn('Meio Recebimento Obrigatório')
+      } else if (dataRecebimento === undefined) {
+        return toast.warn('Data Recebimento Obrigatória')
+      }
+    }
 
     if (
       data.num_protocolo == "" ||
       data.tipo_protocolo == "" ||
-      data.assunto_protocolo == "" ||
-      Number.isNaN(data.data_envio_dia) ||
-      Number.isNaN(data.data_envio_mes) ||
-      Number.isNaN(data.data_envio_ano)
+      data.assunto_protocolo == ""
     ) {
       toast.error("Preencha os campos obrigatórios (*).");
     } else if ((dataEnvio != null && dataRecebimento != null) && (new Date(dataRecebimento) < new Date(dataEnvio))) {
       toast.error(
-        "A data de recebimento deve ser maior que a data de envio."
+        "A data de recebimento deve ser maior ou igual a data de envio."
       );
     } else if (datasRecebimento == false) {
       toast.error(
@@ -231,7 +157,6 @@ export default function Protocolos() {
         "A data de encerramento deve ser toda preenchida (dia, mês e ano)."
       );
     } else {
-
       const {
         data_envio_dia,
         data_envio_mes,
@@ -247,7 +172,6 @@ export default function Protocolos() {
       } = data
 
       try {
-
         const formData = new FormData()
         formData.append('anexos', data.anexos[0])
 
@@ -282,7 +206,7 @@ export default function Protocolos() {
         return toast.success('Operação concluída com sucesso')
       } catch (error) {
         console.log(error);
-        return toast.error("Ops, algo deu errado ao cadastrar o protocolo...");
+        return toast.error("Erro ao cadastrar o protocolo...");
       }
     }
   }
@@ -349,19 +273,19 @@ export default function Protocolos() {
               <TextInput
                 title="Número do Protocolo *"
                 {...register("num_protocolo")}
-                // helperText={errors.num_protocolo?.message}
-                error={!!errors.num_protocolo?.message}
                 helperText={errors.num_protocolo?.message}
+                error={!!errors.num_protocolo?.message}
+              // helperText={errors.num_protocolo?.message}
               />
             </div>
 
             <div>
               <SelectOptions
-                data={tipoProtocoloOptionsData}
+                data={dataCategory}
                 description="Tipo Protocolo *"
                 w={200}
                 {...register("tipo_protocolo")}
-                // helperText={errors.tipo_protocolo?.message}
+                helperText={errors.tipo_protocolo?.message}
                 error={!!errors.tipo_protocolo?.message}
               />
             </div>
@@ -380,47 +304,6 @@ export default function Protocolos() {
           </Box>
 
           <Box>
-            {/* <p
-              style={{
-                borderBottomColor: "#A9A9B2",
-                fontFamily: "Roboto, Helvetica, Arial, sans-serif",
-                fontWeight: "400",
-                lineHeight: "1.4375em",
-                letterSpacing: "0.00938em",
-                maxWidth: "120px",
-                width: "100%",
-              }}
-            >
-              Data de Recebimento
-            </p>
-
-            <div>
-              <SelectOptions
-                data={dataDays}
-                description="Dia"
-                w={100}
-                {...register("data_recebimento_dia")}
-              />
-            </div>
-
-            <div>
-              <SelectOptions
-                data={dataMonths}
-                description="Mês"
-                w={100}
-                {...register("data_recebimento_mes")}
-              />
-            </div>
-
-            <div>
-              <SelectOptions
-                data={dataYears}
-                description="Ano"
-                w={150}
-                {...register("data_recebimento_ano")}
-              />
-            </div> */}
-
 
             <div>
               <div
@@ -436,14 +319,14 @@ export default function Protocolos() {
                   data={dataDays}
                   w={90}
                   {...register('data_recebimento_dia')}
-                // defaultValue={{ label: newDateAnuidade.dia }}
+                //  defaultValue={{ label: newDateAnuidade.dia }}
                 />
                 <SelectOptions
                   data={dataMonths}
                   description="Mês"
                   w={90}
                   {...register('data_recebimento_mes')}
-                // defaultValue={{ label: newDateAnuidade.mes }}
+                //  defaultValue={{ label: newDateAnuidade.mes }}
                 />
                 <SelectOptions
                   w={120}
@@ -459,22 +342,13 @@ export default function Protocolos() {
                   justifyContent: 'space-between',
                 }}
               >
-                {/* <FormError>
-                  {errors.data_recebimento_dia?.message ||
-                    errors.data_recebimento_mes?.message ||
-                    errors.data_recebimento_ano?.message
-                    ? 'Data de Recebimento:'
-                    : null}
-                </FormError>
-                <FormError>{errors.data_recebimento_dia?.message}</FormError>
-                <FormError>{errors.data_recebimento_mes?.message}</FormError>
-                <FormError>{errors.data_recebimento_ano?.message}</FormError> */}
+
               </span>
             </div>
 
             <div>
               <SelectOptions
-                data={meioProtocoloOptionsData}
+                data={dataMeioProtocol}
                 description="Meio de Recebimento"
                 w={225}
                 {...register("meio_recebimento")}
@@ -497,54 +371,6 @@ export default function Protocolos() {
           </Box>
 
           <Box>
-            {/* <p
-              style={{
-                borderBottomColor: "#A9A9B2",
-                fontFamily: "Roboto, Helvetica, Arial, sans-serif",
-                fontWeight: "400",
-                lineHeight: "1.4375em",
-                letterSpacing: "0.00938em",
-                maxWidth: "120px",
-                width: "100%",
-              }}
-            >
-              Data de Envio
-            </p>
-
-            <div>
-              <SelectOptions
-                data={dataDays}
-                description="Dia *"
-                w={100}
-                {...register("data_envio_dia")}
-                // helperText={errors.data_envio_dia?.message}
-                error={!!errors.data_envio_dia?.message}
-              />
-            </div>
-
-            <div>
-              <SelectOptions
-                data={dataMonths}
-                description="Mês *"
-                w={100}
-                {...register("data_envio_mes")}
-                // helperText={errors.data_envio_mes?.message}
-                error={!!errors.data_envio_mes?.message}
-              />
-            </div>
-
-            <div>
-              <SelectOptions
-                data={dataYears}
-                description="Ano *"
-                w={150}
-                {...register("data_envio_ano")}
-                // helperText={errors.data_envio_ano?.message}
-                error={!!errors.data_envio_ano?.message}
-              />
-            </div> */}
-
-
             <div>
               <div
                 style={{
@@ -555,7 +381,7 @@ export default function Protocolos() {
               >
                 <Text> Data de Envio:</Text>
                 <SelectOptions
-                  description="Dia *"
+                  description="Dia"
                   data={dataDays}
                   w={90}
                   {...register('data_envio_dia')}
@@ -563,14 +389,14 @@ export default function Protocolos() {
                 />
                 <SelectOptions
                   data={dataMonths}
-                  description="Mês *"
+                  description="Mês"
                   w={93}
                   {...register('data_envio_mes')}
                 // defaultValue={{ label: newDateAnuidade.mes }}
                 />
                 <SelectOptions
                   w={120}
-                  description="Ano *"
+                  description="Ano"
                   data={dataYears}
                   {...register('data_envio_ano')}
                 // defaultValue={{ label: newDateAnuidade.ano }}
@@ -597,7 +423,7 @@ export default function Protocolos() {
 
             <div>
               <SelectOptions
-                data={meioProtocoloOptionsData}
+                data={dataMeioProtocol}
                 description="Meio de Envio"
                 w={225}
                 {...register("meio_envio")}
@@ -605,57 +431,7 @@ export default function Protocolos() {
             </div>
           </Box>
 
-          {/* <Box>
-            <div>
-              <TextInput
-                title="Quem redigiu documento a ser enviado?"
-                w={500}
-                {...register("quem_redigiu_envio")}
-              />
-            </div>
-          </Box> */}
-
           <Box>
-            {/* <p
-              style={{
-                borderBottomColor: "#A9A9B2",
-                fontFamily: "Roboto, Helvetica, Arial, sans-serif",
-                fontWeight: "400",
-                lineHeight: "1.4375em",
-                letterSpacing: "0.00938em",
-              }}
-            >
-              Data de Encerramento do Protocolo
-            </p>
-
-            <div>
-              <SelectOptions
-                data={dataDays}
-                description="Dia"
-                w={100}
-                {...register("data_encerramento_protocolo_dia")}
-              />
-            </div>
-
-            <div>
-              <SelectOptions
-                data={dataMonths}
-                description="Mês"
-                w={100}
-                {...register("data_encerramento_protocolo_mes")}
-              />
-            </div>
-
-            <div>
-              <SelectOptions
-                data={dataYears}
-                description="Ano"
-                w={150}
-                {...register("data_encerramento_protocolo_ano")}
-              />
-            </div> */}
-
-
             <div>
               <div
                 style={{
@@ -774,4 +550,48 @@ export default function Protocolos() {
       </form>
     </Container>
   );
+}
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  try {
+    const category = await prisma.tabelas.findMany({
+      where: {
+        codigo_tabela: 'Tipo_Protocol',
+      },
+    })
+
+    const dataCategory = category?.map(item => {
+      return {
+        id: item.id,
+        label: item.ocorrencia_tabela
+      }
+    })
+    const meioProtocol = await prisma.tabelas.findMany({
+      where: {
+        codigo_tabela: 'Meio_Protocol',
+      },
+    })
+
+    const dataMeioProtocol = meioProtocol?.map(item => {
+      return {
+        id: item.id,
+        label: item.ocorrencia_tabela
+      }
+    })
+
+    return {
+      props: {
+        dataCategory,
+        dataMeioProtocol,
+
+      },
+    }
+  } catch (error) {
+    return {
+      props: {
+        dataCategory: [],
+        dataMeioProtocol: [],
+      },
+    }
+  }
 }
