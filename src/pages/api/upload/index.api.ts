@@ -171,7 +171,7 @@ export default async function handler(
         const anexosFileName = `ANEXO_PROTOCOLO_id-${idRamdom}${timestamp}.pdf`
         const anexosUploadPath = path.join(
           process.cwd(),
-          'upload',
+          'public/upload',
           anexosFileName,
         )
         fs.writeFileSync(anexosUploadPath, fileAnexos.buffer)
@@ -189,7 +189,7 @@ export default async function handler(
         const enderecoFileName = `COMPROVANTE_ENDERECO_id-${idRamdom}${timestamp}.pdf`
         const enderecoUploadPath = path.join(
           process.cwd(),
-          'upload',
+          'public/upload',
           enderecoFileName,
         )
         fs.writeFileSync(enderecoUploadPath, enderecoFile.buffer)
@@ -200,7 +200,7 @@ export default async function handler(
         const cartaIndicacaoFileName = `CARTA_INDICACAO_MEMBROS_id-${idRamdom}${timestamp}.pdf`
         const cartaIndicacaoUploadPath = path.join(
           process.cwd(),
-          'upload',
+          'public/upload',
           cartaIndicacaoFileName,
         )
         fs.writeFileSync(cartaIndicacaoUploadPath, fileCartaIndicacao.buffer)
@@ -211,7 +211,7 @@ export default async function handler(
         const certidaoQuitacaoFileName = `CERTIDAO_QUITACAO_CRM_id-${idRamdom}${timestamp}.pdf`
         const certidaoQuitacaoUploadPatch = path.join(
           process.cwd(),
-          'upload',
+          'public/upload',
           certidaoQuitacaoFileName,
         )
         fs.writeFileSync(
@@ -226,7 +226,7 @@ export default async function handler(
         const certificadoConclusaoEspecializacaoFileName = `CERTIFICADO_CONCLUSAO_ESPECIALIZACAO_id-${idRamdom}${timestamp}.pdf`
         const certificadoConclusaoEspecializacaoUploadPatch = path.join(
           process.cwd(),
-          'upload',
+          'public/upload',
           certificadoConclusaoEspecializacaoFileName,
         )
         fs.writeFileSync(
@@ -240,7 +240,7 @@ export default async function handler(
         const declaracaoHospitalFileName = `DECLARACAO_HOSPITAL_id-${idRamdom}${timestamp}.pdf`
         const declaracaoHospitalUploadPatch = path.join(
           process.cwd(),
-          'upload',
+          'public/upload',
           declaracaoHospitalFileName,
         )
         fs.writeFileSync(
@@ -254,7 +254,7 @@ export default async function handler(
         const diplomaMedicinaFileName = `DIPLOMA_MEDICINA_id-${idRamdom}${timestamp}.pdf`
         const diplomaMedicinaUploadPatch = path.join(
           process.cwd(),
-          'upload',
+          'public/upload',
           diplomaMedicinaFileName,
         )
         fs.writeFileSync(diplomaMedicinaUploadPatch, fileDiplomaMedicina.buffer)

@@ -19,6 +19,7 @@ import { toast } from 'react-toastify'
 import { useRouter } from 'next/router'
 import { useArrayDate } from '../../../utils/useArrayDate'
 import { BackPage } from '../../../components/BackPage'
+import { ButtonDownload } from '@/components/ButtonDownload'
 
 // import 'react-date-picker/dist/DatePicker.css';
 // import 'react-calendar/dist/Calendar.css';
@@ -389,73 +390,6 @@ export default function ProtocolosAtualizar({ data }: schemaProtocoloProps) {
           </Box>
 
           <Box>
-            {/* <p
-              style={{
-                borderBottomColor: '#A9A9B2',
-                fontFamily: 'Roboto, Helvetica, Arial, sans-serif',
-                fontWeight: '400',
-                lineHeight: '1.4375em',
-                letterSpacing: '0.00938em',
-                maxWidth: '120px',
-                width: '100%',
-              }}
-            >
-              Data de Recebimento
-            </p>
-
-            <div>
-              <SelectOptions
-                data={dataDays}
-                description="Dia"
-                w={100}
-                {...register('data_recebimento_dia', {
-                  valueAsNumber: true, // Essa opção indica que o valor deve ser tratado como número
-                  setValueAs: (value) => parseInt(value), // Função para converter o valor para número
-                })}
-                defaultValue={
-                  dataDays.find(
-                    (option) =>
-                      option.label == String(data.data_recebimento_dia),
-                  ) || null
-                }
-              />
-            </div>
-
-            <div>
-              <SelectOptions
-                data={dataMonths}
-                description="Mês"
-                w={100}
-                {...register('data_recebimento_mes', {
-                  valueAsNumber: true, // Essa opção indica que o valor deve ser tratado como número
-                  setValueAs: (value) => parseInt(value), // Função para converter o valor para número
-                })}
-                defaultValue={
-                  dataMonths.find(
-                    (option) =>
-                      option.label == String(data.data_recebimento_mes),
-                  ) || null
-                }
-              />
-            </div>
-
-            <div>
-              <SelectOptions
-                data={dataYears}
-                description="Ano"
-                w={150}
-                {...register('data_recebimento_ano', {
-                  valueAsNumber: true, // Essa opção indica que o valor deve ser tratado como número
-                  setValueAs: (value) => parseInt(value), // Função para converter o valor para número
-                })}
-                defaultValue={
-                  dataYears.find(
-                    (option) =>
-                      option.label == String(data.data_recebimento_ano),
-                  ) || null
-                }
-              />
-            </div> */}
 
             <div>
               <div
@@ -622,22 +556,7 @@ export default function ProtocolosAtualizar({ data }: schemaProtocoloProps) {
             </div>
           </Box>
 
-          {/* <Box>
-            <div>
-              <SelectOptions
-                data={quemRedigiuDocumentoOptionsData}
-                description="Quem redigiu documento a ser enviado?"
-                w={500}
-                {...register('quem_redigiu_envio')}
-                defaultValue={
-                  quemRedigiuDocumentoOptionsData.find(
-                    (option) =>
-                      option.label == data.quem_redigiu_envio,
-                  ) || null
-                }
-              />
-            </div>
-          </Box> */}
+
 
           <Box>
             <div
@@ -697,7 +616,7 @@ export default function ProtocolosAtualizar({ data }: schemaProtocoloProps) {
                   ) || null
                 }
               />
-              </div>
+            </div>
             <div>
               <TextInput
                 w={200}
@@ -709,7 +628,12 @@ export default function ProtocolosAtualizar({ data }: schemaProtocoloProps) {
           </Box>
 
           <Box>
-            <div>
+
+            <ButtonDownload
+              nameButton='Baixar Arquivo'
+              nameFile={data.anexos}
+            />
+            {/* <div>
               <h4
                 style={{
                   borderBottomColor: '#A9A9B2',
@@ -754,7 +678,7 @@ export default function ProtocolosAtualizar({ data }: schemaProtocoloProps) {
                   </ul>
                 </div>
               )}
-            </div>
+            </div> */}
           </Box>
 
           <Button
