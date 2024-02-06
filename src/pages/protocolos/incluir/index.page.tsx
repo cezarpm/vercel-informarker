@@ -10,7 +10,7 @@ import { GetStaticProps } from "next";
 import { prisma } from "@/lib/prisma";
 import { Button } from "@/components/Button";
 import { api } from "@/lib/axios";
-import axios from "axios";
+import axios, { AxiosError } from "axios";
 import { TextInput } from "@/components/TextInput";
 import { SelectOptions } from "@/components/SelectOptions";
 import { SwitchInput } from "@/components/SwitchInput";
@@ -37,7 +37,7 @@ const schemaProtocoloForm = z.object({
   data_envio_ano: z.string().min(1, { message: "Ano obrigatório" }),
   meio_recebimento: z.string(),
   meio_envio: z.string(),
-  quem_redigiu_envio: z.string(),
+  // quem_redigiu_envio: z.string(),
   entregue_em_maos: z.boolean(),
   obrigatoria_resp_receb: z.boolean(),
   anexos: z.any(), // ALTERAR PARA ANEXO DE ARQUIVO
@@ -207,7 +207,7 @@ export default function Protocolos() {
         data.data_encerramento_protocolo_dia
       );
     }
-    
+
 
     if (
       data.num_protocolo == "" ||
@@ -252,25 +252,35 @@ export default function Protocolos() {
 
         const formData = new FormData()
         formData.append('anexos', data.anexos[0])
-       
 
-        const response = await axios.post('/api/upload', formData, {
-          headers: {
-            'Content-Type': 'multipart/form-data',
-          },
-        })
-        const nameFile = response.data.names_arquivos?.map((item: any) => {
-           return item.anexoProtocolo
-         })
+        const handlePostUpload = async () => {
+          try {
+            const response = await axios.post('/api/upload', formData, {
+              headers: {
+                'Content-Type': 'multipart/form-data',
+              },
+            })
+            const nameFile = response.data.names_arquivos?.map((item: any) => {
+              return item.anexoProtocolo
+            })
+            return nameFile
+          } catch (error: any) {
+            toast.error(error?.response?.data.error)
+            console.log(error?.response?.data.error)
+          }
+        }
 
-        await api.post("/protocolos/incluir", { 
+        const NameUpload = await handlePostUpload()
+
+        await api.post("/protocolos/incluir", {
           ...newData,
           data_envio: dataEnvio,
           data_recebimento: dataRecebimento,
           data_encerramento: dataEncerramento,
-          anexos: nameFile[0]
+          anexos: NameUpload[0]
         });
-        // router.push("/protocolos");
+
+        router.push("/protocolos");
         return toast.success('Operação concluída com sucesso')
       } catch (error) {
         console.log(error);
@@ -320,19 +330,19 @@ export default function Protocolos() {
   return (
     <Container>
       <form onSubmit={handleSubmit(handleOnSubmit)}>
-       
+
         <fieldset>
           <legend style={{ width: '100%', justifyContent: 'space-between', flexWrap: 'wrap' }}>
-            <div style={{display: 'flex', alignItems:'center', gap: '0.5rem'}}>
-            <span>
-              <Link href={"/protocolos"}>Protocolos</Link>
-            </span>
-            <CaretRight size={14} />
-            <span>Cadastro</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <span>
+                <Link href={"/protocolos"}>Protocolos</Link>
+              </span>
+              <CaretRight size={14} />
+              <span>Cadastro</span>
             </div>
             <div>
               {/* <Box style={{ alignItems: "center", display: 'flex' }}> */}
-                <BackPage backRoute="/protocolos" />
+              <BackPage backRoute="/protocolos" />
               {/* </Box> */}
             </div>
           </legend>
@@ -413,7 +423,7 @@ export default function Protocolos() {
               />
             </div> */}
 
-            
+
             <div>
               <div
                 style={{
@@ -586,7 +596,7 @@ export default function Protocolos() {
                 <FormError>{errors.data_envio_ano?.message}</FormError>
               </span>
             </div>
-            
+
             <div>
               <SelectOptions
                 data={meioProtocoloOptionsData}
@@ -597,16 +607,15 @@ export default function Protocolos() {
             </div>
           </Box>
 
-          <Box>
+          {/* <Box>
             <div>
-              <SelectOptions
-                data={quemRedigiuDocumentoOptionsData}
-                description="Quem redigiu documento a ser enviado?"
+              <TextInput
+                title="Quem redigiu documento a ser enviado?"
                 w={500}
                 {...register("quem_redigiu_envio")}
               />
             </div>
-          </Box>
+          </Box> */}
 
           <Box>
             {/* <p
@@ -648,7 +657,7 @@ export default function Protocolos() {
               />
             </div> */}
 
-            
+
             <div>
               <div
                 style={{
@@ -723,7 +732,7 @@ export default function Protocolos() {
               >
                 Anexos
               </h4>
-              <input type="file" {...register('anexos')} multiple onInput={handleFileChange} />
+              <input type="file" accept="application/pdf" {...register('anexos')} multiple onInput={handleFileChange} />
               {selectedFiles.length > 0 && (
                 <div>
                   <b>

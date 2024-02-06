@@ -25,6 +25,7 @@ import {
 } from 'date-fns'
 import { ptBR } from 'date-fns/locale'
 import { useArrayDate } from '@/utils/useArrayDate'
+import { DateField } from '@mui/x-date-pickers'
 
 const shemaFilter = z.object({
   tipo_protocolo_filter: z.string(),
@@ -132,12 +133,12 @@ export default function ProtocoloList({
       width: 180,
       disableColumnMenu: true,
     },
-    {
-      field: 'quem_redigiu_documento_a_ser_enviado',
-      headerName: 'Quem redigiu o documento',
-      width: 210,
-      disableColumnMenu: true,
-    },
+    // {
+    //   field: 'quem_redigiu_documento_a_ser_enviado',
+    //   headerName: 'Quem redigiu o documento',
+    //   width: 210,
+    //   disableColumnMenu: true,
+    // },
     {
       field: 'entregue_em_maos',
       headerName: 'Entregue em Mãos',
@@ -157,13 +158,13 @@ export default function ProtocoloList({
       disableColumnMenu: true,
     },
     {
-      field: 'data_encerramento_protocolo',
+      field: 'data_encerramento',
       headerName: 'Data encerramento',
       width: 180,
       disableColumnMenu: true,
     },
     {
-      field: 'usuario_encerramento_protocolo',
+      field: 'usuario_encerramento',
       headerName: 'Usuário Encerramento',
       width: 180,
       disableColumnMenu: true,
@@ -171,6 +172,8 @@ export default function ProtocoloList({
   ]
 
   const { register, watch, setValue } = useForm<SchemaFilter>()
+
+  //
   function handleCheckDateUser() {
     const dataDigitadaEnvio = watch('data_envio_filter_de')
     const dataDigitadaRecebimento = watch('data_recebimento_filter_de')
@@ -188,6 +191,8 @@ export default function ProtocoloList({
 
     return compareEnvio || compareRecebimento
   }
+
+  // FILTRO PAGINA
   function BuscarFiltro() {
     const checkDateEnvio: boolean = handleCheckDateUser()
     if (checkDateEnvio) {
@@ -295,24 +300,46 @@ export default function ProtocoloList({
       })
     }
 
-    // if (meioRecebidoFilter && meioRecebidoFilter !== 'Todos') {
-    //   filteredList = filteredList.filter((item: any) => {
-    //     console.log('log:', item.meio_recebimento)
-    //     return item.meio_recebimento === meioRecebidoFilter
-    //   })
-    //   console.log(filteredList)
-    // }
+    if (meioRecebidoFilter && meioRecebidoFilter !== 'Todos') {
+      filteredList = filteredList.filter((item: any) => {
+        return item.meio_recebimento === meioRecebidoFilter
+      })
+    }
 
-    // if (meioEvnioFilter && meioEvnioFilter !== 'Todos') {
-    //   filteredList = filteredList.filter((item: any) => {
-    //     return item.meio_envio === meioEvnioFilter
-    //   })
-    // }
-    // if (dataEncerramentoFilter && dataEncerramentoFilter !== 'Todos') {
-    //   filteredList = filteredList.filter((item: any) => {
-    //     return item.data_encerramento === dataEncerramentoFilter
-    //   })
-    // }
+    if (meioEvnioFilter && meioEvnioFilter !== 'Todos') {
+      filteredList = filteredList.filter((item: any) => {
+        return item.meio_envio === meioEvnioFilter
+      })
+    }
+
+    // aqui
+    if (dataEncerramentoFilter && dataEncerramentoFilter !== 'Todos') {
+      const dataInicio = parseISO(dataEncerramentoFilter)
+
+      filteredList = filteredList.filter((item: any) => {
+        if (item.data_encerramento) {
+          const desestructDate = useArrayDate.extrairComponentesData(
+            item.data_encerramento,
+          )
+          const estrutureDateStr = useArrayDate.MontarDate(
+            desestructDate.ano,
+            desestructDate.mes,
+            desestructDate.dia,
+          )
+          const estrutureDate = new Date(estrutureDateStr)
+          const formattedEstrutureDate = format(estrutureDate, 'yyyy-MM-dd')
+          const formattedDataInicio = format(dataInicio, 'yyyy-MM-dd')
+          return formattedEstrutureDate === formattedDataInicio
+        }
+        return false
+      })
+    }
+
+    //  if (dataEncerramentoFilter && dataEncerramentoFilter !== 'Todos') {
+    //    filteredList = filteredList.filter((item: any) => {
+    //      return item.data_encerramento === dataEncerramentoFilter
+    //    })
+    //  }
 
     salvarDadosNoCache('@valuesSelected', filterSelected)
     salvarDadosNoCache('@filtro', filteredList)
@@ -374,6 +401,8 @@ export default function ProtocoloList({
       } else if (tipo === 'recebimento') {
         setValue('data_recebimento_filter_de', formatDate)
         setValue('data_recebimento_filter_ate', formatDate)
+      } else if (tipo === 'encerramento') {
+        setValue('data_encerramento_filter', formatDate)
       }
     }
 
@@ -511,7 +540,8 @@ export default function ProtocoloList({
         // Tratar o erro conforme necessário
       })
   }, [data])
-  console.log(filterSelect.meio_recebimento_filter)
+  // console.log(filterSelect.meio_recebimento_filter)
+
   return (
     <Container>
       <div style={{ paddingBottom: '3rem' }}>
@@ -618,6 +648,7 @@ export default function ProtocoloList({
                   </article>
                 </div>
               </ContentFilterDates>
+
               {/* {console.log(filterSelect.meio_recebimento_filter)} */}
               {filterSelect.meio_recebimento_filter &&
               filterSelect.meio_recebimento_filter !== 'Todos' ? (
@@ -671,18 +702,16 @@ export default function ProtocoloList({
                   <label>
                     <input
                       type="date"
-                      // value={`${filterSelect.data_envio_filter}`}
-                      // title="Envio"
-                      // {...register('data_envio_filter')}
-                      // data={isDataSimNao}
-                      // data={() => []}
+                      {...register('data_encerramento_filter')}
                     />
                   </label>
                   <article>
                     <Button
                       style={{ width: '50px' }}
                       title="Hoje"
-                      onClick={() => {}}
+                      onClick={() => {
+                        handleGetDia('encerramento')
+                      }}
                     />
                   </article>
                 </div>
@@ -704,7 +733,9 @@ export default function ProtocoloList({
                     <Button
                       style={{ width: '50px' }}
                       title="Eu"
-                      onClick={() => {}}
+                      onClick={() => {
+                        alert('não definido')
+                      }}
                     />
                   </article>
                 </div>

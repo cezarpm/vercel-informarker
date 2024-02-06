@@ -622,7 +622,7 @@ export default function ProtocolosAtualizar({ data }: schemaProtocoloProps) {
             </div>
           </Box>
 
-          <Box>
+          {/* <Box>
             <div>
               <SelectOptions
                 data={quemRedigiuDocumentoOptionsData}
@@ -637,7 +637,7 @@ export default function ProtocolosAtualizar({ data }: schemaProtocoloProps) {
                 }
               />
             </div>
-          </Box>
+          </Box> */}
 
           <Box>
             <div
