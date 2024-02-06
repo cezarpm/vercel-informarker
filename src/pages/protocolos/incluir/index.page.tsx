@@ -48,6 +48,97 @@ const schemaProtocoloForm = z.object({
 
 type SchemaProtocoloForm = z.infer<typeof schemaProtocoloForm>
 
+// ATUALIZAR QUANDO HOUVER API CORRESPONDENTE - TIPO PROTOCOLO
+
+/* 
+      const response = await api.get('/tabelas')
+      const filteredResponse = response.data.filter(tabela => {
+        tabela.Cod_Tabela === "Tipo_Protocol"
+      })
+      const finalResponse = []
+      filteredResponse.forEach(response => finalResponse.push(response.Ocorrencia_Tab))
+
+      const tipoProtocoloOptions = []
+      for(let i = 1; i <= finalResponse.length; i++){
+        tipoProtocoloOptions.push({
+          id: i,
+          label: finalResponse[i]
+        })
+      }
+  */
+const tipoProtocoloOptionsData = [
+  { id: 1, label: "Entrada" },
+  { id: 2, label: "Saída" },
+];
+
+// ATUALIZAR QUANDO HOUVER API CORRESPONDENTE - MEIO PROTOCOLO
+
+/* 
+      const response = await api.get('/tabelas')
+      const filteredResponse = response.data.filter(tabela => {
+        tabela.Cod_Tabela === "Meio_Protocol"
+      })
+      const finalResponse = []
+      filteredResponse.forEach(response => finalResponse.push(response.Ocorrencia_Tab))
+
+      const meioProtocoloOptions = []
+      for(let i = 1; i <= finalResponse.length; i++){
+        meioProtocoloOptions.push({
+          id: i,
+          label: finalResponse[i]
+        })
+      }
+  */
+const meioProtocoloOptionsData = [
+  { id: 1, label: "Corrêio" },
+  { id: 2, label: "Email" },
+  { id: 3, label: "Whatsapp" },
+  { id: 4, label: "Web Site" },
+];
+
+// ATUALIZAR QUANDO HOUVER API CORRESPONDENTE - ASSUNTO PROTOCOLO
+
+/* 
+      const response = await api.get('/tabelas')
+      const filteredResponse = response.data.filter(tabela => {
+        tabela.Cod_Tabela === "Assunto_Protocol"
+      })
+      const finalResponse = []
+      filteredResponse.forEach(response => finalResponse.push(response.Ocorrencia_Tab))
+
+      const assuntoProtocoloOptions = []
+      for(let i = 1; i <= finalResponse.length; i++){
+        assuntoProtocoloOptions.push({
+          id: i,
+          label: finalResponse[i]
+        })
+      }
+  */
+const assuntoProtocoloOptionsData = [
+  { id: 1, label: "Protocolo de Entrada" },
+  { id: 2, label: "Protocolo de Saída" },
+  { id: 3, label: "Confidencial" },
+];
+
+// ATUALIZAR QUANDO HOUVER API CORRESPONDENTE - QUEM REDIGIU O DOCUMENTO A SER ENVIADO
+
+/* 
+      const response = await api.get('/tabelas')
+      const filteredResponse = response.data.filter(tabela => {
+        tabela.Cod_Tabela === "Quem_Redigiu_Documento_Protocol"
+      })
+      const finalResponse = []
+      filteredResponse.forEach(response => finalResponse.push(response.Ocorrencia_Tab))
+
+      const quemRedigiuDocumentoOptionsData = []
+      for(let i = 1; i <= finalResponse.length; i++){
+        quemRedigiuDocumentoOptionsData.push({
+          id: i,
+          label: finalResponse[i]
+        })
+      }
+  */
+const quemRedigiuDocumentoOptionsData = [{ id: 1, label: "" }];
 
 interface schemaTabelas {
   id: number

@@ -7,6 +7,9 @@ import { toast } from 'react-toastify'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { EtiquetaPDFCompany } from '@/utils/ticketsCompany'
+import { Modal } from '@mui/material'
+import { Button as ButtonModal } from '@ignite-ui/react'
+
 const style = {
   position: 'absolute' as const,
   top: '50%',
@@ -71,21 +74,9 @@ export default function ModalTickets({
   const handleOpen = () => setOpen(true)
   const handleClose = () => setOpen(false)
 
-  // const [dataSelected, setDataSelected] = useState<EtiquetaProps[]>([])
-
-  // useEffect(() => {
-  //  setDataSelected([])
-  // data.map(async (item: any) => {
-  //     try {
-  //   const response = await fetch(`${route}${item}`)
-  //     const data = await response.json()
-  //       setDataSelected((prev) => [...prev, data])
-  //      } catch (error) {
-  //        toast.success('Erro ao gerar etiquetas')
-  //        console.error('Erro ao buscar empresas:', error)
-  //      }
-  //    })
-  //  }, [data])
+  const [openConfirma, setOpenConfirma] = useState(false)
+  const handleOpenConfirma = () => setOpenConfirma(true)
+  const handleCloseConfirma = () => setOpenConfirma(false)
 
   const gerarEtiqueta = (primario: boolean) => {
     EtiquetaPDFCompany(data, primario)
@@ -111,9 +102,9 @@ export default function ModalTickets({
         title={title}
         onClick={() => {
           if (data.length === 0) {
-            toast.warn('Selecione um item para Excluir')
+            toast.warn('Selecione um item para gerar etiqueta.')
           } else {
-            handleOpen()
+            handleOpenConfirma()
           }
         }}
       />
@@ -143,6 +134,64 @@ export default function ModalTickets({
           />
         </Box>
       </Container>
+
+      <Modal
+        open={openConfirma}
+        onClose={handleCloseConfirma}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box
+          sx={{
+            position: 'absolute' as const,
+            top: '50%',
+            left: '50%',
+            transform: 'translate(-50%, -50%)',
+            width: 400,
+            bgcolor: 'background.paper',
+            p: 4,
+          }}
+        >
+          <p style={{ fontFamily: 'Roboto' }}>
+            Confirma a impressão de etiquetas para as empresas selecionadas?
+          </p>
+          <Box
+            style={{
+              marginTop: '1.5rem',
+              display: 'flex',
+              flexDirection: 'row',
+              alignItems: 'flex-end',
+              justifyContent: 'center',
+              gap: '2rem',
+              width: '100%',
+            }}
+          >
+            <ButtonModal
+              style={{
+                padding: '0.5rem',
+                height: 'auto',
+                backgroundColor: '#0DA9A4',
+              }}
+              onClick={() => {
+                handleOpen()
+                handleCloseConfirma()
+              }}
+            >
+              Ok
+            </ButtonModal>
+            <ButtonModal
+              style={{
+                padding: '0.5rem',
+                height: 'auto',
+                backgroundColor: '#0DA9A4',
+              }}
+              onClick={handleCloseConfirma}
+            >
+              Cancelar
+            </ButtonModal>
+          </Box>
+        </Box>
+      </Modal>
     </div>
   )
 }
