@@ -77,6 +77,7 @@ const usuarioEncerramento = [
     label: 'TSA - Tania Santos de Andrade Barbosa'
   }
 ]
+
 type SchemaProtocoloForm = z.infer<typeof schemaProtocoloForm>
 interface schemaProtocoloProps {
   data: any
@@ -160,11 +161,13 @@ export default function ProtocolosAtualizar({ data }: schemaProtocoloProps) {
       toast.error(
         'A data de recebimento deve ser toda preenchida (dia, mês e ano).',
       )
-    } else if (datasEncerramento == false) {
-      toast.error(
-        'A data de encerramento deve ser toda preenchida (dia, mês e ano).',
-      )
-    } else {
+    } 
+//    else if (datasEncerramento == false) {
+//      toast.error(
+//        'A data de encerramento deve ser toda preenchida (dia, mês e ano).',
+//      )
+//    } 
+    else {
       const {
         data_envio_dia,
         data_envio_mes,
