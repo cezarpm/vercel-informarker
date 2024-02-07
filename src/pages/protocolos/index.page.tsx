@@ -89,6 +89,28 @@ export default function ProtocoloList({
   })
   isMeioProtocol.unshift(objTodos)
 
+  const usuarioEncerramento = [
+    {
+      id: 1,
+      ocorrencia_tabela: 'ALM - Andrea Laino Marinho',
+    },
+    {
+      id: 2,
+      ocorrencia_tabela: 'MAA - Marcelo Artur Almeida Santos',
+    },
+    {
+      id: 2,
+      ocorrencia_tabela: 'TSA - Tania Santos de Andrade Barbosa',
+    },
+  ]
+
+  const isUsuarioProtocol = usuarioEncerramento?.map((item) => {
+    return {
+      ...item,
+    }
+  })
+  isUsuarioProtocol.unshift(objTodos)
+
   const columns: GridColDef[] = [
     { field: 'id', headerName: 'ID', width: 100 },
     {
@@ -312,7 +334,6 @@ export default function ProtocoloList({
       })
     }
 
-    // aqui
     if (dataEncerramentoFilter && dataEncerramentoFilter !== 'Todos') {
       const dataInicio = parseISO(dataEncerramentoFilter)
 
@@ -335,11 +356,11 @@ export default function ProtocoloList({
       })
     }
 
-    //  if (dataEncerramentoFilter && dataEncerramentoFilter !== 'Todos') {
-    //    filteredList = filteredList.filter((item: any) => {
-    //      return item.data_encerramento === dataEncerramentoFilter
-    //    })
-    //  }
+    if (usuarioEncerramentoFilter && usuarioEncerramentoFilter !== 'Todos') {
+      filteredList = filteredList.filter((item: any) => {
+        return item.usuario_encerramento === usuarioEncerramentoFilter
+      })
+    }
 
     salvarDadosNoCache('@valuesSelected', filterSelected)
     salvarDadosNoCache('@filtro', filteredList)
@@ -524,7 +545,7 @@ export default function ProtocoloList({
           setValue('meio_envio_filter', getItemsFilter.meio_envio_filter)
           setValue(
             'usuario_encerramento_filter',
-            getItemsFilter.usuario_encerramento,
+            getItemsFilter.usuario_encerramento_filter,
           )
           setValue(
             'data_encerramento_filter',
@@ -557,7 +578,7 @@ export default function ProtocoloList({
           <div style={{ display: 'flex' }}>
             <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'end' }}>
               {filterSelect.tipo_protocolo_filter &&
-              filterSelect.tipo_protocolo_filter !== 'Todos' ? (
+                filterSelect.tipo_protocolo_filter !== 'Todos' ? (
                 <SelectNoComplete
                   p="0px 0px 0px 0.5rem"
                   value={`${filterSelect.tipo_protocolo_filter}`}
@@ -569,7 +590,7 @@ export default function ProtocoloList({
               ) : null}
 
               {filterSelect.tipo_protocolo_filter &&
-              filterSelect.tipo_protocolo_filter === 'Todos' ? (
+                filterSelect.tipo_protocolo_filter === 'Todos' ? (
                 <SelectNoComplete
                   p="0px 0px 0px 0.5rem"
                   value={`Todos`}
@@ -651,19 +672,19 @@ export default function ProtocoloList({
 
               {/* {console.log(filterSelect.meio_recebimento_filter)} */}
               {filterSelect.meio_recebimento_filter &&
-              filterSelect.meio_recebimento_filter !== 'Todos' ? (
+                filterSelect.meio_recebimento_filter !== 'Todos' ? (
                 <SelectNoComplete
                   p="0px 0px 0px 0.5rem"
                   value={`${filterSelect.meio_recebimento_filter}`}
                   title="Meio recebimento"
                   {...register('meio_recebimento_filter')}
                   data={isMeioProtocol}
-                  // data={() => []}
+                // data={() => []}
                 />
               ) : null}
 
               {filterSelect.meio_recebimento_filter &&
-              filterSelect.meio_recebimento_filter === 'Todos' ? (
+                filterSelect.meio_recebimento_filter === 'Todos' ? (
                 <SelectNoComplete
                   p="0px 0px 0px 0.5rem"
                   value={`Todos`}
@@ -674,19 +695,19 @@ export default function ProtocoloList({
               ) : null}
 
               {filterSelect.meio_envio_filter &&
-              filterSelect.meio_envio_filter !== 'Todos' ? (
+                filterSelect.meio_envio_filter !== 'Todos' ? (
                 <SelectNoComplete
                   p="0px 0px 0px 0.5rem"
                   value={`${filterSelect.meio_envio_filter}`}
                   title="Meio Envio"
                   {...register('meio_envio_filter')}
                   data={isMeioProtocol}
-                  // data={() => []}
+                // data={() => []}
                 />
               ) : null}
 
               {filterSelect.meio_envio_filter &&
-              filterSelect.meio_envio_filter === 'Todos' ? (
+                filterSelect.meio_envio_filter === 'Todos' ? (
                 <SelectNoComplete
                   p="0px 0px 0px 0.5rem"
                   value={`Todos`}
@@ -698,7 +719,7 @@ export default function ProtocoloList({
 
               <ContentFilterDates>
                 <div>
-                  <p>Data encerramento</p>
+                  <p>Data encerramento:</p>
                   <label>
                     <input
                       type="date"
@@ -717,8 +738,29 @@ export default function ProtocoloList({
                 </div>
 
                 <div>
-                  <p>Usuário Encerramento</p>
-                  <label>
+                  {filterSelect.usuario_encerramento_filter &&
+                    filterSelect.usuario_encerramento_filter !== 'Todos' ? (
+                    <SelectNoComplete
+                      p="0px 0px 0px 0.5rem"
+                      value={`${filterSelect.usuario_encerramento_filter}`}
+                      title="Usuario Protocolo"
+                      {...register('usuario_encerramento_filter')}
+                      data={isUsuarioProtocol}
+                    // data={() => []}
+                    />
+                  ) : null}
+
+                  {filterSelect.usuario_encerramento_filter &&
+                    filterSelect.usuario_encerramento_filter === 'Todos' ? (
+                    <SelectNoComplete
+                      p="0px 0px 0px 0.5rem"
+                      value={`Todos`}
+                      title="Usuario Protocolo"
+                      {...register('usuario_encerramento_filter')}
+                      data={usuarioEncerramento}
+                    />
+                  ) : null}
+                  {/* <label>
                     <input
                       type="text"
                       value={'Iniciais do usuário'}
@@ -728,13 +770,13 @@ export default function ProtocoloList({
                       // data={isDataSimNao}
                       // data={() => []}
                     />
-                  </label>
+                  </label> */}
                   <article>
                     <Button
                       style={{ width: '50px' }}
                       title="Eu"
                       onClick={() => {
-                        alert('não definido')
+                        toast('não definido')
                       }}
                     />
                   </article>
@@ -816,7 +858,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
     // ADEQUAR QUANDO DESENVOLVER FUNCIONALIDADES!
     const response = await prisma.protocolos.findMany({
       orderBy: {
-        id: 'desc',
+        data_recebimento: 'desc',
       },
     })
     const data = response.map((item) => {
@@ -825,29 +867,29 @@ export const getServerSideProps: GetServerSideProps = async () => {
         data_recebimento:
           item.data_recebimento != undefined
             ? new Date(item.data_recebimento)
-                .toISOString()
-                .replace(/T.*/, '')
-                .split('-')
-                .reverse()
-                .join('/')
+              .toISOString()
+              .replace(/T.*/, '')
+              .split('-')
+              .reverse()
+              .join('/')
             : null,
         data_envio:
           item.data_envio != undefined
             ? new Date(item.data_envio)
-                .toISOString()
-                .replace(/T.*/, '')
-                .split('-')
-                .reverse()
-                .join('/')
+              .toISOString()
+              .replace(/T.*/, '')
+              .split('-')
+              .reverse()
+              .join('/')
             : null,
         data_encerramento:
           item.data_encerramento != undefined
             ? new Date(item.data_encerramento)
-                .toISOString()
-                .replace(/T.*/, '')
-                .split('-')
-                .reverse()
-                .join('/')
+              .toISOString()
+              .replace(/T.*/, '')
+              .split('-')
+              .reverse()
+              .join('/')
             : null,
         entregue_em_maos:
           item.entregue_em_maos != undefined

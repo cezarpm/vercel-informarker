@@ -6,6 +6,7 @@ import { Container } from './styled'
 import { useEffect, useState } from 'react'
 import { api } from '@/lib/axios'
 import CircularProgress from '@mui/material/CircularProgress'
+import { convertBrFilter } from './convertBrFilter'
 
 export default function DataGridDemo({ rows, columns, w }: any) {
   const { setSelection, selectedRowIds, setVoltarPagina, voltarPagina } =
@@ -69,6 +70,7 @@ export default function DataGridDemo({ rows, columns, w }: any) {
       >
         {linhas.length > 0 ? (
           <DataGrid
+            localeText={convertBrFilter}
             rows={rows}
             rowHeight={34}
             columns={columns}
