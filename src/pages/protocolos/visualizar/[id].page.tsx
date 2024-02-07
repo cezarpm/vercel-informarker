@@ -36,7 +36,6 @@ interface schemaEmpresasProps {
   data: any
 }
 export default function Vizualizar({ data }: schemaEmpresasProps) {
-  console.log(data)
   return (
     <Container>
       <form>
@@ -57,12 +56,14 @@ export default function Vizualizar({ data }: schemaEmpresasProps) {
               <TextInput
                 title="Número de Protocolo"
                 value={data[0].num_protocolo}
+                disabled={true}
               />
             </div>
             <TextInput
               title="Tipo Protocolo"
               w={200}
               value={data[0].tipo_protocolo}
+              disabled={true}
             />
           </Box>
 
@@ -71,6 +72,7 @@ export default function Vizualizar({ data }: schemaEmpresasProps) {
               title="Assunto Protocolo"
               w={500}
               value={data[0].assunto_protocolo}
+              disabled={true}
             />
           </Box>
 
@@ -88,18 +90,21 @@ export default function Vizualizar({ data }: schemaEmpresasProps) {
                 title="Dia"
                 w={100}
                 defaultValue={data[0].data_recebimento?.dia}
+                disabled={true}
               />
 
               <TextInput
                 title="Mês"
                 w={100}
                 defaultValue={data[0].data_recebimento?.mes}
+                disabled={true}
               />
 
               <TextInput
                 title="Ano"
                 w={150}
                 defaultValue={data[0].data_recebimento?.ano}
+                disabled={true}
               />
             </div>
             <div>
@@ -107,6 +112,7 @@ export default function Vizualizar({ data }: schemaEmpresasProps) {
                 title="Meio de Recebimento"
                 w={225}
                 defaultValue={data[0].meio_recebimento}
+                disabled={true}
               />
             </div>
           </Box>
@@ -125,18 +131,21 @@ export default function Vizualizar({ data }: schemaEmpresasProps) {
                 title="Dia"
                 w={100}
                 defaultValue={data[0].data_envio?.dia}
+                disabled={true}
               />
 
               <TextInput
                 title="Mês"
                 w={100}
                 defaultValue={data[0].data_envio?.mes}
+                disabled={true}
               />
 
               <TextInput
                 title="Ano"
                 w={150}
                 defaultValue={data[0].data_envio?.ano}
+                disabled={true}
               />
             </div>
             <div>
@@ -144,6 +153,7 @@ export default function Vizualizar({ data }: schemaEmpresasProps) {
                 title="Meio de Envio"
                 w={225}
                 defaultValue={data[0].meio_envio}
+                disabled={true}
               />
             </div>
           </Box>
@@ -162,18 +172,21 @@ export default function Vizualizar({ data }: schemaEmpresasProps) {
                 title="Dia"
                 w={100}
                 defaultValue={data[0].data_encerramento?.dia}
+                disabled={true}
               />
 
               <TextInput
                 title="Mês"
                 w={100}
                 defaultValue={data[0].data_encerramento?.mes}
+                disabled={true}
               />
 
               <TextInput
                 title="Ano"
                 w={150}
                 defaultValue={data[0].data_encerramento?.ano}
+                disabled={true}
               />
             </div>
             <div>
@@ -181,6 +194,7 @@ export default function Vizualizar({ data }: schemaEmpresasProps) {
                 title="Usuário Encerramento Protocolo"
                 w={225}
                 defaultValue={data[0].usuario_encerramento}
+                disabled={true}
               />
             </div>
           </Box>
@@ -208,20 +222,34 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     })
 
     const newData = [data]?.map((item: any) => {
-      const desestrutureDateRecebimento = useArrayDate.DesestruturarDate(
-        item.data_recebimento || '',
-      )
-      const desestrutureDateEnvio = useArrayDate.DesestruturarDate(
-        item.data_envio || '',
-      )
-      const desestrutureDateEncerramento = useArrayDate.DesestruturarDate(
-        item.data_encerramento || '',
-      )
+      let dataRecebimento
+      let dataEnvio
+      let dataEncerramento
+      if (item.data_recebimento !== null) {
+        dataRecebimento = useArrayDate.DesestruturarDate(item.data_recebimento)
+      } else {
+        dataRecebimento = ''
+      }
+
+      if (item.data_envio !== null) {
+        dataEnvio = useArrayDate.DesestruturarDate(item.data_envio)
+      } else {
+        dataEnvio = ''
+      }
+
+      if (item.data_encerramento !== null) {
+        dataEncerramento = useArrayDate.DesestruturarDate(
+          item.data_encerramento,
+        )
+      } else {
+        dataEncerramento = ''
+      }
+
       return {
         ...data,
-        data_recebimento: desestrutureDateRecebimento,
-        data_envio: desestrutureDateEnvio,
-        data_encerramento: desestrutureDateEncerramento,
+        data_recebimento: dataRecebimento,
+        data_envio: dataEnvio,
+        data_encerramento: dataEncerramento,
       }
     })
 

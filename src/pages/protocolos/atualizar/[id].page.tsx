@@ -108,7 +108,7 @@ export default function ProtocolosAtualizar({ data }: schemaProtocoloProps) {
   async function OnSubmit(dataSubmit: SchemaProtocoloForm) {
     const datasRecebimento = verificaData(dataSubmit, 'recebimento')
     const datasEncerramento = verificaData(dataSubmit, 'encerramento')
-
+    console.log(dataSubmit)
     let dataEnvio
     let dataRecebimento
     let dataEncerramento
@@ -143,7 +143,22 @@ export default function ProtocolosAtualizar({ data }: schemaProtocoloProps) {
         dataSubmit.data_encerramento_protocolo_dia,
       )
     }
-    console.log(dataEncerramento)
+ 
+    if (String(dataSubmit.tipo_protocolo.toLowerCase()) === String('saída')) {
+      if (dataSubmit.meio_envio === '') {
+        return toast.warn('Meio Envio Obrigatório')
+      } else if (dataEnvio === undefined) {
+        return toast.warn('Data Envio Obrigatório')
+      }
+    }
+
+    if (String(dataSubmit.tipo_protocolo.toLowerCase()) === String('entrada')) {
+      if (dataSubmit.meio_recebimento === '') {
+        return toast.warn('Meio Recebimento Obrigatório')
+      } else if (dataRecebimento === undefined) {
+        return toast.warn('Data Recebimento Obrigatória')
+      }
+    }
 
     if (
       dataSubmit.num_protocolo == '' ||
@@ -263,12 +278,12 @@ export default function ProtocolosAtualizar({ data }: schemaProtocoloProps) {
     setValue('num_protocolo', data[0].num_protocolo)
     setValue('assunto_protocolo', data[0].assunto_protocolo)
     setValue('tipo_protocolo', data[0].tipo_protocolo)
-    setValue('data_recebimento_dia', data[0].data_recebimento.dia)
-    setValue('data_recebimento_mes', data[0].data_recebimento.mes)
-    setValue('data_recebimento_ano', data[0].data_recebimento.ano)
-    setValue('data_envio_dia', data[0].data_envio.dia)
-    setValue('data_envio_mes', data[0].data_envio.mes)
-    setValue('data_envio_ano', data[0].data_envio.ano)
+    setValue('data_recebimento_dia', data[0].data_recebimento.dia || '')
+    setValue('data_recebimento_mes', data[0].data_recebimento.mes || '')
+    setValue('data_recebimento_ano', data[0].data_recebimento.ano || '')
+    setValue('data_envio_dia', data[0].data_envio.dia || '')
+    setValue('data_envio_mes', data[0].data_envio.mes || '')
+    setValue('data_envio_ano', data[0].data_envio.ano || '')
     setValue('meio_recebimento', data[0].meio_recebimento)
     setValue('meio_envio', data[0].meio_envio)
     setValue('entregue_em_maos', data[0].entregue_em_maos)
@@ -294,7 +309,7 @@ export default function ProtocolosAtualizar({ data }: schemaProtocoloProps) {
   useEffect(() => {
     setInitialValues()
   }, [])
-
+  console.log(errors)
   return (
     <Container>
       <form onSubmit={handleSubmit(OnSubmit)}>
