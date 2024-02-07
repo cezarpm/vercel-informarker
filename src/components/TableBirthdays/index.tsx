@@ -15,6 +15,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "react-toastify";
 import { BackPage } from "../BackPage";
+import { convertBrFilter } from './convertBrFilter'
 
 const shemaFilter = z.object({
   data_filter: z.string(),
@@ -346,6 +347,7 @@ const TableBirthdays = ({
       {filteredData.length > 0 && (
         <Box sx={{ height: "60vh", width: w, marginTop: "1rem" }}>
           <DataGrid
+            localeText={convertBrFilter}
             rows={filteredData}
             columns={columns}
             initialState={{
