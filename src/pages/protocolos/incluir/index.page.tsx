@@ -150,6 +150,22 @@ interface schemaProtocolos {
   dataMeioProtocol: schemaTabelas
 }
 
+// PUXAR DE TABELAS, QUANDO NECESSÁRIO!
+const usuarioEncerramento = [
+  {
+    id: 1,
+    label: 'ALM - Andrea Laino Marinho',
+  },
+  {
+    id: 2,
+    label: 'MAA - Marcelo Artur Almeida Santos'
+  },
+  {
+    id: 2,
+    label: 'TSA - Tania Santos de Andrade Barbosa'
+  }
+]
+
 export default function Protocolos({ dataCategory, dataMeioProtocol }: schemaProtocolos) {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
 
@@ -176,14 +192,14 @@ export default function Protocolos({ dataCategory, dataMeioProtocol }: schemaPro
   async function handleOnSubmit(data: SchemaProtocoloForm) {
     const datasRecebimento = verificaData(data, "recebimento");
     const datasEncerramento = verificaData(data, "encerramento");
-
+    console.log(data)
     let dataEnvio;
     let dataRecebimento;
     let dataEncerramento;
 
     if (data.data_envio_dia && data.data_envio_mes && data.data_envio_ano) {
       dataEnvio = useArrayDate.MontarDate(
-        data.data_envio_ano,
+        (data.data_envio_ano),
         data.data_envio_mes,
         data.data_envio_dia
       );
@@ -214,7 +230,7 @@ export default function Protocolos({ dataCategory, dataMeioProtocol }: schemaPro
     }
 
     if (String(data.tipo_protocolo.toLowerCase()) === String('saída')) {
-      if (dataEnvio === undefined && data.meio_envio === '') {
+      if (data.meio_envio === '') {
         return toast.warn('Meio Envio Obrigatório')
       } else if (dataEnvio === undefined) {
         return toast.warn('Data Envio Obrigatório')
@@ -222,7 +238,7 @@ export default function Protocolos({ dataCategory, dataMeioProtocol }: schemaPro
     }
 
     if (String(data.tipo_protocolo.toLowerCase()) === String('entrada')) {
-      if (dataRecebimento === undefined && data.meio_recebimento === '') {
+      if (data.meio_recebimento === '') {
         return toast.warn('Meio Recebimento Obrigatório')
       } else if (dataRecebimento === undefined) {
         return toast.warn('Data Recebimento Obrigatória')
@@ -241,11 +257,11 @@ export default function Protocolos({ dataCategory, dataMeioProtocol }: schemaPro
       );
     } else if (datasRecebimento == false) {
       toast.error(
-        "A data de recebimento deve ser toda preenchida (dia, mês e ano)."
+        "Data de Recebimento Incompleta"
       );
     } else if (datasEncerramento == false) {
       toast.error(
-        "A data de encerramento deve ser toda preenchida (dia, mês e ano)."
+        "Data encerramento Incompleta"
       );
     } else {
       const {
@@ -493,23 +509,7 @@ export default function Protocolos({ dataCategory, dataMeioProtocol }: schemaPro
                 // defaultValue={{ label: newDateAnuidade.ano }}
                 />
               </div>
-              <span
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                }}
-              >
-                <FormError>
-                  {errors.data_envio_dia?.message ||
-                    errors.data_envio_mes?.message ||
-                    errors.data_envio_ano?.message
-                    ? ' Data de Envio:'
-                    : null}
-                </FormError>
-                <FormError>{errors.data_envio_dia?.message}</FormError>
-                <FormError>{errors.data_envio_mes?.message}</FormError>
-                <FormError>{errors.data_envio_ano?.message}</FormError>
-              </span>
+
             </div>
 
             <div>
@@ -554,31 +554,17 @@ export default function Protocolos({ dataCategory, dataMeioProtocol }: schemaPro
                 // defaultValue={{ label: newDateAnuidade.ano }}
                 />
               </div>
-              <span
-                style={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                }}
-              >
-                {/* <FormError>
-                  {errors.data_recebimento_dia?.message ||
-                    errors.data_recebimento_mes?.message ||
-                    errors.data_recebimento_ano?.message
-                    ? 'Data de Recebimento:'
-                    : null}
-                </FormError>
-                <FormError>{errors.data_recebimento_dia?.message}</FormError>
-                <FormError>{errors.data_recebimento_mes?.message}</FormError>
-                <FormError>{errors.data_recebimento_ano?.message}</FormError> */}
-              </span>
+
             </div>
 
 
             <div>
-              <TextInput
-                w={200}
-                title="Usuário Encerramento Protocolo"
+              <SelectOptions
+                w={300}
+                description="Usuário Encerramento Protocolo"
+                data={usuarioEncerramento}
                 {...register("usuario_encerramento")}
+              // defaultValue={{ label: newDateAnuidade.ano }}
               />
             </div>
           </Box>

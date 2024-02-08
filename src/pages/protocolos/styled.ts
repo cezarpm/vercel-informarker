@@ -28,6 +28,7 @@ export const ContentFilterDates = styled('div', {
     textAlign: 'left',
     display: 'flex',
     alignItems: 'center',
+    color: 'rgba(0, 0, 0, 0.6)',
   },
   input: {
     border: 'solid 1px',
