@@ -158,10 +158,10 @@ export function TemporaryDrawer() {
         {[
           'Empresas',
           'Associados',
-          'Pagamentos',
+          // 'Pagamentos',
           'Aniversariantes',
           'Protocolos',
-          'Chapas',
+          // 'Chapas',
           'Eleições',
           'Votação',
           'Diretorias',
