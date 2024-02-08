@@ -34,7 +34,7 @@ const TableBirthdays = ({
 }: any) => {
   const { setSelection, selectedRowIds } = useContextCustom();
   const [filterSelect, setFilterSelect] = useState({
-    data_filter: "Selecione",
+    data_filter: "Todos",
     situacao_filter: "Todos, exceto falecidos",
     categoria_filter: "Todos",
   });
@@ -55,7 +55,7 @@ const TableBirthdays = ({
   const [ultimoDiaSemana, setUltimoDiaSemana] = useState<Date>();
   const [dia, setDia] = useState<number>(0);
 
-  const [filteredData, setFilteredData] = useState([]);
+  const [filteredData, setFilteredData] = useState(rows);
 
   const { register, watch, setValue } = useForm<SchemaFilter>();
 
@@ -94,7 +94,7 @@ const TableBirthdays = ({
     // Inicialize a lista com os dados originais
     let filteredList = rows;
 
-    if (dataFilter && dataFilter != "Selecione") {
+    if(dataFilter && dataFilter != "Todos"){
       filteredList = filteredList.filter((item: any) => {
         if (item.situacao != "Falecido") {
           if (item.data_nascimento != null) {
@@ -138,6 +138,7 @@ const TableBirthdays = ({
           return false;
         }
       });
+    }
 
       if (situacaoFilter != "Todos, exceto falecidos") {
         filteredList = filteredList.filter((item: any) => {
@@ -162,11 +163,6 @@ const TableBirthdays = ({
         toast.warn("A consulta não possui dados para serem exibidos.");
         setFilteredData([]);
       }
-    } else {
-      setLoader(false);
-      setFilteredData([]);
-      toast.error("Preencha os campos obrigatórios (*).");
-    }
   }
 
   const getQuantityRows = async () => {
@@ -295,7 +291,7 @@ const TableBirthdays = ({
             <SelectNoComplete
               p="0px 0px 0px 0.5rem"
               value={`${filterSelect.data_filter}`}
-              title="Período *"
+              title="Período"
               data={filtroData}
               {...register("data_filter")}
             />
