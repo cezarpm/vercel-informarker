@@ -47,7 +47,6 @@ export default function CsvUpload() {
   return (
     <Container>
       <p>Importação Pagamentos Anuidade</p>
-      <BackPage backRoute="/" discartPageBack />
       <Box>
         <div style={{ flexDirection: "row" }}>
           <input type="file" accept=".csv" onChange={handleFileChange} />
