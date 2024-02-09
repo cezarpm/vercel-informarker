@@ -6,7 +6,6 @@ import { prisma } from "@/lib/prisma";
 import { Logs } from "@/utils/Logs";
 
 
-
 export const config = {
   api: {
     bodyParser: false,
@@ -48,15 +47,15 @@ export default async function handler(
     const csvData = fs.readFileSync(csvFilePath, "utf8");
     const records = Papa.parse(csvData, {
       header: true,
-      delimiter: ';',
+      delimiter: ',',
       skipEmptyLines: true,
     }).data;
-
+    
     let linhasModificadas = 0;
     let linhasDuplicadas = 0;
     let linhasNaoEncontradas = 0;
     let linhasNaoPagas = 0;
-
+    
     for (const record of records as any[]) {
       if (record.status && record.status.toLowerCase() === "completed") {
         if (
@@ -75,17 +74,11 @@ export default async function handler(
             },
           });
 
-          if (associado?.matricula_SAERJ) {
-            const anoAnuidade = new Date(record.order_date)
-              .getFullYear()
-              .toString();
+          if (associado?.matricula_SAERJ !== null && associado?.matricula_SAERJ !== undefined) {
 
             const pagamentoExistente = await prisma.pagamentos.findFirst({
               where: {
                 matricula_saerj: associado.matricula_SAERJ.toString() ?? "",
-                tipo_pagamento: record.payment_method ?? "",
-                ano_anuidade: anoAnuidade ?? "2024",
-                data_pagto_unico: record.order_date ? new Date(record.order_date).toISOString().split("T")[0] : "2024-01-01 00:00:00",
               },
             });
 
@@ -94,7 +87,7 @@ export default async function handler(
                 data: {
                   matricula_saerj:
                     associado.matricula_SAERJ.toString() ?? "",
-                  tipo_pagamento: record.payment_method ?? "",
+                   tipo_pagamento: record.payment_method ?? "",
                   ano_anuidade: new Date(record.order_date)
                     .getFullYear()
                     .toString(),
@@ -109,7 +102,7 @@ export default async function handler(
                   data_pagto_parcela_2: "",
                   valor_pagto_parcela_2: "",
                   data_pagto_parcela_3: "",
-                  valor_pagto_parcela_3: "",
+                  valor_pagto_parcela_3: "", 
                 },
               });
               linhasModificadas++;
@@ -143,6 +136,6 @@ export default async function handler(
   } catch (processError) {
     res.status(500).json({ message: "Erro ao processar os dados", error: processError });
   }
-  });
+});
 }
 
