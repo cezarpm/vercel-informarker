@@ -48,7 +48,7 @@ export function TemporaryDrawer() {
     } else if (text === 'Tabelas') {
       router.push('/tabelas')
     } else if (text === 'Associados') {
-      router.push('/associados')
+      router.push('/associados/cadastro')
     } else if (text === 'Logs') {
       router.push('/logs')
     } else if (text === 'Aniversariantes') {
@@ -72,18 +72,18 @@ export function TemporaryDrawer() {
 
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
-    (event: React.KeyboardEvent | React.MouseEvent) => {
-      if (
-        event.type === 'keydown' &&
-        ((event as React.KeyboardEvent).key === 'Tab' ||
-          (event as React.KeyboardEvent).key === 'Shift')
-      ) {
-        return
-      }
+      (event: React.KeyboardEvent | React.MouseEvent) => {
+        if (
+          event.type === 'keydown' &&
+          ((event as React.KeyboardEvent).key === 'Tab' ||
+            (event as React.KeyboardEvent).key === 'Shift')
+        ) {
+          return
+        }
 
-      setState({ ...state, [anchor]: open })
-      setOpen(open)
-    }
+        setState({ ...state, [anchor]: open })
+        setOpen(open)
+      }
 
   const arrayIcons = [
     <>
@@ -156,16 +156,7 @@ export function TemporaryDrawer() {
 
       <List>
         {[
-          'Empresas',
           'Associados',
-          'Importação anuidades',
-          'Pagamentos',
-          'Aniversariantes',
-          'Protocolos',
-          // 'Chapas',
-          'Eleições',
-          'Votação',
-          'Diretorias',
         ].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton
@@ -181,7 +172,7 @@ export function TemporaryDrawer() {
       </List>
       <Divider />
       {/* two list */}
-      <List>
+      {/* <List>
         {['Tabelas', 'Parametros', 'Logs'].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton
@@ -194,7 +185,7 @@ export function TemporaryDrawer() {
             </ListItemButton>
           </ListItem>
         ))}
-      </List>
+      </List> */}
     </Box>
   )
 

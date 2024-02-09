@@ -7,6 +7,12 @@ export const Container = styled('main', {
     display: 'flex',
     flexDirection: 'column',
     gap: '20px',
+
+    '> form': {
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '20px',
+    }
 })
 
 export const Title = styled('h1', {

@@ -258,14 +258,8 @@ export default function AssociadosCadastro({
   return (
     <Container>
       <form onSubmit={handleSubmit(handleOnSubmit)}>
-        <BackPage backRoute="associados" />
+        <BackPage backRoute="/" />
         <fieldset>
-          <legend>
-            <Link href="/associados">Associados</Link>
-            <CaretRight size={14} />
-            <span>Incluir</span>
-          </legend>
-
           <Fieldset>
             <legend>
               <h2>Gerais</h2>
@@ -340,21 +334,21 @@ export default function AssociadosCadastro({
                     data={dataDays}
                     w={90}
                     {...register('dayNasc')}
-                    // defaultValue={{ label: newDateAnuidade.dia }}
+                  // defaultValue={{ label: newDateAnuidade.dia }}
                   />
                   <SelectOptions
                     data={dataMonths}
                     description="Mês"
                     w={90}
                     {...register('monthNasc')}
-                    // defaultValue={{ label: newDateAnuidade.mes }}
+                  // defaultValue={{ label: newDateAnuidade.mes }}
                   />
                   <SelectOptions
                     w={120}
                     description="Ano"
                     data={dataYears}
                     {...register('yearNasc')}
-                    // defaultValue={{ label: newDateAnuidade.ano }}
+                  // defaultValue={{ label: newDateAnuidade.ano }}
                   />
                 </div>
                 <span
@@ -365,8 +359,8 @@ export default function AssociadosCadastro({
                 >
                   <FormError>
                     {errors.dayNasc?.message ||
-                    errors.dayNasc?.message ||
-                    errors.yearNasc?.message
+                      errors.dayNasc?.message ||
+                      errors.yearNasc?.message
                       ? 'Data de nascimento:'
                       : null}
                   </FormError>
@@ -605,7 +599,7 @@ export default function AssociadosCadastro({
                       data={dataDays}
                       w={90}
                       {...register('dayInicioEspec')}
-                      // defaultValue={{ label: newDateAnuidade.dia }}
+                    // defaultValue={{ label: newDateAnuidade.dia }}
                     />
 
                     <SelectOptions
@@ -613,7 +607,7 @@ export default function AssociadosCadastro({
                       description="Mês"
                       w={90}
                       {...register('monthInicioEspec')}
-                      // defaultValue={{ label: newDateAnuidade.mes }}
+                    // defaultValue={{ label: newDateAnuidade.mes }}
                     />
 
                     <SelectOptions
@@ -621,7 +615,7 @@ export default function AssociadosCadastro({
                       description="Ano"
                       data={dataYears}
                       {...register('yearInicioEspec')}
-                      // defaultValue={{ label: newDateAnuidade.ano }}
+                    // defaultValue={{ label: newDateAnuidade.ano }}
                     />
                   </div>
                   <div
@@ -638,7 +632,7 @@ export default function AssociadosCadastro({
                       data={dataDays}
                       w={90}
                       {...register('dayPrevConcl')}
-                      // defaultValue={{ label: newDateAnuidade.dia }}
+                    // defaultValue={{ label: newDateAnuidade.dia }}
                     />
 
                     <SelectOptions
@@ -646,7 +640,7 @@ export default function AssociadosCadastro({
                       description="Mês"
                       w={90}
                       {...register('monthPrevConcl')}
-                      // defaultValue={{ label: newDateAnuidade.mes }}
+                    // defaultValue={{ label: newDateAnuidade.mes }}
                     />
 
                     <SelectOptions
@@ -654,7 +648,7 @@ export default function AssociadosCadastro({
                       description="Ano"
                       data={useArrayDate.AnoAtualMaior()}
                       {...register('yearPrevConcl')}
-                      // defaultValue={{ label: newDateAnuidade.ano }}
+                    // defaultValue={{ label: newDateAnuidade.ano }}
                     />
                   </div>
                   <div>
@@ -721,8 +715,8 @@ export default function AssociadosCadastro({
                   />
                   <p>
                     {nomeArquivoComprovanteCpf &&
-                    nomeArquivoComprovanteCpf[0] &&
-                    nomeArquivoComprovanteCpf[0].name !== undefined
+                      nomeArquivoComprovanteCpf[0] &&
+                      nomeArquivoComprovanteCpf[0].name !== undefined
                       ? `Arquivo Selecionado: ${nomeArquivoComprovanteCpf[0].name}`
                       : 'Selecione o Arquivo:'}
                   </p>
@@ -742,8 +736,8 @@ export default function AssociadosCadastro({
                   />
                   <p>
                     {nomeArquivoComprovanteEndereco &&
-                    nomeArquivoComprovanteEndereco[0] &&
-                    nomeArquivoComprovanteEndereco[0].name !== undefined
+                      nomeArquivoComprovanteEndereco[0] &&
+                      nomeArquivoComprovanteEndereco[0].name !== undefined
                       ? `Arquivo Selecionado: ${nomeArquivoComprovanteEndereco[0].name}`
                       : 'Selecione o Arquivo:'}
                   </p>
@@ -762,8 +756,8 @@ export default function AssociadosCadastro({
                   />
                   <p>
                     {nomeArquivoCertidaoQuitacaoCrm &&
-                    nomeArquivoCertidaoQuitacaoCrm[0] &&
-                    nomeArquivoCertidaoQuitacaoCrm[0].name !== undefined
+                      nomeArquivoCertidaoQuitacaoCrm[0] &&
+                      nomeArquivoCertidaoQuitacaoCrm[0].name !== undefined
                       ? `Arquivo Selecionado: ${nomeArquivoCertidaoQuitacaoCrm[0].name}`
                       : 'Selecione o Arquivo:'}
                   </p>
@@ -783,8 +777,8 @@ export default function AssociadosCadastro({
                   />
                   <p>
                     {nomeArquivoCertificadoConclusaoEspecializacao &&
-                    nomeArquivoCertificadoConclusaoEspecializacao[0] &&
-                    nomeArquivoCertificadoConclusaoEspecializacao[0].name !==
+                      nomeArquivoCertificadoConclusaoEspecializacao[0] &&
+                      nomeArquivoCertificadoConclusaoEspecializacao[0].name !==
                       undefined
                       ? `Arquivo Selecionado: ${nomeArquivoCertificadoConclusaoEspecializacao[0].name}`
                       : 'Selecione o Arquivo:'}
@@ -805,8 +799,8 @@ export default function AssociadosCadastro({
                   />
                   <p>
                     {nomeArquivoCartaIndicacao2Membros &&
-                    nomeArquivoCartaIndicacao2Membros[0] &&
-                    nomeArquivoCartaIndicacao2Membros[0].name !== undefined
+                      nomeArquivoCartaIndicacao2Membros[0] &&
+                      nomeArquivoCartaIndicacao2Membros[0].name !== undefined
                       ? `Arquivo Selecionado: ${nomeArquivoCartaIndicacao2Membros[0].name}`
                       : 'Selecione o Arquivo:'}
                   </p>
@@ -825,8 +819,8 @@ export default function AssociadosCadastro({
                   />
                   <p>
                     {nomeArquivoDiplomaMedicina &&
-                    nomeArquivoDiplomaMedicina[0] &&
-                    nomeArquivoDiplomaMedicina[0].name !== undefined
+                      nomeArquivoDiplomaMedicina[0] &&
+                      nomeArquivoDiplomaMedicina[0].name !== undefined
                       ? `Arquivo Selecionado: ${nomeArquivoDiplomaMedicina[0].name}`
                       : 'Selecione o Arquivo:'}
                   </p>
@@ -846,8 +840,8 @@ export default function AssociadosCadastro({
                     />
                     <p>
                       {nomeArquivoDeclaracaoHospital &&
-                      nomeArquivoDeclaracaoHospital[0] &&
-                      nomeArquivoDeclaracaoHospital[0].name !== undefined
+                        nomeArquivoDeclaracaoHospital[0] &&
+                        nomeArquivoDeclaracaoHospital[0].name !== undefined
                         ? `Arquivo Selecionado: ${nomeArquivoDeclaracaoHospital[0].name}`
                         : 'Selecione o Arquivo:'}
                     </p>
