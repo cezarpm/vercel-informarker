@@ -15,6 +15,7 @@ import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { toast } from "react-toastify";
 import { BackPage } from "../BackPage";
+import { convertBrFilter } from "./convertBrFilter";
 
 const shemaFilter = z.object({
   data_filter: z.string(),
@@ -33,7 +34,7 @@ const TableBirthdays = ({
 }: any) => {
   const { setSelection, selectedRowIds } = useContextCustom();
   const [filterSelect, setFilterSelect] = useState({
-    data_filter: "Selecione",
+    data_filter: "Todos",
     situacao_filter: "Todos, exceto falecidos",
     categoria_filter: "Todos",
   });
@@ -54,7 +55,7 @@ const TableBirthdays = ({
   const [ultimoDiaSemana, setUltimoDiaSemana] = useState<Date>();
   const [dia, setDia] = useState<number>(0);
 
-  const [filteredData, setFilteredData] = useState([]);
+  const [filteredData, setFilteredData] = useState(rows);
 
   const { register, watch, setValue } = useForm<SchemaFilter>();
 
@@ -93,7 +94,7 @@ const TableBirthdays = ({
     // Inicialize a lista com os dados originais
     let filteredList = rows;
 
-    if (dataFilter && dataFilter != "Selecione") {
+    if (dataFilter && dataFilter != "Todos") {
       filteredList = filteredList.filter((item: any) => {
         if (item.situacao != "Falecido") {
           if (item.data_nascimento != null) {
@@ -108,7 +109,7 @@ const TableBirthdays = ({
             if (dataFilter === "Semana") {
               const dataNascString = item.data_nascimento.split("/");
               const dataNascimento = new Date(
-                ano+"-" + dataNascString[1] + "-" + dataNascString[0]
+                ano + "-" + dataNascString[1] + "-" + dataNascString[0]
               );
 
               if (
@@ -137,34 +138,30 @@ const TableBirthdays = ({
           return false;
         }
       });
+    }
 
-      if (situacaoFilter != "Todos, exceto falecidos") {
-        filteredList = filteredList.filter((item: any) => {
-          const situacaoMatch =
-            item.situacao === situacaoFilter && item.situacao !== "Falecido";
-          return situacaoMatch;
-        });
-      }
+    if (situacaoFilter != "Todos, exceto falecidos") {
+      filteredList = filteredList.filter((item: any) => {
+        const situacaoMatch =
+          item.situacao === situacaoFilter && item.situacao !== "Falecido";
+        return situacaoMatch;
+      });
+    }
 
-      if (categoriaFilter != "Todos") {
-        filteredList = filteredList.filter((item: any) => {
-          return item.categoria === categoriaFilter;
-        });
-      }
+    if (categoriaFilter != "Todos") {
+      filteredList = filteredList.filter((item: any) => {
+        return item.categoria === categoriaFilter;
+      });
+    }
 
-      if (filteredList.length > 0) {
-        // Atualize o estado com os dados filtrados
-        setLoader(false);
-        setFilteredData(filteredList);
-      } else {
-        setLoader(false);
-        toast.warn("A consulta não possui dados para serem exibidos.");
-        setFilteredData([]);
-      }
+    if (filteredList.length > 0) {
+      // Atualize o estado com os dados filtrados
+      setLoader(false);
+      setFilteredData(filteredList);
     } else {
       setLoader(false);
+      toast.warn("A consulta não possui dados para serem exibidos.");
       setFilteredData([]);
-      toast.error("Preencha os campos obrigatórios (*).");
     }
   }
 
@@ -193,45 +190,47 @@ const TableBirthdays = ({
   }
 
   useEffect(() => {
-    if (rows.length == 1) {
+    if (rows.length === 1) {
       setSelection([rows[0].id]);
     }
     valuesDefaultFilter();
-
+  
     const date = new Date();
-
-    // O primeiro dia é o dia do mês, menos o dia da semana
-    const primeiro = date.getDate() - date.getDay();
-
-    const primeiroDia = new Date(date.setDate(primeiro));
-    const ultimoDia = new Date(date.setDate(date.getDate() + 6));
-
+  
+    // Define o primeiro dia da semana
+    const primeiroDia = new Date(date);
+    primeiroDia.setDate(date.getDate() - date.getDay()); // Define o primeiro dia da semana atual
+  
+    // Define o último dia da semana
+    const ultimoDia = new Date(primeiroDia);
+    ultimoDia.setDate(primeiroDia.getDate() + 6); // Define o último dia da semana atual
+  
     setPrimeiroDiaSemana(primeiroDia);
     setUltimoDiaSemana(ultimoDia);
-
+  
     setMes(
       date.getMonth() + 1 < 10
-        ? ("0" + (date.getMonth() + 1)).toString()
+        ? "0" + (date.getMonth() + 1)
         : (date.getMonth() + 1).toString()
     );
     setDia(date.getDate());
     setAno(date.getFullYear());
-
+  
     const diaAtual = date.getDay();
-
+  
     const diferencaDomingo = diaAtual - 0;
     date.setDate(date.getDate() - diferencaDomingo);
-
+  
     const diasDaSemana = [];
-
+  
     for (let i = 0; i < 7; i++) {
       diasDaSemana.push(new Date(date).getDate());
       date.setDate(date.getDate() + 1);
     }
-
+  
     setSemana(diasDaSemana);
   }, [rows]);
-
+  
   return (
     <>
       <Modal
@@ -294,7 +293,7 @@ const TableBirthdays = ({
             <SelectNoComplete
               p="0px 0px 0px 0.5rem"
               value={`${filterSelect.data_filter}`}
-              title="Período *"
+              title="Período"
               data={filtroData}
               {...register("data_filter")}
             />
@@ -346,6 +345,7 @@ const TableBirthdays = ({
       {filteredData.length > 0 && (
         <Box sx={{ height: "60vh", width: w, marginTop: "1rem" }}>
           <DataGrid
+            localeText={convertBrFilter}
             rows={filteredData}
             columns={columns}
             initialState={{
