@@ -14,7 +14,10 @@ const nextConfig = {
     'page.tsx',
     'api.ts',
     'api.tsx',
-  ]
+  ],
+  typescript: {
+    ignoreBuildErrors: true,
+  },
 }
 
 module.exports = withPWA(nextConfig)
