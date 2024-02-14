@@ -35,15 +35,30 @@ export function TemporaryDrawer() {
   });
 
   const [isOpen, setOpen] = React.useState(false);
+  const [hasToken, setHasToken] = React.useState(false);
 
   const router = useRouter();
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
+    sessionStorage.removeItem("token");
     router.push("/auth");
+
+    setHasToken(false);
+    setOpen(false);
+    setState({ ...state, left: false });
   };
 
+  React.useEffect(() => {
+    if (sessionStorage.getItem("token") !== null) {
+      setHasToken(true);
+    }
+  }, []);
+
   function handleNextPage(text: string): void {
+    if (!hasToken) {
+      router.push("/auth");
+    }
+
     if (text === "Parametros") {
       router.push("/parametros");
     } else if (text === "Empresas") {
@@ -194,12 +209,14 @@ export function TemporaryDrawer() {
     <div>
       {(["left"] as const).map((anchor) => (
         <React.Fragment key={anchor}>
-          <Button
-            style={{ color: "#fff" }}
-            onClick={toggleDrawer(anchor, true)}
-          >
-            <Hamburger toggled={isOpen} />
-          </Button>
+          {hasToken && (
+            <Button
+              style={{ color: "#fff" }}
+              onClick={toggleDrawer(anchor, true)}
+            >
+              <Hamburger toggled={isOpen} />
+            </Button>
+          )}
           <Drawer
             anchor={anchor}
             open={state[anchor]}
