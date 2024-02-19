@@ -443,7 +443,6 @@ export default function AssociadosCadastro({
               <div>
                 <TextInput
                   disabled={disableCamposCepInvalido}
-                  w={350}
                   title="Cidade *"
                   {...register("cidade")}
                   error={!!errors?.cidade?.message}
@@ -453,7 +452,6 @@ export default function AssociadosCadastro({
 
               <div>
                 <TextInput
-                  w={200}
                   disabled={disableCamposCepInvalido}
                   title="Bairro *"
                   {...register("bairro")}
@@ -465,7 +463,6 @@ export default function AssociadosCadastro({
             <Box>
               <div>
                 <TextInput
-                  w={400}
                   disabled={disableCamposCepInvalido}
                   title="Logradouro *"
                   {...register("logradouro")}
@@ -491,7 +488,6 @@ export default function AssociadosCadastro({
                 <TextInput
                   disabled={disableCamposCepInvalido}
                   title="Complemento *"
-                  w={400}
                   {...register("complemento")}
                 />
               </div>
